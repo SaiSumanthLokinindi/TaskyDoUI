@@ -18,6 +18,7 @@ const GlobalStyles = createGlobalStyle(({theme})=>{
 
     body{
         background-color: ${theme.baseColors.primary};
+        color: ${theme.text.primary}
     }
 
     `

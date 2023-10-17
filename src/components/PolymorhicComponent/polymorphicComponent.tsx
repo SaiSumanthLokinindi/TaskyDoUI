@@ -12,7 +12,7 @@ type PolymorphicComponentProps<T extends ElementType> = {
 
 const PolymorphicComponent  = forwardRef(<T extends ElementType = 'span'>({as, children, ...restProps}: PolymorphicComponentProps<T>, ref?:PolymorphicRef<T>)=>{
     
-    const Component = as || 'span';
+    const Component = as ?? 'span';
 
     if(children){
         return <Component ref={ref} {...restProps}>{children}</Component>

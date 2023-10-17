@@ -39,6 +39,11 @@ const StyledInput = styled.input(({theme})=>{
             outline: 2.5px solid ${theme.baseColors.secondary};
             box-shadow: 0 0 8px 4px rgba(30, 169, 65, 0.2);
         }
+
+        &:disabled{
+            color: ${theme.text.disabled};
+            background-color: ${theme.components.input.disabledBackgroundColor};
+        }
     `
 })
 
@@ -53,7 +58,7 @@ const Input = forwardRef(({ type = 'text', defaultValue = '', placeholder, requi
     }, [defaultValue])
     
 
-    return <PolymorphicComponent as={StyledInput} ref={ref} value={value} required={required} disabled={disabled} type={type} placeholder={placeholder} onChange={(e:ChangeEvent<HTMLInputElement>)=>{
+    return <PolymorphicComponent as={StyledInput} ref={ref} value={value} required={required} readOnly={readOnly} disabled={disabled} type={type} placeholder={placeholder} onChange={(e:ChangeEvent<HTMLInputElement>)=>{
         setValue(e.currentTarget.value);
         onChange?.(e);
     }} onFocus={onFocus} onBlur={onBlur}></PolymorphicComponent>
