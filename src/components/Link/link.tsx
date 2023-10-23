@@ -20,7 +20,6 @@ export const StyledLink = styled.a(({theme})=>{
         color: ${theme.baseColors.secondary};
         text-decoration: none;
         outline: none;
-        
 
         &:hover{
             cursor: pointer;

@@ -11,7 +11,7 @@ function App() {
     <Button href="www.google.com">Login</Button>
     <br/>
     <br/> */}
-    <Link href='www.google.com'>SignUp</Link>
+    <Link href='www.google.com' disabled>SignUp</Link>
     </Configuration>
 }
 

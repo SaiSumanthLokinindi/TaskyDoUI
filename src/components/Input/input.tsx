@@ -1,7 +1,6 @@
-import { ChangeEvent, FocusEvent, useState, useEffect, Ref, forwardRef } from "react";
+import { ChangeEvent, FocusEvent, useState, useEffect, Ref, forwardRef, PropsWithoutRef } from "react";
 import styled, { css } from "styled-components";
 import PolymorphicComponent from "../PolymorphicComponent/polymorphicComponent";
-import {Theme} from '../../Themes/theme.types'
 
 export interface InputProps {
     type?: string;
@@ -13,7 +12,6 @@ export interface InputProps {
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
     onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
     onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
-    ref?: Ref<HTMLInputElement> | null;
 }
 
 const StyledInput = styled.input(({theme})=>{
@@ -49,7 +47,7 @@ const StyledInput = styled.input(({theme})=>{
 
 // StyledInput.defaultProps = Theme
 
-const Input = forwardRef(({ type = 'text', defaultValue = '', placeholder, required, readOnly, disabled, onChange, onFocus, onBlur }: InputProps, ref: Ref<HTMLInputElement>) => {
+const Input = forwardRef(({ type = 'text', defaultValue = '', placeholder, required, readOnly, disabled, onChange, onFocus, onBlur }: PropsWithoutRef<InputProps>, ref?: Ref<HTMLInputElement>) => {
 
     const [value, setValue] = useState(defaultValue);
 
