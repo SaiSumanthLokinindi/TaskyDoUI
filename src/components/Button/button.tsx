@@ -1,22 +1,22 @@
 import styled, {css} from "styled-components";
-import PolymorphicComponent from "../PolymorhicComponent/polymorphicComponent";
+import PolymorphicComponent from "../PolymorphicComponent/polymorphicComponent";
 import { PropsWithoutRef, ReactNode, Ref, forwardRef } from "react";
 
 const StyledButton = styled.button(({theme})=>{
     return css`
-        font-size: 0.85rem;
         appearance: none;
-        height: 40px;
-        width: auto;
-        border: none;
-        outline: none;
-        padding: ${theme.spacing} calc(2 * ${theme.spacing});
         background-color: ${theme.baseColors.secondary};
         border-radius: 4px;
-        font-weight: 500;
-        min-width: 90px;
-        color: ${theme.text.primary};
+        border: none;
         box-shadow: 0 0 1px 4px rgba(0,0,0, 0.15);
+        color: ${theme.text.primary};
+        font-size: 0.85rem;
+        font-weight: 500;
+        height: 40px;
+        min-width: 90px;
+        outline: none;
+        padding: ${theme.spacing} calc(2 * ${theme.spacing});
+        width: auto;
         
         &:hover{
             background-color: #26BC4C;
@@ -29,7 +29,7 @@ const StyledButton = styled.button(({theme})=>{
             box-shadow:  0 0 1px 4px rgba(0,0,0, 0.15);
         }
 
-        &:focus{
+        &:focus-visible{
             outline: 2px solid ${theme.baseColors.secondary};
             outline-offset: 2px;
         }

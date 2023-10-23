@@ -1,7 +1,7 @@
 import { ChangeEvent, FocusEvent, useState, useEffect, Ref, forwardRef } from "react";
 import styled, { css } from "styled-components";
+import PolymorphicComponent from "../PolymorphicComponent/polymorphicComponent";
 import {Theme} from '../../Themes/theme.types'
-import PolymorphicComponent from "../PolymorhicComponent/polymorphicComponent";
 
 export interface InputProps {
     type?: string;
