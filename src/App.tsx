@@ -7,7 +7,7 @@ function App() {
   return <Configuration>
     <Input type="text" placeholder="Enter something" defaultValue="Hello" disabled/>
     <Input type="text" placeholder="Enter something" defaultValue="Hello" readOnly/>
-    <Button>Login</Button>
+    <Button href="www.google.com">Login</Button>
     </Configuration>
 }
 
