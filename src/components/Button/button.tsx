@@ -9,13 +9,11 @@ const StyledButton = styled.button(({ theme }) => {
         border: none;
         box-shadow: 0 0 1px 4px rgba(0, 0, 0, 0.15);
         color: ${theme.text.primary};
-        font-size: 0.85rem;
+        font-size: 1rem;
         font-weight: 500;
-        height: 40px;
-        min-width: 90px;
+        white-space: nowrap;
         outline: none;
-        padding: ${theme.spacing} calc(2 * ${theme.spacing});
-        width: auto;
+        padding: 8px calc(3 * ${theme.spacing});
 
         &:hover {
             background-color: #26bc4c;
@@ -48,6 +46,7 @@ export interface ButtonProps {
     onBlur?: () => void;
     onClick?: () => void;
     onFocus?: () => void;
+    type?: 'submit' | 'reset';
 }
 
 const Button = forwardRef(

@@ -1,6 +1,14 @@
-import { ChangeEvent, FocusEvent, useState, useEffect, Ref, forwardRef, PropsWithoutRef } from "react";
-import styled, { css } from "styled-components";
-import PolymorphicComponent from "../PolymorphicComponent/polymorphicComponent";
+import {
+    ChangeEvent,
+    FocusEvent,
+    useState,
+    useEffect,
+    Ref,
+    forwardRef,
+    PropsWithoutRef,
+} from 'react';
+import styled, { css } from 'styled-components';
+import PolymorphicComponent from '../PolymorphicComponent/polymorphicComponent';
 
 export interface InputProps {
     type?: string;
@@ -14,56 +22,74 @@ export interface InputProps {
     onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
 }
 
-const StyledInput = styled.input(({theme})=>{
+const StyledInput = styled.input(({ theme }) => {
     return css`
-        background-color: #3D3D3D;
+        background-color: #3d3d3d;
         color: ${theme.text.primary};
         appearance: none;
         outline: none;
         border: none;
         border-radius: 4px;
-        height: 32px;
-        padding: ${theme.spacing} calc(2* ${theme.spacing});
+        height: 40px;
+        padding: ${theme.spacing} calc(2 * ${theme.spacing});
         width: 100%;
-        max-width: 250px;
+        max-width: 500px;
+        min-width: 300px;
         font-size: 0.9rem;
+        box-sizing: border-box;
         /* box-shadow: ${theme.components.input.shadow}; */
-        
-        &::placeholder{
-            color: ${theme.components.input.placeholderColor}
+
+        &::placeholder {
+            color: ${theme.components.input.placeholderColor};
         }
 
-        &:focus{
+        &:focus {
             outline: 2.5px solid ${theme.baseColors.secondary};
             box-shadow: 0 0 8px 4px rgba(30, 169, 65, 0.2);
         }
 
-        &:disabled{
+        &:disabled {
             color: ${theme.text.disabled};
             background-color: ${theme.components.input.disabledBackgroundColor};
 
-            &::placeholder{
+            &::placeholder {
                 color: ${theme.text.disabled};
             }
         }
-    `
-})
+    `;
+});
 
 // StyledInput.defaultProps = Theme
 
-const Input = forwardRef(({ type = 'text', defaultValue = '', onChange, ...restProps }: PropsWithoutRef<InputProps>, ref?: Ref<HTMLInputElement>) => {
+const Input = forwardRef(
+    (
+        {
+            type = 'text',
+            defaultValue = '',
+            onChange,
+            ...restProps
+        }: PropsWithoutRef<InputProps>,
+        ref?: Ref<HTMLInputElement>,
+    ) => {
+        const [value, setValue] = useState(defaultValue);
 
-    const [value, setValue] = useState(defaultValue);
+        useEffect(() => {
+            setValue(defaultValue);
+        }, [defaultValue]);
 
-    useEffect(() => {
-        setValue(defaultValue);
-    }, [defaultValue])
-    
-
-    return <StyledInput ref={ref} value={value}  type={type} onChange={(e:ChangeEvent<HTMLInputElement>)=>{
-        setValue(e.currentTarget.value);
-        onChange?.(e);
-    }} {...restProps}></StyledInput>
-})
+        return (
+            <StyledInput
+                ref={ref}
+                value={value}
+                type={type}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    setValue(e.currentTarget.value);
+                    onChange?.(e);
+                }}
+                {...restProps}
+            ></StyledInput>
+        );
+    },
+);
 
 export default Input;
