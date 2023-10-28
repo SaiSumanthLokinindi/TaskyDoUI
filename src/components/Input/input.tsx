@@ -16,7 +16,7 @@ export interface InputProps {
 
 const StyledInput = styled.input(({theme})=>{
     return css`
-        background-color: ${theme.components.input.backgroundColor};
+        background-color: #3D3D3D;
         color: ${theme.text.primary};
         appearance: none;
         outline: none;
@@ -27,7 +27,7 @@ const StyledInput = styled.input(({theme})=>{
         width: 100%;
         max-width: 250px;
         font-size: 0.9rem;
-        box-shadow: ${theme.components.input.shadow};
+        /* box-shadow: ${theme.components.input.shadow}; */
         
         &::placeholder{
             color: ${theme.components.input.placeholderColor}
@@ -41,13 +41,17 @@ const StyledInput = styled.input(({theme})=>{
         &:disabled{
             color: ${theme.text.disabled};
             background-color: ${theme.components.input.disabledBackgroundColor};
+
+            &::placeholder{
+                color: ${theme.text.disabled};
+            }
         }
     `
 })
 
 // StyledInput.defaultProps = Theme
 
-const Input = forwardRef(({ type = 'text', defaultValue = '', placeholder, required, readOnly, disabled, onChange, onFocus, onBlur }: PropsWithoutRef<InputProps>, ref?: Ref<HTMLInputElement>) => {
+const Input = forwardRef(({ type = 'text', defaultValue = '', onChange, ...restProps }: PropsWithoutRef<InputProps>, ref?: Ref<HTMLInputElement>) => {
 
     const [value, setValue] = useState(defaultValue);
 
@@ -56,10 +60,10 @@ const Input = forwardRef(({ type = 'text', defaultValue = '', placeholder, requi
     }, [defaultValue])
     
 
-    return <PolymorphicComponent as={StyledInput} ref={ref} value={value} required={required} readOnly={readOnly} disabled={disabled} type={type} placeholder={placeholder} onChange={(e:ChangeEvent<HTMLInputElement>)=>{
+    return <StyledInput ref={ref} value={value}  type={type} onChange={(e:ChangeEvent<HTMLInputElement>)=>{
         setValue(e.currentTarget.value);
         onChange?.(e);
-    }} onFocus={onFocus} onBlur={onBlur}></PolymorphicComponent>
+    }} {...restProps}></StyledInput>
 })
 
 export default Input;

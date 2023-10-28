@@ -11,15 +11,15 @@ const dark = {
     text:{
         primary: "#FFFFFF",
         secondary: "#8D8D8D",
-        disabled: "#8F8F8F"
+        disabled: "rgba(143, 143, 143, 0.2)"
     },
     components:{
         input:{
-            backgroundColor: '#252525',
+            backgroundColor: '#3D3D3D',
             placeholderColor: 'rgba(255, 255, 255, 0.3)',
             textColor: '#FFFFFF',
             shadow: '0 0 4px 1px rgba(0,0,0,0.15)',
-            disabledBackgroundColor:"#3D3D3D"
+            disabledBackgroundColor:"rgba(61, 61, 61, 0.3)"
         },
         button:{
             

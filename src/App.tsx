@@ -1,17 +1,17 @@
-import Button from "./components/Button/button"
+
+import Card from "./components/Card/card"
 import Configuration from "./components/Configuration"
 import Input from "./components/Input/input"
-import Link from "./components/Link/link"
+import Login from "./pages/Login"
 
 
 function App() {
   return <Configuration>
-    {/* <Input type="text" placeholder="Enter something" defaultValue="Hello" disabled/>
-    <Input type="text" placeholder="Enter something" defaultValue="Hello" readOnly/>
-    <Button href="www.google.com">Login</Button>
-    <br/>
-    <br/> */}
-    <Link href='www.google.com' disabled>SignUp</Link>
+    {/* <Card><div style={{height: '300px', width: '500px'}}>
+      <Input placeholder='username or email'/>
+      <Input disabled placeholder='password'/>
+      </div></Card> */}
+    <Login/>
     </Configuration>
 }
 

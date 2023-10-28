@@ -1,5 +1,4 @@
 import { ReactNode, Ref, PropsWithoutRef, forwardRef } from "react";
-import PolymorphicComponent from "../PolymorphicComponent/polymorphicComponent";
 import styled, {css} from "styled-components";
 
 
@@ -33,8 +32,8 @@ export const StyledLink = styled.a(({theme})=>{
     `
 })
 
-const Link = forwardRef((({children, ...restProps}: PropsWithoutRef<LinkProps>, ref?: Ref<HTMLAnchorElement | null> )=>{
-    return <PolymorphicComponent as={StyledLink} ref={ref} {...restProps}>{children}</PolymorphicComponent>
+const Link = forwardRef((({children, ...restProps}: PropsWithoutRef<LinkProps>, ref?: Ref<HTMLAnchorElement> )=>{
+    return <StyledLink ref={ref} {...restProps}>{children}</StyledLink>
 }));
 
 export default Link;
