@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 const StyledCard = styled.article(({ theme }) => {
     return css`
         padding: calc(3 * ${theme.spacing});
-        background-color: #1e1e1e;
+        background-color: #1c1c1c;
         /* box-shadow:
             0px 0px 2.2px rgba(0, 0, 0, 0.027),
             0px 0px 5.3px rgba(0, 0, 0, 0.043),

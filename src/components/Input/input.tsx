@@ -8,7 +8,6 @@ import {
     PropsWithoutRef,
 } from 'react';
 import styled, { css } from 'styled-components';
-import PolymorphicComponent from '../PolymorphicComponent/polymorphicComponent';
 
 export interface InputProps {
     type?: string;
@@ -17,14 +16,14 @@ export interface InputProps {
     required?: boolean;
     readOnly?: boolean;
     disabled?: boolean;
-    onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-    onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
-    onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
+    onChange?: (e?: ChangeEvent<HTMLInputElement>) => void;
+    onFocus?: (e?: FocusEvent<HTMLInputElement>) => void;
+    onBlur?: (e?: FocusEvent<HTMLInputElement>) => void;
 }
 
 const StyledInput = styled.input(({ theme }) => {
     return css`
-        background-color: #3d3d3d;
+        background-color: ${theme.components.input.backgroundColor};
         color: ${theme.text.primary};
         appearance: none;
         outline: none;
@@ -32,12 +31,11 @@ const StyledInput = styled.input(({ theme }) => {
         border-radius: 4px;
         height: 40px;
         padding: ${theme.spacing} calc(2 * ${theme.spacing});
-        width: 100%;
-        max-width: 500px;
+        width: auto;
         min-width: 300px;
+        max-width: 500px;
         font-size: 0.9rem;
         box-sizing: border-box;
-        /* box-shadow: ${theme.components.input.shadow}; */
 
         &::placeholder {
             color: ${theme.components.input.placeholderColor};

@@ -7,7 +7,6 @@ const StyledButton = styled.button(({ theme }) => {
         background-color: ${theme.baseColors.secondary};
         border-radius: 4px;
         border: none;
-        box-shadow: 0 0 1px 4px rgba(0, 0, 0, 0.15);
         color: ${theme.text.primary};
         font-size: 1rem;
         font-weight: 500;
@@ -17,13 +16,11 @@ const StyledButton = styled.button(({ theme }) => {
 
         &:hover {
             background-color: #26bc4c;
-            box-shadow: 0 0 2px 6px rgba(0, 0, 0, 0.25);
             cursor: pointer;
         }
 
         &:active {
             background-color: #1b9339;
-            box-shadow: 0 0 1px 4px rgba(0, 0, 0, 0.15);
         }
 
         &:focus-visible {

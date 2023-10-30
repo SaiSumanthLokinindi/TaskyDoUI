@@ -1,46 +1,33 @@
 import Flex from '../../components/Flex/flex';
-import styled, { css } from 'styled-components';
 import Input from '../../components/Input/input';
 import Button from '../../components/Button/button';
 import Link from '../../components/Link/link';
 import TaskyDoLogo from '../../assets/TaskyDoLogo.svg';
 import Card from '../../components/Card/card';
-
-const StyledHeader = styled(Flex)(() => {
-    return css`
-        height: 120px;
-    `;
-});
-
-const StyledSeparator = styled(Flex)(({ theme }) => {
-    return css`
-        margin-block: calc(3 * ${theme.spacing});
-        hr {
-            appearance: none;
-            border: 0;
-            outline: none;
-            width: 30%;
-            height: 0.05rem;
-            background: white;
-        }
-    `;
-});
-
-const StyledFooter = styled(Flex)(({ theme }) => {
-    return css`
-        p {
-            font-size: 0.85rem;
-            margin-block: 0 ${theme.spacing};
-        }
-    `;
-});
-
-const StyledButton = styled(Button)`
-    width: min-content;
-`;
+import { FormEvent, useRef, useState } from 'react';
+import {
+    StyledHeader,
+    StyledError,
+    StyledSeparator,
+    StyledFooter,
+} from './login.styles';
 
 const Login = () => {
-    const handleLogin = () => {};
+    const [userNameOrEmailRef, passwordRef] = [
+        useRef<HTMLInputElement>(null),
+        useRef<HTMLInputElement>(null),
+    ];
+
+    const [error, setError] = useState('');
+
+    const handleLogin = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const userNameOrEmail = userNameOrEmailRef.current?.value;
+        const password = passwordRef.current?.value;
+        if (!userNameOrEmail || !password) {
+            setError('incorrect username or password');
+        }
+    };
 
     return (
         <Card>
@@ -48,10 +35,24 @@ const Login = () => {
                 <img src={TaskyDoLogo} />
             </StyledHeader>
             <form onSubmit={handleLogin}>
+                <StyledError>{error}</StyledError>
                 <Flex direction="column" rowGap="16px" alignItems="center">
-                    <Input placeholder="username or email" />
-                    <Input type="password" placeholder="password" />
-                    <StyledButton type="submit">Login</StyledButton>
+                    <Input
+                        ref={userNameOrEmailRef}
+                        placeholder="username or email"
+                        onChange={() => {
+                            setError('');
+                        }}
+                    />
+                    <Input
+                        ref={passwordRef}
+                        type="password"
+                        placeholder="password"
+                        onChange={() => {
+                            setError('');
+                        }}
+                    />
+                    <Button type="submit">Login</Button>
                 </Flex>
             </form>
             <StyledSeparator alignItems="center" justifyContent="space-around">
