@@ -1,8 +1,6 @@
-import Card from './components/Card/card';
 import Configuration from './components/Configuration';
 import Flex from './components/Flex/flex';
-import Input from './components/Input/input';
-import Login from './pages/Login';
+import Login from './pages/Authentication';
 import styled, { css } from 'styled-components';
 
 const StyledBody = styled(Flex)(() => {
@@ -15,12 +13,8 @@ const StyledBody = styled(Flex)(() => {
 function App() {
     return (
         <Configuration>
-            {/* <Card><div style={{height: '300px', width: '500px'}}>
-      <Input placeholder='username or email'/>
-      <Input disabled placeholder='password'/>
-      </div></Card> */}
             <StyledBody justifyContent="center" alignItems="center">
-                <Login />
+                <Login type="signup" />
             </StyledBody>
         </Configuration>
     );
