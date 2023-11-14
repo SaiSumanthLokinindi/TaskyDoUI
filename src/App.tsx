@@ -13,7 +13,7 @@ const StyledBody = styled(Flex)(() => {
 function App() {
     return (
         <Configuration>
-            <StyledBody justifyContent="center" alignItems="center">
+            <StyledBody justifyContent="center" alignItems="flex-start">
                 <Login type="signup" />
             </StyledBody>
         </Configuration>

@@ -1,8 +1,10 @@
 import { ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
-const StyledCard = styled.article(({ theme }) => {
+export const StyledCard = styled.article(({ theme }) => {
     return css`
+        width: 100%;
+        box-sizing: border-box;
         padding: calc(3 * ${theme.spacing});
         background-color: #1c1c1c;
         /* box-shadow:

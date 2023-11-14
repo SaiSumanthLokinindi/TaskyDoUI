@@ -10,18 +10,25 @@ import {
 import styled, { css } from 'styled-components';
 
 export interface InputProps {
-    type?: string;
     defaultValue?: string;
-    placeholder?: string;
-    required?: boolean;
-    readOnly?: boolean;
     disabled?: boolean;
+    info?: string;
+    name?: string;
+    onBlur?: (e?: FocusEvent<HTMLInputElement>) => void;
     onChange?: (e?: ChangeEvent<HTMLInputElement>) => void;
     onFocus?: (e?: FocusEvent<HTMLInputElement>) => void;
-    onBlur?: (e?: FocusEvent<HTMLInputElement>) => void;
+    placeholder?: string;
+    readOnly?: boolean;
+    required?: boolean;
+    status?: 'error' | 'info' | 'warning';
+    type?: string;
 }
 
-const StyledInput = styled.input(({ theme }) => {
+const StyledInputWrapper = styled.div`
+    width: 100%;
+`;
+
+export const StyledInput = styled.input(({ theme }) => {
     return css`
         background-color: ${theme.components.input.backgroundColor};
         color: ${theme.text.primary};
@@ -31,9 +38,7 @@ const StyledInput = styled.input(({ theme }) => {
         border-radius: 4px;
         height: 40px;
         padding: ${theme.spacing} calc(2 * ${theme.spacing});
-        width: auto;
-        min-width: 300px;
-        max-width: 500px;
+        width: 100%;
         font-size: 0.9rem;
         box-sizing: border-box;
 
@@ -57,6 +62,14 @@ const StyledInput = styled.input(({ theme }) => {
     `;
 });
 
+export const StyledInfo = styled.div(({ theme }) => {
+    return css`
+        font-size: ${theme.text.helperText.size.md};
+        color: ${theme.text.helperText.color};
+        overflow-wrap: anywhere;
+    `;
+});
+
 // StyledInput.defaultProps = Theme
 
 const Input = forwardRef(
@@ -65,6 +78,7 @@ const Input = forwardRef(
             type = 'text',
             defaultValue = '',
             onChange,
+            info,
             ...restProps
         }: PropsWithoutRef<InputProps>,
         ref?: Ref<HTMLInputElement>,
@@ -76,16 +90,19 @@ const Input = forwardRef(
         }, [defaultValue]);
 
         return (
-            <StyledInput
-                ref={ref}
-                value={value}
-                type={type}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    setValue(e.currentTarget.value);
-                    onChange?.(e);
-                }}
-                {...restProps}
-            ></StyledInput>
+            <StyledInputWrapper>
+                <StyledInput
+                    {...restProps}
+                    ref={ref}
+                    value={value}
+                    type={type}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                        setValue(e.currentTarget.value);
+                        onChange?.(e);
+                    }}
+                ></StyledInput>
+                <StyledInfo>{info}</StyledInfo>
+            </StyledInputWrapper>
         );
     },
 );

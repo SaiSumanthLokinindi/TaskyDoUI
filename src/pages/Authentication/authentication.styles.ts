@@ -1,6 +1,24 @@
 import styled, { css } from 'styled-components';
 import Flex from '../../components/Flex/flex';
 
+export const StyledAuthWrapper = styled(Flex)`
+    margin-block-start: 10vh;
+
+    width: 20%;
+
+    @media all and (max-width: 1652px) and (orientation: landscape) {
+        width: 30%;
+    }
+
+    @media all and (max-width: 1024px) and (orientation: portrait) {
+        width: 50%;
+    }
+
+    @media all and (max-width: 599px) {
+        width: 90%;
+    }
+`;
+
 export const StyledHeader = styled(Flex)(() => {
     return css`
         height: 120px;
@@ -31,10 +49,9 @@ export const StyledError = styled.div(
     }) => {
         return css`
             color: ${helperText.color};
-            font-size: ${helperText.size};
+            font-size: ${helperText.size.md};
             padding-block-end: ${spacing};
             line-height: ${helperText.lineHeight};
-            height: calc(2 * ${spacing});
         `;
     },
 );
