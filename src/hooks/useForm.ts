@@ -64,12 +64,14 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
                     const errorMessages = validators.reduce(
                         (result: string[], validator: Validator) => {
                             const error = validator(data);
-                            return [...result, error];
+                            if (error) return [...result, error];
+                            else return result;
                         },
                         [],
                     );
 
                     if (errorMessages.length > 0) errors[name] = errorMessages;
+                    else errors[name] = [];
                     return errors;
                 },
                 {},

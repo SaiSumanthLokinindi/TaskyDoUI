@@ -4,7 +4,14 @@ import Button from '../../components/Button/button';
 import Link from '../../components/Link/link';
 import TaskyDoLogo from '../../assets/TaskyDoLogo.svg';
 import Card from '../../components/Card/card';
-import { FormEvent, useRef, useState } from 'react';
+import {
+    FocusEvent,
+    FormEvent,
+    memo,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import {
     StyledHeader,
     StyledError,
@@ -12,9 +19,43 @@ import {
     StyledFooter,
     StyledAuthWrapper,
 } from './authentication.styles';
+import { useForm } from '../../hooks/useForm';
 
-const Login = ({ type = 'login' }: { type: 'login' | 'signup' }) => {
+const fieldRequiredValidator = (
+    fieldName: 'username' | 'email' | 'password',
+) => {
+    return (data: Record<string, string>) => {
+        return !data[fieldName] ? `${fieldName} is required` : '';
+    };
+};
+
+const Authentication = ({ type = 'login' }: { type: 'login' | 'signup' }) => {
     const [authType, setAuthType] = useState(type);
+    const {
+        errors: formErrors,
+        registerInput,
+        setFieldValue,
+        runValidators,
+        resetError,
+    } = useForm();
+
+    useEffect(() => {
+        if (type === 'signup') {
+            registerInput('username', [
+                fieldRequiredValidator('username'),
+                (data) => {
+                    return data['username'] && data['username']?.length < 10
+                        ? 'Name should be at least 10 characters'
+                        : '';
+                },
+            ]);
+            registerInput('email', [fieldRequiredValidator('email')]);
+            registerInput('password', [fieldRequiredValidator('password')]);
+        } else {
+            registerInput('email', [fieldRequiredValidator('email')]);
+            registerInput('password', [fieldRequiredValidator('password')]);
+        }
+    }, [type]);
 
     const [userNameOrEmailRef, passwordRef] = [
         useRef<HTMLInputElement>(null),
@@ -34,11 +75,7 @@ const Login = ({ type = 'login' }: { type: 'login' | 'signup' }) => {
 
     const handleSignUp = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const signUpData = new FormData(e.currentTarget);
-        const username = signUpData.get('username');
-        const email = signUpData.get('email');
-        const password = signUpData.get('password');
-        // if(!username || !email || !password)
+        runValidators();
     };
 
     return (
@@ -87,7 +124,16 @@ const Login = ({ type = 'login' }: { type: 'login' | 'signup' }) => {
                                 name="username"
                                 onChange={() => {
                                     setAuthError('');
+                                    resetError('username');
                                 }}
+                                onBlur={(e: FocusEvent<HTMLInputElement>) => {
+                                    setFieldValue('username', e.target.value);
+                                }}
+                                info={
+                                    formErrors.username?.length > 0
+                                        ? formErrors.username
+                                        : undefined
+                                }
                             />
                             <Input
                                 type="email"
@@ -95,7 +141,16 @@ const Login = ({ type = 'login' }: { type: 'login' | 'signup' }) => {
                                 placeholder="email"
                                 onChange={() => {
                                     setAuthError('');
+                                    resetError('email');
                                 }}
+                                onBlur={(e: FocusEvent<HTMLInputElement>) => {
+                                    setFieldValue('email', e.target.value);
+                                }}
+                                info={
+                                    formErrors.email?.length > 0
+                                        ? formErrors.email
+                                        : undefined
+                                }
                             />
                             <Input
                                 type="password"
@@ -103,7 +158,16 @@ const Login = ({ type = 'login' }: { type: 'login' | 'signup' }) => {
                                 placeholder="password"
                                 onChange={() => {
                                     setAuthError('');
+                                    resetError('password');
                                 }}
+                                onBlur={(e: FocusEvent<HTMLInputElement>) => {
+                                    setFieldValue('password', e.target.value);
+                                }}
+                                info={
+                                    formErrors.password?.length > 0
+                                        ? formErrors.email
+                                        : undefined
+                                }
                             />
                             <Button type="submit">SingUp</Button>
                         </Flex>
@@ -138,4 +202,4 @@ const Login = ({ type = 'login' }: { type: 'login' | 'signup' }) => {
     );
 };
 
-export default Login;
+export default memo(Authentication);

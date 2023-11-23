@@ -1,6 +1,6 @@
 import Configuration from './components/Configuration';
 import Flex from './components/Flex/flex';
-import Login from './pages/Authentication';
+import Authentication from './pages/Authentication';
 import styled, { css } from 'styled-components';
 
 const StyledBody = styled(Flex)(() => {
@@ -14,7 +14,7 @@ function App() {
     return (
         <Configuration>
             <StyledBody justifyContent="center" alignItems="flex-start">
-                <Login type="signup" />
+                <Authentication type="signup" />
             </StyledBody>
         </Configuration>
     );

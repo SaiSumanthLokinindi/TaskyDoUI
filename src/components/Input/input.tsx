@@ -12,7 +12,7 @@ import styled, { css } from 'styled-components';
 export interface InputProps {
     defaultValue?: string;
     disabled?: boolean;
-    info?: string;
+    info?: string | string[];
     name?: string;
     onBlur?: (e?: FocusEvent<HTMLInputElement>) => void;
     onChange?: (e?: ChangeEvent<HTMLInputElement>) => void;
@@ -101,7 +101,14 @@ const Input = forwardRef(
                         onChange?.(e);
                     }}
                 ></StyledInput>
-                <StyledInfo>{info}</StyledInfo>
+                <StyledInfo>
+                    {info &&
+                        (Array.isArray(info) ? (
+                            info.map((message) => <div>{message}</div>)
+                        ) : (
+                            <div>{info}</div>
+                        ))}
+                </StyledInfo>
             </StyledInputWrapper>
         );
     },
