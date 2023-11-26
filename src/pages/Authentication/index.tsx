@@ -21,9 +21,7 @@ import {
 } from './authentication.styles';
 import { useForm } from '../../hooks/useForm';
 
-const fieldRequiredValidator = (
-    fieldName: 'username' | 'email' | 'password',
-) => {
+const fieldRequiredValidator = (fieldName: string) => {
     return (data: Record<string, string>) => {
         return !data[fieldName] ? `${fieldName} is required` : '';
     };
@@ -41,36 +39,48 @@ const Authentication = ({ type = 'login' }: { type: 'login' | 'signup' }) => {
 
     useEffect(() => {
         if (type === 'signup') {
-            registerInput('username', [
-                fieldRequiredValidator('username'),
+            registerInput('name', [
+                fieldRequiredValidator('name'),
                 (data) => {
-                    return data['username'] && data['username']?.length < 10
-                        ? 'Name should be at least 10 characters'
+                    if (!data['name']) return '';
+                    return !/^[A-Za-z\s]{2, 25}$/.test(data['name'])
+                        ? 'Name should be minimum of 2 and maximum of 25 character long and can only contain alphabets or spaces'
                         : '';
                 },
             ]);
-            registerInput('email', [fieldRequiredValidator('email')]);
-            registerInput('password', [fieldRequiredValidator('password')]);
+            registerInput('email', [
+                fieldRequiredValidator('email'),
+                (data) => {
+                    if (!data['email']) return '';
+                    return !/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/.test(
+                        data['email'],
+                    )
+                        ? 'email is invalid'
+                        : '';
+                },
+            ]);
+            registerInput('password', [
+                fieldRequiredValidator('password'),
+                (data) => {
+                    if (!data['password']) return '';
+                    return !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$/.test(
+                        data['password'],
+                    )
+                        ? 'Password should be 8 to 32 characters long, should contain at least one uppercase, lowercase, number and special character '
+                        : '';
+                },
+            ]);
         } else {
             registerInput('email', [fieldRequiredValidator('email')]);
             registerInput('password', [fieldRequiredValidator('password')]);
         }
     }, [type]);
 
-    const [userNameOrEmailRef, passwordRef] = [
-        useRef<HTMLInputElement>(null),
-        useRef<HTMLInputElement>(null),
-    ];
-
     const [authError, setAuthError] = useState('');
 
     const handleLogin = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const userNameOrEmail = userNameOrEmailRef.current?.value;
-        const password = passwordRef.current?.value;
-        if (!userNameOrEmail || !password) {
-            setAuthError('incorrect username or password');
-        }
+        runValidators();
     };
 
     const handleSignUp = (e: FormEvent<HTMLFormElement>) => {
@@ -93,21 +103,37 @@ const Authentication = ({ type = 'login' }: { type: 'login' | 'signup' }) => {
                             alignItems="center"
                         >
                             <Input
-                                ref={userNameOrEmailRef}
                                 placeholder="email"
                                 name="email"
                                 onChange={() => {
                                     setAuthError('');
+                                    resetError('email');
                                 }}
+                                onBlur={(e: FocusEvent<HTMLInputElement>) => {
+                                    setFieldValue('password', e.target.value);
+                                }}
+                                info={
+                                    formErrors.email?.length > 0
+                                        ? formErrors.email
+                                        : undefined
+                                }
                             />
                             <Input
-                                ref={passwordRef}
                                 type="password"
                                 name="password"
                                 placeholder="password"
                                 onChange={() => {
                                     setAuthError('');
+                                    resetError('password');
                                 }}
+                                onBlur={(e: FocusEvent<HTMLInputElement>) => {
+                                    setFieldValue('password', e.target.value);
+                                }}
+                                info={
+                                    formErrors.password?.length > 0
+                                        ? formErrors.password
+                                        : undefined
+                                }
                             />
                             <Button type="submit">Login</Button>
                         </Flex>
@@ -121,17 +147,17 @@ const Authentication = ({ type = 'login' }: { type: 'login' | 'signup' }) => {
                         >
                             <Input
                                 placeholder="Name"
-                                name="username"
+                                name="name"
                                 onChange={() => {
                                     setAuthError('');
-                                    resetError('username');
+                                    resetError('name');
                                 }}
                                 onBlur={(e: FocusEvent<HTMLInputElement>) => {
-                                    setFieldValue('username', e.target.value);
+                                    setFieldValue('name', e.target.value);
                                 }}
                                 info={
-                                    formErrors.username?.length > 0
-                                        ? formErrors.username
+                                    formErrors.name?.length > 0
+                                        ? formErrors.name
                                         : undefined
                                 }
                             />
@@ -165,7 +191,7 @@ const Authentication = ({ type = 'login' }: { type: 'login' | 'signup' }) => {
                                 }}
                                 info={
                                     formErrors.password?.length > 0
-                                        ? formErrors.email
+                                        ? formErrors.password
                                         : undefined
                                 }
                             />
