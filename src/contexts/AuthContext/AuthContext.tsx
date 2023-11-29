@@ -1,29 +1,25 @@
 import {
+    Dispatch,
     ReactNode,
+    SetStateAction,
     createContext,
-    useCallback,
     useMemo,
     useState,
 } from 'react';
 
-export const AuthContext = createContext({
-    isAuthenticated: false,
-    setAuthState: () => void
-});
+type Auth = {
+    isAuthenticated: boolean;
+    setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
+};
+
+export const AuthContext = createContext<Auth | null>(null);
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    const setAuthState = useCallback(
-        (authState: boolean) => {
-            setIsAuthenticated(authState);
-        },
-        [setIsAuthenticated],
-    );
-
-    const auth = useMemo(() => {
-        return { isAuthenticated, setAuthState };
-    }, [isAuthenticated, setAuthState]);
+    const auth: Auth = useMemo(() => {
+        return { isAuthenticated, setIsAuthenticated };
+    }, [isAuthenticated, setIsAuthenticated]);
 
     return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 };
