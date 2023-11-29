@@ -4,14 +4,7 @@ import Button from '../../components/Button/button';
 import Link from '../../components/Link/link';
 import TaskyDoLogo from '../../assets/TaskyDoLogo.svg';
 import Card from '../../components/Card/card';
-import {
-    FocusEvent,
-    FormEvent,
-    memo,
-    useEffect,
-    useRef,
-    useState,
-} from 'react';
+import { FocusEvent, FormEvent, memo, useEffect, useState } from 'react';
 import {
     StyledHeader,
     StyledError,
