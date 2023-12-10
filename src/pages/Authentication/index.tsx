@@ -30,7 +30,7 @@ const fieldRequiredValidator = (fieldName: string) => {
 
 const Authentication = memo(
     ({ type = 'login' }: { type: 'login' | 'signup' }) => {
-        const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+        const { setIsAuthenticated } = useContext(AuthContext);
         const [authType, setAuthType] = useState(type);
         const {
             errors: formErrors,
@@ -46,7 +46,7 @@ const Authentication = memo(
                     fieldRequiredValidator('name'),
                     (data) => {
                         if (!data['name']) return '';
-                        return !/^[A-Za-z\s]{2, 25}$/.test(data['name'])
+                        return !/^[A-Za-z\s]{2,25}$/.test(data['name'])
                             ? 'Name should be minimum of 2 and maximum of 25 character long and can only contain alphabets or spaces'
                             : '';
                     },
@@ -88,7 +88,9 @@ const Authentication = memo(
 
         const handleSignUp = (e: FormEvent<HTMLFormElement>) => {
             e.preventDefault();
-            const hasError = runValidators();
+            if (!runValidators()) {
+                setIsAuthenticated(true);
+            }
         };
 
         return (
