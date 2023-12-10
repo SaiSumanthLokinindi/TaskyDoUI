@@ -4,7 +4,14 @@ import Button from '../../components/Button/button';
 import Link from '../../components/Link/link';
 import TaskyDoLogo from '../../assets/TaskyDoLogo.svg';
 import Card from '../../components/Card/card';
-import { FocusEvent, FormEvent, memo, useEffect, useState } from 'react';
+import {
+    FocusEvent,
+    FormEvent,
+    memo,
+    useEffect,
+    useState,
+    useContext,
+} from 'react';
 import {
     StyledHeader,
     StyledError,
@@ -13,6 +20,7 @@ import {
     StyledAuthWrapper,
 } from './authentication.styles';
 import { useForm } from '../../hooks/useForm';
+import { AuthContext } from '../../contexts/AuthContext/AuthContext';
 
 const fieldRequiredValidator = (fieldName: string) => {
     return (data: Record<string, string>) => {
@@ -21,6 +29,7 @@ const fieldRequiredValidator = (fieldName: string) => {
 };
 
 const Authentication = ({ type = 'login' }: { type: 'login' | 'signup' }) => {
+    const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
     const [authType, setAuthType] = useState(type);
     const {
         errors: formErrors,
@@ -78,7 +87,7 @@ const Authentication = ({ type = 'login' }: { type: 'login' | 'signup' }) => {
 
     const handleSignUp = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        runValidators();
+        const hasError = runValidators();
     };
 
     return (

@@ -10,10 +10,12 @@ interface FormState {
 
 interface FormAction {
     type: string;
-    payload: {
-        name: string;
-        value?: Validator[] | string[] | string;
-    };
+    payload:
+        | {
+              name: string;
+              value?: Validator[] | string[] | string;
+          }
+        | Record<string, string[]>;
 }
 
 const initialFormState: FormState = {
@@ -29,16 +31,16 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
                 ...state,
                 data: {
                     ...state.data,
-                    [action.payload.name]: '',
+                    [action.payload.name as string]: '',
                 },
                 validators: {
                     ...state.validators,
-                    [action.payload.name]: (action.payload.value ||
+                    [action.payload.name as string]: (action.payload.value ||
                         []) as Validator[],
                 },
                 errors: {
                     ...state.errors,
-                    [action.payload.name]: [],
+                    [action.payload.name as string]: [],
                 },
             };
         case 'setData':
@@ -46,48 +48,30 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
                 ...state,
                 data: {
                     ...state.data,
-                    [action.payload.name]: action.payload.value as string,
+                    [action.payload.name as string]: action.payload
+                        .value as string,
+                },
+            };
+        case 'setFieldError':
+            return {
+                ...state,
+                errors: {
+                    ...state.errors,
+                    [action.payload.name as string]: action.payload
+                        .value as string[],
                 },
             };
         case 'setErrors':
             return {
                 ...state,
-                errors: {
-                    ...state.errors,
-                    [action.payload.name]: action.payload.value as string[],
-                },
+                errors: action.payload as Record<string, string[]>,
             };
-        case 'runValidators': {
-            const { validators, data } = { ...state };
-            const formErrors = Object.entries(validators).reduce(
-                (errors: FormState['errors'], [name, validators]) => {
-                    const errorMessages = validators.reduce(
-                        (result: string[], validator: Validator) => {
-                            const error = validator(data);
-                            if (error) return [...result, error];
-                            else return result;
-                        },
-                        [],
-                    );
-
-                    if (errorMessages.length > 0) errors[name] = errorMessages;
-                    else errors[name] = [];
-                    return errors;
-                },
-                {},
-            );
-
-            return {
-                ...state,
-                errors: formErrors,
-            };
-        }
         case 'resetFieldError':
             return {
                 ...state,
                 errors: {
                     ...state.errors,
-                    [action.payload.name]: [],
+                    [action.payload.name as string]: [],
                 },
             };
         case 'resetErrors': {
@@ -107,9 +91,9 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
                 validators: currentValidators,
             } = { ...state };
 
-            delete data[action.payload.name];
-            delete currentValidators[action.payload.name];
-            delete errors[action.payload.name];
+            delete data[action.payload.name as string];
+            delete currentValidators[action.payload.name as string];
+            delete errors[action.payload.name as string];
 
             return {
                 data,
@@ -146,14 +130,38 @@ export const useForm = () => {
         dispatch({ type: 'resetFieldError', payload: { name } });
     };
 
+    const runValidators = () => {
+        const { validators, data } = formState;
+        let hasError = false;
+        const formErrors = Object.entries(validators).reduce(
+            (errors: FormState['errors'], [name, validators]) => {
+                const errorMessages = validators.reduce(
+                    (result: string[], validator: Validator) => {
+                        const error = validator(data);
+                        if (error) {
+                            hasError = true;
+                            return [...result, error];
+                        } else return result;
+                    },
+                    [],
+                );
+
+                if (errorMessages.length > 0) errors[name] = errorMessages;
+                else errors[name] = [];
+                return errors;
+            },
+            {},
+        );
+        dispatch({ type: 'setErrors', payload: formErrors });
+        return hasError;
+    };
+
     return {
         data: formState.data,
         errors: formState.errors,
         registerInput,
         setFieldValue,
-        runValidators: () => {
-            dispatch({ type: 'runValidators' });
-        },
+        runValidators,
         resetError,
     };
 };

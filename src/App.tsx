@@ -14,7 +14,7 @@ function App() {
     return (
         <Configuration>
             <StyledBody justifyContent="center" alignItems="flex-start">
-                <Authentication type="login" />
+                <Authentication type="signup" />
             </StyledBody>
         </Configuration>
     );

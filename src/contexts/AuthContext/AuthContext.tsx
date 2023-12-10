@@ -12,7 +12,10 @@ type Auth = {
     setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
 };
 
-export const AuthContext = createContext<Auth | null>(null);
+export const AuthContext = createContext<Auth | null>({
+    isAuthenticated: false,
+    setIsAuthenticated: () => {},
+});
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
