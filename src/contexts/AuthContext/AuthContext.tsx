@@ -12,7 +12,7 @@ type Auth = {
     setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
 };
 
-export const AuthContext = createContext<Auth | null>({
+export const AuthContext = createContext<Auth>({
     isAuthenticated: false,
     setIsAuthenticated: () => {},
 });
