@@ -84,33 +84,39 @@ const Authentication = memo(
 
         const [authError, setAuthError] = useState('');
 
-        const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+        const handleLogin = (e: FormEvent<HTMLFormElement>) => {
             e.preventDefault();
             if (!runValidators()) {
-                try {
-                    setLoading(true);
-                    const response = await axios.post('user/login', formData);
-                    if (response.statusText === '200') setIsAuthenticated(true);
-                    setLoading(false);
-                } catch (error) {
-                    console.log(error);
-                    setLoading(false);
-                }
+                setLoading(true);
+                axios
+                    .post('user/login', formData)
+                    .then((response) => {
+                        if (response.statusText === '200')
+                            setIsAuthenticated(true);
+                        setLoading(false);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        setLoading(false);
+                    });
             }
         };
 
-        const handleSignUp = async (e: FormEvent<HTMLFormElement>) => {
+        const handleSignUp = (e: FormEvent<HTMLFormElement>) => {
             e.preventDefault();
             if (!runValidators()) {
-                try {
-                    setLoading(true);
-                    const response = await axios.post('user', formData);
-                    if (response.statusText === '201') setIsAuthenticated(true);
-                    setLoading(false);
-                } catch (error) {
-                    console.log(error);
-                    setLoading(false);
-                }
+                setLoading(true);
+                axios
+                    .post('user', formData)
+                    .then((response) => {
+                        if (response.statusText === '201')
+                            setIsAuthenticated(true);
+                        setLoading(false);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        setLoading(false);
+                    });
             }
         };
 
