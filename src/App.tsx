@@ -16,7 +16,7 @@ function App() {
         <AuthProvider>
             <Configuration>
                 <StyledBody justifyContent="center" alignItems="flex-start">
-                    <Authentication type="signup" />
+                    <Authentication type="login" />
                 </StyledBody>
             </Configuration>
         </AuthProvider>

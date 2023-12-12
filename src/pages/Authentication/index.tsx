@@ -19,8 +19,9 @@ import {
     StyledFooter,
     StyledAuthWrapper,
 } from './authentication.styles';
-import { useForm } from '../../hooks/useForm';
-import { AuthContext } from '../../contexts/AuthContext/AuthContext';
+import axios from 'src/axios-instance/axios-instance';
+import { AuthContext } from 'src/contexts/AuthContext/AuthContext';
+import { useForm } from 'src/hooks/useForm';
 
 const fieldRequiredValidator = (fieldName: string) => {
     return (data: Record<string, string>) => {
@@ -32,12 +33,14 @@ const Authentication = memo(
     ({ type = 'login' }: { type: 'login' | 'signup' }) => {
         const { setIsAuthenticated } = useContext(AuthContext);
         const [authType, setAuthType] = useState(type);
+        const [loading, setLoading] = useState(false);
         const {
             errors: formErrors,
             registerInput,
             setFieldValue,
             runValidators,
             resetError,
+            data: formData,
         } = useForm();
 
         useEffect(() => {
@@ -81,15 +84,33 @@ const Authentication = memo(
 
         const [authError, setAuthError] = useState('');
 
-        const handleLogin = (e: FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
-            runValidators();
-        };
-
-        const handleSignUp = (e: FormEvent<HTMLFormElement>) => {
+        const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
             e.preventDefault();
             if (!runValidators()) {
-                setIsAuthenticated(true);
+                try {
+                    setLoading(true);
+                    const response = await axios.post('user/login', formData);
+                    if (response.statusText === '200') setIsAuthenticated(true);
+                    setLoading(false);
+                } catch (error) {
+                    console.log(error);
+                    setLoading(false);
+                }
+            }
+        };
+
+        const handleSignUp = async (e: FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            if (!runValidators()) {
+                try {
+                    setLoading(true);
+                    const response = await axios.post('user', formData);
+                    if (response.statusText === '201') setIsAuthenticated(true);
+                    setLoading(false);
+                } catch (error) {
+                    console.log(error);
+                    setLoading(false);
+                }
             }
         };
 
@@ -117,10 +138,7 @@ const Authentication = memo(
                                     onBlur={(
                                         e: FocusEvent<HTMLInputElement>,
                                     ) => {
-                                        setFieldValue(
-                                            'password',
-                                            e.target.value,
-                                        );
+                                        setFieldValue('email', e.target.value);
                                     }}
                                     info={
                                         formErrors.email?.length > 0
