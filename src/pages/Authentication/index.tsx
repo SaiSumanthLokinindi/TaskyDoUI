@@ -22,6 +22,7 @@ import {
 import axios from 'src/axios-instance/axios-instance';
 import { AuthContext } from 'src/contexts/AuthContext/AuthContext';
 import { useForm } from 'src/hooks/useForm';
+import { AxiosError } from 'axios';
 
 const fieldRequiredValidator = (fieldName: string) => {
     return (data: Record<string, string>) => {
@@ -34,6 +35,8 @@ const Authentication = memo(
         const { setIsAuthenticated } = useContext(AuthContext);
         const [authType, setAuthType] = useState(type);
         const [loading, setLoading] = useState(false);
+        const [formError, setFormError] = useState<string>();
+        const [signUpPasswordInfo, setSignUpPasswordInfo] = useState<string>();
         const {
             errors: formErrors,
             registerInput,
@@ -80,12 +83,9 @@ const Authentication = memo(
                 registerInput('email', [fieldRequiredValidator('email')]);
                 registerInput('password', [fieldRequiredValidator('password')]);
             }
-        }, [type]);
-
-        const [authError, setAuthError] = useState('');
+        }, [type, registerInput]);
 
         const handleLogin = (e: FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
             if (!runValidators()) {
                 setLoading(true);
                 axios
@@ -95,15 +95,22 @@ const Authentication = memo(
                             setIsAuthenticated(true);
                         setLoading(false);
                     })
-                    .catch((error) => {
-                        console.log(error);
-                        setLoading(false);
-                    });
+                    .catch(
+                        (
+                            error: AxiosError<{
+                                code: string;
+                                message: string;
+                            }>,
+                        ) => {
+                            setFormError(error.response?.data.message);
+                            setLoading(false);
+                        },
+                    );
             }
+            e.preventDefault();
         };
 
         const handleSignUp = (e: FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
             if (!runValidators()) {
                 setLoading(true);
                 axios
@@ -113,20 +120,28 @@ const Authentication = memo(
                             setIsAuthenticated(true);
                         setLoading(false);
                     })
-                    .catch((error) => {
-                        console.log(error);
-                        setLoading(false);
-                    });
+                    .catch(
+                        (
+                            error: AxiosError<{
+                                code: string;
+                                message: string;
+                            }>,
+                        ) => {
+                            setFormError(error.response?.data.message);
+                            setLoading(false);
+                        },
+                    );
             }
+            e.preventDefault();
         };
 
         return (
             <StyledAuthWrapper justifyContent="center">
                 <Card>
                     <StyledHeader justifyContent="center" alignItems="center">
-                        <img src={TaskyDoLogo} />
+                        <img alt="logo of tasky do app" src={TaskyDoLogo} />
                     </StyledHeader>
-                    <StyledError>{authError}</StyledError>
+                    <StyledError>{formError}</StyledError>
                     {authType === 'login' ? (
                         <form onSubmit={handleLogin}>
                             <Flex
@@ -138,7 +153,7 @@ const Authentication = memo(
                                     placeholder="email"
                                     name="email"
                                     onChange={() => {
-                                        setAuthError('');
+                                        setFormError('');
                                         resetError('email');
                                     }}
                                     onBlur={(
@@ -157,7 +172,7 @@ const Authentication = memo(
                                     name="password"
                                     placeholder="password"
                                     onChange={() => {
-                                        setAuthError('');
+                                        setFormError('');
                                         resetError('password');
                                     }}
                                     onBlur={(
@@ -188,7 +203,7 @@ const Authentication = memo(
                                     placeholder="Name"
                                     name="name"
                                     onChange={() => {
-                                        setAuthError('');
+                                        setFormError('');
                                         resetError('name');
                                     }}
                                     onBlur={(
@@ -201,13 +216,18 @@ const Authentication = memo(
                                             ? formErrors.name
                                             : undefined
                                     }
+                                    status={
+                                        formErrors.name?.length > 0
+                                            ? 'error'
+                                            : undefined
+                                    }
                                 />
                                 <Input
                                     type="email"
                                     name="email"
                                     placeholder="email"
                                     onChange={() => {
-                                        setAuthError('');
+                                        setFormError('');
                                         resetError('email');
                                     }}
                                     onBlur={(
@@ -220,14 +240,24 @@ const Authentication = memo(
                                             ? formErrors.email
                                             : undefined
                                     }
+                                    status={
+                                        formErrors.email?.length > 0
+                                            ? 'error'
+                                            : undefined
+                                    }
                                 />
                                 <Input
                                     type="password"
                                     name="password"
                                     placeholder="password"
                                     onChange={() => {
-                                        setAuthError('');
+                                        setFormError('');
                                         resetError('password');
+                                    }}
+                                    onFocus={() => {
+                                        setSignUpPasswordInfo(
+                                            'password should be at least 8 characters long, it should contain a lowercase, uppercase, number and a special character',
+                                        );
                                     }}
                                     onBlur={(
                                         e: FocusEvent<HTMLInputElement>,
@@ -236,14 +266,22 @@ const Authentication = memo(
                                             'password',
                                             e.target.value,
                                         );
+                                        setSignUpPasswordInfo(undefined);
                                     }}
                                     info={
                                         formErrors.password?.length > 0
                                             ? formErrors.password
+                                            : signUpPasswordInfo || undefined
+                                    }
+                                    status={
+                                        formErrors.password?.length > 0
+                                            ? 'error'
                                             : undefined
                                     }
                                 />
-                                <Button type="submit">SingUp</Button>
+                                <Button type="submit" progress={loading}>
+                                    SignUp
+                                </Button>
                             </Flex>
                         </form>
                     )}

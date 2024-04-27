@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import { useCallback, useReducer } from 'react';
 
 type Validator = (data: FormState['data']) => string;
 
@@ -109,29 +109,39 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
 export const useForm = () => {
     const [formState, dispatch] = useReducer(formReducer, initialFormState);
 
-    const registerInput = (name: string, validators: Validator[]) => {
-        dispatch({
-            type: 'registerInput',
-            payload: { name, value: validators },
-        });
-    };
+    const registerInput = useCallback(
+        (name: string, validators: Validator[]) => {
+            dispatch({
+                type: 'registerInput',
+                payload: { name, value: validators },
+            });
+        },
+        [dispatch],
+    );
 
-    const setFieldValue = (name: string, value: string) => {
-        dispatch({
-            type: 'setData',
-            payload: {
-                name,
-                value,
-            },
-        });
-    };
+    const setFieldValue = useCallback(
+        (name: string, value: string) => {
+            dispatch({
+                type: 'setData',
+                payload: {
+                    name,
+                    value,
+                },
+            });
+        },
+        [dispatch],
+    );
 
-    const resetError = (name: string) => {
-        dispatch({ type: 'resetFieldError', payload: { name } });
-    };
+    const resetError = useCallback(
+        (name: string) => {
+            dispatch({ type: 'resetFieldError', payload: { name } });
+        },
+        [dispatch],
+    );
 
-    const runValidators = () => {
-        const { validators, data } = formState;
+    const runValidators = useCallback(() => {
+        const validators = formState.validators;
+        const data = formState.data;
         let hasError = false;
         const formErrors = Object.entries(validators).reduce(
             (errors: FormState['errors'], [name, validators]) => {
@@ -154,7 +164,7 @@ export const useForm = () => {
         );
         dispatch({ type: 'setErrors', payload: formErrors });
         return hasError;
-    };
+    }, [formState.validators, formState.data, dispatch]);
 
     return {
         data: formState.data,

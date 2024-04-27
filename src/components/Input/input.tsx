@@ -28,39 +28,47 @@ const StyledInputWrapper = styled.div`
     width: 100%;
 `;
 
-export const StyledInput = styled.input(({ theme }) => {
-    return css`
-        background-color: ${theme.components.input.backgroundColor};
-        color: ${theme.text.primary};
-        appearance: none;
-        outline: none;
-        border: none;
-        border-radius: 4px;
-        height: 40px;
-        padding: ${theme.spacing} calc(2 * ${theme.spacing});
-        width: 100%;
-        font-size: 0.9rem;
-        box-sizing: border-box;
-
-        &::placeholder {
-            color: ${theme.components.input.placeholderColor};
-        }
-
-        &:focus {
-            outline: 2.5px solid ${theme.baseColors.secondary};
-            box-shadow: 0 0 8px 4px rgba(30, 169, 65, 0.2);
-        }
-
-        &:disabled {
-            color: ${theme.text.disabled};
-            background-color: ${theme.components.input.disabledBackgroundColor};
+export const StyledInput = styled.input<{ status: InputProps['status'] }>(
+    ({ status, theme }) => {
+        return css`
+            background-color: ${theme.components.input.backgroundColor};
+            color: ${theme.text.primary};
+            appearance: none;
+            outline: none;
+            border: none;
+            border-radius: 4px;
+            height: 40px;
+            padding: ${theme.spacing} calc(2 * ${theme.spacing});
+            width: 100%;
+            font-size: 0.9rem;
+            box-sizing: border-box;
 
             &::placeholder {
-                color: ${theme.text.disabled};
+                color: ${theme.components.input.placeholderColor};
             }
-        }
-    `;
-});
+
+            &:focus {
+                outline: 2.5px solid ${theme.baseColors.secondary};
+                box-shadow: 0 0 8px 4px rgba(30, 169, 65, 0.2);
+            }
+
+            &:disabled {
+                color: ${theme.text.disabled};
+                background-color: ${theme.components.input
+                    .disabledBackgroundColor};
+
+                &::placeholder {
+                    color: ${theme.text.disabled};
+                }
+            }
+
+            ${status === 'error' &&
+            css`
+                border: 2px solid red;
+            `}
+        `;
+    },
+);
 
 export const StyledInfo = styled.div(({ theme }) => {
     return css`
@@ -79,6 +87,7 @@ const Input = forwardRef(
             defaultValue = '',
             onChange,
             info,
+            status,
             ...restProps
         }: PropsWithoutRef<InputProps>,
         ref?: Ref<HTMLInputElement>,
@@ -93,6 +102,7 @@ const Input = forwardRef(
             <StyledInputWrapper>
                 <StyledInput
                     {...restProps}
+                    status={status}
                     ref={ref}
                     value={value}
                     type={type}
