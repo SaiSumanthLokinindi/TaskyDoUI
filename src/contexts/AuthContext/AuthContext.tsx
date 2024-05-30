@@ -1,9 +1,9 @@
 import {
     Dispatch,
-    ReactNode,
+    PropsWithChildren,
     SetStateAction,
     createContext,
-    useMemo,
+    memo,
     useState,
 } from 'react';
 
@@ -11,20 +11,19 @@ type Auth = {
     isAuthenticated: boolean;
     setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
 };
-
 export const AuthContext = createContext<Auth>({
     isAuthenticated: false,
-    setIsAuthenticated: () => {},
+    setIsAuthenticated: () => undefined,
 });
 
-const AuthProvider = ({ children }: { children: ReactNode }) => {
+const AuthProvider = ({ children }: PropsWithChildren) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    const auth: Auth = useMemo(() => {
-        return { isAuthenticated, setIsAuthenticated };
-    }, [isAuthenticated, setIsAuthenticated]);
-
-    return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
-export default AuthProvider;
+export default memo(AuthProvider);

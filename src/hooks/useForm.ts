@@ -84,16 +84,17 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
                 errors: currentErrors,
             };
         }
-        case 'unregisterInput': {
+        case 'deregisterInput': {
             const {
                 data,
                 errors,
                 validators: currentValidators,
             } = { ...state };
-
-            delete data[action.payload.name as string];
-            delete currentValidators[action.payload.name as string];
-            delete errors[action.payload.name as string];
+            action.payload.inputs.forEach((input: string) => {
+                delete data[input];
+                delete currentValidators[input];
+                delete errors[input];
+            });
 
             return {
                 data,
@@ -114,6 +115,18 @@ export const useForm = () => {
             dispatch({
                 type: 'registerInput',
                 payload: { name, value: validators },
+            });
+        },
+        [dispatch],
+    );
+
+    const deregisterInput = useCallback(
+        (...inputs: string[]) => {
+            dispatch({
+                type: 'deregisterInput',
+                payload: {
+                    inputs,
+                },
             });
         },
         [dispatch],
@@ -170,6 +183,7 @@ export const useForm = () => {
         data: formState.data,
         errors: formState.errors,
         registerInput,
+        deregisterInput,
         setFieldValue,
         runValidators,
         resetError,

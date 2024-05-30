@@ -1,11 +1,11 @@
 import {
     ChangeEvent,
-    FocusEvent,
     useState,
     useEffect,
     Ref,
     forwardRef,
     PropsWithoutRef,
+    FocusEvent,
 } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -14,8 +14,8 @@ export interface InputProps {
     disabled?: boolean;
     info?: string | string[];
     name?: string;
-    onBlur?: (e?: FocusEvent<HTMLInputElement>) => void;
     onChange?: (e?: ChangeEvent<HTMLInputElement>) => void;
+    onBlur?: (e?: FocusEvent<HTMLInputElement>) => void;
     onFocus?: (e?: FocusEvent<HTMLInputElement>) => void;
     placeholder?: string;
     readOnly?: boolean;
