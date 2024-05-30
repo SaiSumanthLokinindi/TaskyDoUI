@@ -14,7 +14,10 @@ import { AxiosError } from 'axios';
 import Flex from 'src/components/Flex/flex';
 import Input from 'src/components/Input/input';
 import Button from 'src/components/Button/button';
-import { AuthContext } from 'src/contexts/AuthContext/AuthContext';
+import {
+    AuthContext,
+    AuthResponse,
+} from 'src/contexts/AuthContext/AuthContext';
 import { UserContext } from 'src/contexts/UserContext/UserContext';
 
 const SignUp = ({
@@ -76,18 +79,15 @@ const SignUp = ({
         if (!runValidators()) {
             setLoading(true);
             axios
-                .post('user', formData)
+                .post<AuthResponse>('user', formData)
                 .then((response) => {
                     if (response.status === 201) {
                         setIsAuthenticated(true);
                         localStorage.setItem(
                             'accessToken',
-                            response.data.token as string,
+                            response.data.token,
                         );
-                        setUserInfo({
-                            name: response.data.user.name as string,
-                            email: response.data.user.email as string,
-                        });
+                        setUserInfo(response.data.user);
                     }
                 })
                 .catch(
