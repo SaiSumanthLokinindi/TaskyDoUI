@@ -4,6 +4,8 @@ import AuthProvider from './contexts/AuthContext/AuthContext';
 import UserProvider from './contexts/UserContext/UserContext';
 import Authentication from './pages/Authentication';
 import styled, { css } from 'styled-components';
+import { BrowserRouter as Router } from 'react-router-dom';
+import AppRoutes from './Routing/AppRoutes';
 
 const StyledBody = styled(Flex)(() => {
     return css`
@@ -14,15 +16,20 @@ const StyledBody = styled(Flex)(() => {
 
 function App() {
     return (
-        <AuthProvider>
-            <UserProvider>
-                <Configuration>
-                    <StyledBody justifyContent="center" alignItems="flex-start">
-                        <Authentication type="signup" />
-                    </StyledBody>
-                </Configuration>
-            </UserProvider>
-        </AuthProvider>
+        <Router>
+            <Configuration>
+                <AuthProvider>
+                    <UserProvider>
+                        <StyledBody
+                            justifyContent="center"
+                            alignItems="flex-start"
+                        >
+                            <AppRoutes />
+                        </StyledBody>
+                    </UserProvider>
+                </AuthProvider>
+            </Configuration>
+        </Router>
     );
 }
 

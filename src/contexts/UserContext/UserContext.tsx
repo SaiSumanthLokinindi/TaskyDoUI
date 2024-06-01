@@ -3,7 +3,6 @@ import {
     PropsWithChildren,
     SetStateAction,
     createContext,
-    memo,
     useState,
 } from 'react';
 
@@ -32,4 +31,4 @@ const UserProvider = ({ children }: PropsWithChildren) => {
     );
 };
 
-export default memo(UserProvider);
+export default UserProvider;

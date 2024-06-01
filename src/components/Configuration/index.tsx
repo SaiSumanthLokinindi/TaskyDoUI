@@ -28,12 +28,10 @@ const GlobalStyles = createGlobalStyle(({ theme }) => {
 
 const Configuration = ({ children }: ConfigurationProps) => {
     return (
-        <>
-            <ThemeProvider theme={darkTheme}>
-                <GlobalStyles />
-                {children}
-            </ThemeProvider>
-        </>
+        <ThemeProvider theme={darkTheme}>
+            <GlobalStyles />
+            {children}
+        </ThemeProvider>
     );
 };
 

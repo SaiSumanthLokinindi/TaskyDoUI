@@ -13,9 +13,8 @@ import Login from './Login';
 import Button from 'src/components/Button/button';
 
 const Authentication = memo(
-    ({ type = 'login' }: { type: 'login' | 'signup' }) => {
+    ({ type = 'login' }: { type?: 'login' | 'signup' }) => {
         const [authType, setAuthType] = useState(type);
-
         const [formError, setFormError] = useState<string>();
 
         useEffect(() => {

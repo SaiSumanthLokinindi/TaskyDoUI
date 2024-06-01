@@ -3,10 +3,11 @@ import {
     PropsWithChildren,
     SetStateAction,
     createContext,
-    memo,
+    useMemo,
     useState,
 } from 'react';
 import type { UserInfo } from '../UserContext/UserContext';
+import { isExpired } from 'react-jwt';
 
 type Auth = {
     isAuthenticated: boolean;
@@ -21,7 +22,13 @@ export const AuthContext = createContext<Auth>({
 });
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const isAccessTokenValid = useMemo(() => {
+        const accessToken = localStorage.getItem('accessToken');
+
+        return !!accessToken && !isExpired(accessToken);
+    }, []);
+
+    const [isAuthenticated, setIsAuthenticated] = useState(isAccessTokenValid);
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
@@ -30,4 +37,4 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     );
 };
 
-export default memo(AuthProvider);
+export default AuthProvider;
