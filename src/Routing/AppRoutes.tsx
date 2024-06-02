@@ -1,6 +1,6 @@
 import { useRoutes } from 'react-router-dom';
 import Authentication from 'src/pages/Authentication';
-import Dashboard from 'src/pages/Dashboard/Dashboard';
+import MyDay from 'src/pages/MyDay/MyDay';
 import ProtectedRoute from './ProtectedRoute';
 import NotFoundPage from 'src/pages/NotFoundPage';
 
@@ -10,15 +10,15 @@ const AppRoutes = () => {
             path: '/',
             element: (
                 <ProtectedRoute>
-                    <Dashboard />
+                    <MyDay />
                 </ProtectedRoute>
             ),
         },
         {
-            path: '/dashboard',
+            path: '/myday',
             element: (
                 <ProtectedRoute>
-                    <Dashboard />
+                    <MyDay />
                 </ProtectedRoute>
             ),
         },

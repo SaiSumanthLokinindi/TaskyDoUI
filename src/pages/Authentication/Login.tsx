@@ -63,7 +63,7 @@ const Login = memo(
                                 response.data.token,
                             );
                             setUserInfo(response.data.user);
-                            navigate('/dashboard');
+                            navigate('/myday');
                         }
                     })
                     .catch(
