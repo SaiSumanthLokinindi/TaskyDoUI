@@ -38,12 +38,12 @@ const StyledButton = styled.button<{
         padding: 8px calc(3 * ${theme.spacing});
 
         &:hover {
-            background-color: #26bc4c;
+            background-color: #1dbe45;
             cursor: pointer;
         }
 
         &:active {
-            background-color: #1b9339;
+            background-color: #169135;
         }
 
         &:focus-visible {
@@ -81,7 +81,6 @@ const StyledButton = styled.button<{
         ${$progress &&
         $variant !== 'link' &&
         css`
-            background-color: #5d8b68;
             &::before {
                 content: '';
                 position: absolute;
