@@ -3,6 +3,7 @@ import Authentication from 'src/pages/Authentication';
 import MyDay from 'src/pages/MyDay/MyDay';
 import ProtectedRoute from './ProtectedRoute';
 import NotFoundPage from 'src/pages/NotFoundPage';
+import AppContainer from 'src/pages/AppContainer/AppContainer';
 
 const AppRoutes = () => {
     return useRoutes([
@@ -10,19 +11,16 @@ const AppRoutes = () => {
             path: '/',
             element: (
                 <ProtectedRoute>
-                    <MyDay />
+                    <AppContainer />
                 </ProtectedRoute>
             ),
+            children: [
+                {
+                    path: 'myday',
+                    element: <MyDay />,
+                },
+            ],
         },
-        {
-            path: '/myday',
-            element: (
-                <ProtectedRoute>
-                    <MyDay />
-                </ProtectedRoute>
-            ),
-        },
-
         {
             path: '/login',
             element: <Authentication type="login" />,

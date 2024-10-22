@@ -15,18 +15,18 @@ export const StyledLink = styled.a(({ theme }) => {
     return css`
         appearance: none;
         font-weight: bold;
-        color: ${theme.baseColors.secondary};
+        color: ${theme.baseColors.tertiary};
         text-decoration: none;
         outline: none;
 
         &:hover {
             cursor: pointer;
-            border-bottom: 2px solid ${theme.baseColors.secondary};
+            border-bottom: 2px solid ${theme.baseColors.tertiary};
             margin-bottom: -2px;
         }
 
         &:focus-visible {
-            outline: 2px solid ${theme.baseColors.secondary};
+            outline: 2px solid ${theme.baseColors.tertiary};
             outline-offset: 4px;
         }
     `;

@@ -1,14 +1,12 @@
 import { ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
-const StyledFlex = styled.div<
-    Omit<FlexProps, 'justifyContent'> & { $justifyContent: string }
->(
+const StyledFlex = styled.div<FlexProps>(
     ({
         inline,
         direction,
         alignItems,
-        $justifyContent,
+        justifyContent,
         flexWrap,
         alignContent,
         gap,
@@ -21,7 +19,7 @@ const StyledFlex = styled.div<
             display: ${inline ? 'inline-flex' : 'flex'};
             flex-direction: ${direction ?? 'row'};
             align-items: ${alignItems ?? 'stretch'};
-            justify-content: ${$justifyContent ?? 'flex-start'};
+            justify-content: ${justifyContent ?? 'flex-start'};
             flex-wrap: ${flexWrap ?? 'nowrap'};
             align-content: ${alignContent ?? 'normal'};
             gap: ${gap ?? 'normal'};
@@ -71,12 +69,8 @@ interface FlexProps {
     width?: string;
 }
 
-const Flex = ({ children, justifyContent, ...restProps }: FlexProps) => {
-    return (
-        <StyledFlex {...restProps} $justifyContent={justifyContent}>
-            {children}
-        </StyledFlex>
-    );
+const Flex = ({ children, ...restProps }: FlexProps) => {
+    return <StyledFlex {...restProps}>{children}</StyledFlex>;
 };
 
 export default Flex;

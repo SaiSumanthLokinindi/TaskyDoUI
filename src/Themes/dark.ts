@@ -2,8 +2,9 @@ import { Theme } from './theme.types';
 
 const dark = {
     baseColors: {
-        primary: '#080808',
-        secondary: '#1EA941',
+        primary: '#0D0D0D',
+        secondary: '#1C1C1C',
+        tertiary: '#1EA941',
         error: 'red',
         clicked: '#1C943A',
     },
@@ -33,6 +34,19 @@ const dark = {
             },
         },
         button: {},
+        text: {
+            size: {
+                xs: '0.694rem',
+                sm: '0.833',
+                rg: '1rem',
+                md: '1.2rem',
+                lg: '1.44rem',
+                xl: '1.728rem',
+                xxl: '2.074rem',
+                xxxl: '2.488rem',
+                title: '2.2986rem',
+            },
+        },
     },
     spacing: '0.5rem',
 };

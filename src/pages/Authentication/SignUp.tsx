@@ -103,7 +103,9 @@ const SignUp = memo(
                                 message: string;
                             }>,
                         ) => {
-                            setFormError(error.response?.data.message);
+                            if (error.code === 'ERR_NETWORK')
+                                setFormError('something went wrong');
+                            else setFormError(error.response?.data.message);
                         },
                     )
                     .finally(() => {

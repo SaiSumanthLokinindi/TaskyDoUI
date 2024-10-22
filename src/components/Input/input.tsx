@@ -35,7 +35,7 @@ export const StyledInput = styled.input<{ status: InputProps['status'] }>(
             color: ${theme.text.primary};
             appearance: none;
             outline: none;
-            border: none;
+            border: 2px solid transparent;
             border-radius: 4px;
             height: 40px;
             padding: ${theme.spacing} calc(2 * ${theme.spacing});
@@ -48,7 +48,7 @@ export const StyledInput = styled.input<{ status: InputProps['status'] }>(
             }
 
             &:focus {
-                outline: 2.5px solid ${theme.baseColors.secondary};
+                outline: 2.5px solid ${theme.baseColors.tertiary};
                 box-shadow: 0 0 8px 4px rgba(30, 169, 65, 0.2);
             }
 
@@ -64,19 +64,33 @@ export const StyledInput = styled.input<{ status: InputProps['status'] }>(
 
             ${status === 'error' &&
             css`
-                border: 2px solid red;
+                &:not(:focus) {
+                    border: 2px solid red;
+                }
             `}
         `;
     },
 );
 
-export const StyledInfo = styled.div(({ theme }) => {
-    return css`
-        font-size: ${theme.text.helperText.size.md};
-        color: ${theme.text.helperText.color};
-        overflow-wrap: anywhere;
-    `;
-});
+export const StyledInfo = styled.div(
+    ({
+        theme: {
+            spacing,
+            text: { helperText },
+        },
+    }) => {
+        return css`
+            font-size: ${helperText.size.md};
+            color: ${helperText.color};
+            overflow-wrap: anywhere;
+
+            span:first-of-type {
+                display: inline-block;
+                margin-block-start: calc(0.25 * ${spacing});
+            }
+        `;
+    },
+);
 
 // StyledInput.defaultProps = Theme
 
@@ -114,9 +128,9 @@ const Input = forwardRef(
                 <StyledInfo>
                     {info &&
                         (Array.isArray(info) ? (
-                            info.map((message) => <div>{message}</div>)
+                            info.map((message) => <span>{message}</span>)
                         ) : (
-                            <div>{info}</div>
+                            <span>{info}</span>
                         ))}
                 </StyledInfo>
             </StyledInputWrapper>

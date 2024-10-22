@@ -15,7 +15,6 @@ const GlobalStyles = createGlobalStyle(({ theme }) => {
         * {
             font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
             font-weight: 400;
-            line-height: 1.5;
         }
 
         body {

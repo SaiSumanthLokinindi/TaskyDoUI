@@ -1,8 +1,7 @@
-import Configuration from './components/Configuration';
+import Configuration from './components/Configuration/Configuration';
 import Flex from './components/Flex/flex';
 import AuthProvider from './contexts/AuthContext/AuthContext';
 import UserProvider from './contexts/UserContext/UserContext';
-import Authentication from './pages/Authentication';
 import styled, { css } from 'styled-components';
 import { BrowserRouter as Router } from 'react-router-dom';
 import AppRoutes from './Routing/AppRoutes';
