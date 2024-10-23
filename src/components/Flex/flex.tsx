@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
-const StyledFlex = styled.div<FlexProps>(
+export const StyledFlex = styled.div<FlexProps>(
     ({
         inline,
         direction,

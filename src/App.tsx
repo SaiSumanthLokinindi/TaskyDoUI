@@ -4,7 +4,7 @@ import AuthProvider from './contexts/AuthContext/AuthContext';
 import UserProvider from './contexts/UserContext/UserContext';
 import styled, { css } from 'styled-components';
 import { BrowserRouter as Router } from 'react-router-dom';
-import AppRoutes from './Routing/AppRoutes';
+import AppRoutes from './routing/AppRoutes';
 
 const StyledBody = styled(Flex)(() => {
     return css`

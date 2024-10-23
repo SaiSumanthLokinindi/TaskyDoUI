@@ -14,8 +14,8 @@ const StyledUserInfo = styled(Flex)(({ theme: { spacing } }) => {
     return css`
         padding-inline: ${spacing};
         ${StyledImage} {
-            max-height: 50px;
-            max-width: 50px;
+            max-height: 56px;
+            max-width: 56px;
             border-radius: 100%;
         }
         ${StyledText} {
@@ -27,7 +27,6 @@ const StyledUserInfo = styled(Flex)(({ theme: { spacing } }) => {
 
 const StyledInitials = styled(Flex)(({
     theme: {
-        baseColors: { secondary },
         spacing,
         components: {
             text: { size },
@@ -35,8 +34,8 @@ const StyledInitials = styled(Flex)(({
     },
 }) => {
     return css`
-        width: 50px;
-        height: 50px;
+        width: 56px;
+        height: 56px;
         background-color: gray;
         box-sizing: border-box;
         border-radius: 100%;

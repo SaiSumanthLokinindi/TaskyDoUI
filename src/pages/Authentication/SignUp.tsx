@@ -7,7 +7,7 @@ import {
     useEffect,
     useState,
 } from 'react';
-import { fieldRequiredValidator } from './utils';
+import { fieldRequiredValidator } from './authUtils';
 import { useForm } from 'src/hooks/useForm';
 import axios from 'src/axios-instance/axios-instance';
 import { AxiosError } from 'axios';

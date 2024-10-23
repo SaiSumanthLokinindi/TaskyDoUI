@@ -7,6 +7,7 @@ const dark = {
         tertiary: '#1EA941',
         error: 'red',
         clicked: '#1C943A',
+        secondaryHover: 'rgba(171,171,171,0.25)',
     },
     text: {
         primary: '#FFFFFF',
