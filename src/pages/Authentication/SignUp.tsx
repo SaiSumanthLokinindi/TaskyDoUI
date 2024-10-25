@@ -93,7 +93,7 @@ const SignUp = memo(
                                 response.data.token,
                             );
                             setUserInfo(response.data.user);
-                            navigate('/myday');
+                            navigate('/');
                         }
                     })
                     .catch(

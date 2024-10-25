@@ -6,6 +6,7 @@ import AppContainer from 'src/pages/AppContainer/AppContainer';
 import ProtectedRoute from './ProtectedRoute';
 import Search from 'src/pages/Search/Search';
 import Calendar from 'src/pages/Calendar/Calendar';
+import Home from 'src/pages/Home/Home';
 
 const AppRoutes = () => {
     return useRoutes([
@@ -17,6 +18,10 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             ),
             children: [
+                {
+                    path: '',
+                    element: <Home />,
+                },
                 {
                     path: 'myday',
                     element: <MyDay />,

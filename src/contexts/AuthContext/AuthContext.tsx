@@ -3,11 +3,14 @@ import {
     PropsWithChildren,
     SetStateAction,
     createContext,
+    useContext,
     useMemo,
     useState,
 } from 'react';
-import type { UserInfo } from '../UserContext/UserContext';
+import axios from 'src/axios-instance/axios-instance';
+import { UserContext, type UserInfo } from '../UserContext/UserContext';
 import { isExpired } from 'react-jwt';
+import { AxiosError } from 'axios';
 
 type Auth = {
     isAuthenticated: boolean;
@@ -22,10 +25,41 @@ export const AuthContext = createContext<Auth>({
 });
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
+    const { setUserInfo, setLoading } = useContext(UserContext);
+
     const isAccessTokenValid = useMemo(() => {
         const accessToken = localStorage.getItem('accessToken');
 
-        return !!accessToken && !isExpired(accessToken);
+        // return !!accessToken && !isExpired(accessToken);
+
+        if (!accessToken || isExpired(accessToken)) return false;
+        else {
+            setLoading(true);
+            axios
+                .get('/user')
+                .then((response) => {
+                    if (response.status === 200) {
+                        setUserInfo(response.data.user);
+                    } else {
+                        console.log(
+                            'Something went wrong with login with existing token',
+                        );
+                    }
+                    setLoading(false);
+                })
+                .catch(
+                    (
+                        error: AxiosError<{
+                            code: string;
+                            message: string;
+                        }>,
+                    ) => {
+                        console.log(error.message);
+                        setLoading(false);
+                    },
+                );
+            return true;
+        }
     }, []);
 
     const [isAuthenticated, setIsAuthenticated] = useState(isAccessTokenValid);

@@ -17,16 +17,16 @@ function App() {
     return (
         <Router>
             <Configuration>
-                <AuthProvider>
-                    <UserProvider>
+                <UserProvider>
+                    <AuthProvider>
                         <StyledBody
                             justifyContent="center"
                             alignItems="flex-start"
                         >
                             <AppRoutes />
                         </StyledBody>
-                    </UserProvider>
-                </AuthProvider>
+                    </AuthProvider>
+                </UserProvider>
             </Configuration>
         </Router>
     );

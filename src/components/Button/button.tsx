@@ -13,7 +13,7 @@ export interface ButtonProps {
     type?: 'submit' | 'reset';
 }
 
-const StyledButton = styled.button<{
+export const StyledButton = styled.button<{
     $progress: ButtonProps['progress'];
     $variant: ButtonProps['variant'];
 }>(({ $progress, $variant, theme }) => {

@@ -1,6 +1,7 @@
 import { Theme } from './theme.types';
 
 const dark = {
+    spacing: '0.5rem',
     baseColors: {
         primary: '#0D0D0D',
         secondary: '#1C1C1C',
@@ -49,7 +50,12 @@ const dark = {
             },
         },
     },
-    spacing: '0.5rem',
+    breakpoints: {
+        sm: '480px',
+        md: '759px',
+        lg: '1280px',
+        xl: '1980px',
+    },
 };
 
 export default dark;

@@ -5,14 +5,23 @@ import styled, { css } from 'styled-components';
 import { StyledImage } from '../Image/Image';
 
 export interface UserInfoProps {
+    /** User image prop */
     visual?: ReactNode;
+    /** Primary information about the user */
     primary: string;
+    /** Secondary text shown below the user name
+     * useful to showing any dynamic useful information like tasks due or the date etc
+     */
     secondary?: string;
+    /**
+     * @default false
+     * user to indicate loading state of user data
+     */
+    loading?: boolean;
 }
 
-const StyledUserInfo = styled(Flex)(({ theme: { spacing } }) => {
+const StyledUserInfo = styled(Flex)(() => {
     return css`
-        padding-inline: ${spacing};
         ${StyledImage} {
             max-height: 56px;
             max-width: 56px;
@@ -65,16 +74,26 @@ const Initials = ({ name }: { name: string }) => {
     );
 };
 
-const UserInfo: FC<UserInfoProps> = memo(({ visual, primary, secondary }) => {
-    return (
-        <StyledUserInfo columnGap="0.75rem" alignItems="center">
-            {visual || <Initials name={primary} />}
-            <Flex direction="column" rowGap="0.125rem" justifyContent="center">
-                <Text size="xl">{primary}</Text>
-                <Text variant="helper">{secondary}</Text>
-            </Flex>
-        </StyledUserInfo>
-    );
-});
+const UserInfo: FC<UserInfoProps> = memo(
+    ({ visual, primary, secondary, loading = false }) => {
+        return (
+            <StyledUserInfo columnGap="0.75rem" alignItems="center">
+                {visual || <Initials name={primary} />}
+                <Flex
+                    direction="column"
+                    rowGap="0.125rem"
+                    justifyContent="center"
+                >
+                    {loading ? (
+                        <span>Loading...</span>
+                    ) : (
+                        <Text size="xl">{primary}</Text>
+                    )}
+                    <Text variant="helper">{secondary}</Text>
+                </Flex>
+            </StyledUserInfo>
+        );
+    },
+);
 
 export default UserInfo;

@@ -9,7 +9,7 @@ import Flex from '../Flex/flex';
 
 type Route = 'home' | 'myday' | 'search' | 'calendar';
 
-const StyledNavigation = styled(Flex)<{ activeRoute: Route }>(({
+export const StyledNavigation = styled(Flex)<{ activeRoute: Route }>(({
     activeRoute,
     theme: {
         baseColors: { tertiary, secondary, secondaryHover },
@@ -17,33 +17,35 @@ const StyledNavigation = styled(Flex)<{ activeRoute: Route }>(({
     },
 }) => {
     return css`
-        padding: ${spacing};
         background-color: ${secondary};
         border-radius: 50px;
 
         ul {
             list-style-type: none;
             margin: unset;
-            padding: unset;
+            padding: calc(0.5 * ${spacing});
             white-space: nowrap;
+            display: flex;
+            column-gap: ${spacing};
 
             li {
                 display: inline-block;
-                margin-inline: calc(0.5 * ${spacing});
-            }
-
-            a {
-                text-decoration: none;
-                font-size: 1.5rem;
                 color: #ffffff;
-                display: block;
-                height: 24px;
-                padding: ${spacing};
-                transition: background-color 0.25s linear;
                 border-radius: 50px;
 
-                &:hover {
-                    background-color: ${secondaryHover};
+                a {
+                    text-decoration: none;
+                    font-size: 1.25rem;
+                    color: inherit;
+                    display: block;
+                    height: 20px;
+                    padding: ${spacing};
+                    transition: background-color 0.25s linear;
+                    border-radius: inherit;
+
+                    &:hover {
+                        background-color: ${secondaryHover};
+                    }
                 }
 
                 &:nth-child(
@@ -52,7 +54,14 @@ const StyledNavigation = styled(Flex)<{ activeRoute: Route }>(({
                             ) + 1}
                     ) {
                     color: ${tertiary};
-                    background-color: ${secondaryHover};
+
+                    a {
+                        background-color: ${secondaryHover};
+                    }
+
+                    a:hover {
+                        cursor: default;
+                    }
                 }
             }
         }
