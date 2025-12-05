@@ -42,7 +42,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
                         setUserInfo(response.data.user);
                     } else {
                         console.log(
-                            'Something went wrong with login with existing token',
+                            'Unable to fetch user details with current token',
                         );
                     }
                     setLoading(false);

@@ -1,5 +1,5 @@
 import { memo, useContext } from 'react';
-import { IoAddOutline } from 'react-icons/io5';
+import { IoAdd } from 'react-icons/io5';
 import UserInfo from 'src/components/UserInfo/UserInfo';
 import Image from '../../components/Image/Image';
 import Navigation, {
@@ -14,11 +14,11 @@ import { UserContext } from 'src/contexts/UserContext/UserContext';
 
 const StyledFlex = styled(Flex)(({ theme: { spacing, breakpoints } }) => {
     return css`
-        margin: calc(2 * ${spacing});
+        padding: calc(2 * ${spacing});
         width: 100%;
 
         @media (max-width: ${breakpoints.sm}) {
-            margin: ${spacing};
+            padding: ${spacing};
             position: relative;
 
             ${StyledNavigation} {
@@ -43,6 +43,20 @@ const StyledNavigationWrapper = styled(Flex)(({
             align-items: center;
             column-gap: ${spacing};
             color: #ffffff;
+        }
+
+        & > ${StyledButton} > svg {
+            height: 1.5em;
+            width: 1.5em;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: ${breakpoints.md}) {
+            ${StyledButton}:last-child {
+                border-radius: 100%;
+                width: 40px;
+                justify-content: center;
+            }
         }
 
         @media (max-width: ${breakpoints.sm}) {
@@ -77,7 +91,7 @@ const AppContainer = memo(() => {
                 <StyledNavigationWrapper columnGap="0.5rem" alignItems="center">
                     <Navigation />
                     <Button>
-                        <IoAddOutline />{' '}
+                        <IoAdd />{' '}
                         {isMediumScreenOrAbove && <span> Add Task</span>}
                     </Button>
                 </StyledNavigationWrapper>
