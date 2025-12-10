@@ -14,11 +14,11 @@ import { UserContext } from 'src/contexts/UserContext/UserContext';
 
 const StyledFlex = styled(Flex)(({ theme: { spacing, breakpoints } }) => {
     return css`
-        padding: calc(2 * ${spacing});
+        padding: calc(4 * ${spacing});
         width: 100%;
 
         @media (max-width: ${breakpoints.sm}) {
-            padding: ${spacing};
+            padding: calc(1.5 * ${spacing});
             position: relative;
 
             ${StyledNavigation} {
@@ -85,7 +85,14 @@ const AppContainer = memo(() => {
                         />
                     }
                     primary={name}
-                    secondary="3 tasks due today"
+                    secondary={new Date()
+                        .toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                        })
+                        .replace(',', '')
+                        .replace(/^(\w+)\s(\d+)\s(\d+)$/, '$2 $1 $3')}
                     loading={userLoading}
                 />
                 <StyledNavigationWrapper columnGap="0.5rem" alignItems="center">

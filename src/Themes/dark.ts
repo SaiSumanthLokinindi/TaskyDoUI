@@ -54,7 +54,8 @@ const dark = {
         sm: '480px',
         md: '759px',
         lg: '1280px',
-        xl: '1980px',
+        xl: '1536px',
+        xxl: '1980px',
     },
 };
 

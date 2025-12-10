@@ -20,10 +20,11 @@ export const StyledCard = styled.article(({ theme }) => {
 
 export interface CardProps {
     children: ReactNode;
+    className?: string;
 }
 
-const Card = ({ children }: CardProps) => {
-    return <StyledCard>{children}</StyledCard>;
+const Card = ({ children, className }: CardProps) => {
+    return <StyledCard className={className}>{children}</StyledCard>;
 };
 
 export default Card;

@@ -22,9 +22,20 @@ export const StyledFlex = styled.div<FlexProps>(
             justify-content: ${justifyContent ?? 'flex-start'};
             flex-wrap: ${flexWrap ?? 'nowrap'};
             align-content: ${alignContent ?? 'normal'};
-            gap: ${gap ?? 'normal'};
-            row-gap: ${rowGap ?? 'normal'};
-            column-gap: ${columnGap ?? 'normal'};
+            ${gap !== undefined &&
+            css`
+                gap: ${gap};
+            `}
+
+            ${rowGap !== undefined &&
+            css`
+                row-gap: ${rowGap};
+            `}
+
+        ${columnGap !== undefined &&
+            css`
+                column-gap: ${columnGap};
+            `}
             ${height &&
             css`
                 height: ${height};
