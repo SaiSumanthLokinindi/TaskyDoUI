@@ -10,21 +10,22 @@ const StyledDueToday = styled(Card)(({
 }) => {
     return css`
         padding: calc(1.5 * ${spacing});
-        height: 120px;
+        height: 100%;
         width: 100%;
         display: flex;
         flex-grow: 1;
         flex-direction: column;
 
-        & > span:nth-child(1) {
+        /* & > span:nth-child(1) {
             font-size: 0.75rem;
             opacity: 0.75;
-        }
+        } */
 
-        & > span:nth-child(2) {
+        & > span:nth-child(1) {
             font-size: 2.5rem;
             font-weight: bold;
             margin-top: auto;
+            line-height: normal;
         }
 
         @media (max-width: ${sm}) {
@@ -43,7 +44,7 @@ interface DueCardProps {
 const DueCard = ({ label, count, helperText }: DueCardProps) => {
     return (
         <StyledDueToday>
-            <span>{label}</span>
+            {/* <span>{label}</span> */}
             <span>{count}</span>
             <Text variant="helper" size="xs">
                 {helperText}

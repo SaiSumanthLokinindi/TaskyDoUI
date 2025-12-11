@@ -6,37 +6,60 @@ import Card from 'src/components/Card/card';
 import Text from 'src/components/Text/Text';
 import Progress from 'src/components/Progress/Progress';
 
-const StyledHomeContainer = styled(Flex)(({
-    theme: {
-        spacing,
-        breakpoints: { xl, lg, sm },
-    },
-}) => {
+const StyledQuickStats = styled(Flex)`
+    grid-area: quickinfo;
+`;
+
+const StyledMyDayTasksList = styled(Card)(({ theme }) => {
+    return css`
+        padding: calc(1.5 * ${theme.spacing});
+        grid-area: myday;
+    `;
+});
+
+const StyledOverdueTasksList = styled(Card)(({ theme }) => {
+    return css`
+        padding: calc(1.5 * ${theme.spacing});
+        grid-area: overdue;
+    `;
+});
+
+const StyledUpcomingTasksList = styled(Card)(({ theme }) => {
+    return css`
+        padding: calc(1.5 * ${theme.spacing});
+        grid-area: upcoming;
+    `;
+});
+
+const StyledStats = styled(Card)(({ theme }) => {
+    return css`
+        padding: calc(1.5 * ${theme.spacing});
+        grid-area: stats;
+    `;
+});
+
+const StyledCalender = styled(Card)(({ theme }) => {
+    return css`
+        padding: calc(1.5 * ${theme.spacing});
+        grid-area: calender;
+    `;
+});
+const StyledHomeContainer = styled.div(({ theme: { spacing } }) => {
     return css`
         padding-block: calc(3 * ${spacing});
         width: 100%;
-
-        & > ${StyledFlex} {
-            width: 20%;
-        }
-
-        @media (max-width: ${xl}) {
-            & > ${StyledFlex} {
-                width: 30%;
-            }
-        }
-
-        @media (max-width: ${lg}) {
-            & > ${StyledFlex} {
-                width: 40%;
-            }
-        }
-
-        @media (max-width: ${sm}) {
-            & > ${StyledFlex} {
-                width: 100%;
-            }
-        }
+        height: 100%;
+        display: grid;
+        grid-template-columns: 20% 1fr 1fr;
+        grid-template-rows: repeat(6, auto);
+        grid-template-areas:
+            'quickinfo myday overdue'
+            'quickinfo myday overdue'
+            'calender myday overdue'
+            'calender upcoming stats'
+            'calender upcoming stats'
+            'metrics upcoming stats';
+        gap: calc(2 * ${spacing});
     `;
 });
 
@@ -57,17 +80,17 @@ const StyledMyDayProgress = styled(Card)(({ theme }) => {
 const Home = memo(() => {
     return (
         <StyledHomeContainer>
-            <Flex direction="column" rowGap="16px">
-                <Flex gap="16px">
+            <StyledQuickStats direction="column" rowGap="16px">
+                <Flex columnGap="16px">
                     <DueCard
                         label="Due Today"
                         count={8}
-                        helperText="Tasks Pending"
+                        helperText="Tasks due today"
                     />
                     <DueCard
                         label="Overdue"
                         count={15}
-                        helperText="Tasks Pending"
+                        helperText="Tasks overdue"
                     />
                 </Flex>
                 <StyledMyDayProgress>
@@ -93,7 +116,12 @@ const Home = memo(() => {
                         </Flex>
                     </Flex>
                 </StyledMyDayProgress>
-            </Flex>
+            </StyledQuickStats>
+            <StyledMyDayTasksList />
+            <StyledOverdueTasksList />
+            <StyledUpcomingTasksList />
+            <StyledStats />
+            <StyledCalender />
         </StyledHomeContainer>
     );
 });
