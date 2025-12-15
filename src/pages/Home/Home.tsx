@@ -1,10 +1,12 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import DueCard from './DueCard';
 import Flex, { StyledFlex } from 'src/components/Flex/flex';
 import styled, { css } from 'styled-components';
 import Card from 'src/components/Card/card';
 import Text from 'src/components/Text/Text';
 import Progress from 'src/components/Progress/Progress';
+import { DayPicker } from 'react-day-picker';
+import 'react-day-picker/style.css';
 
 const StyledQuickStats = styled(Flex)`
     grid-area: quickinfo;
@@ -31,16 +33,9 @@ const StyledUpcomingTasksList = styled(Card)(({ theme }) => {
     `;
 });
 
-const StyledStats = styled(Card)(({ theme }) => {
+const StyledCalender = styled(Card)(({ theme: { spacing } }) => {
     return css`
-        padding: calc(1.5 * ${theme.spacing});
-        grid-area: stats;
-    `;
-});
-
-const StyledCalender = styled(Card)(({ theme }) => {
-    return css`
-        padding: calc(1.5 * ${theme.spacing});
+        padding: calc(1.5 * ${spacing});
         grid-area: calender;
     `;
 });
@@ -56,9 +51,9 @@ const StyledHomeContainer = styled.div(({ theme: { spacing } }) => {
             'quickinfo myday overdue'
             'quickinfo myday overdue'
             'calender myday overdue'
-            'calender upcoming stats'
-            'calender upcoming stats'
-            'metrics upcoming stats';
+            'calender myday upcoming'
+            'calender myday upcoming'
+            'calender myday upcoming';
         gap: calc(2 * ${spacing});
     `;
 });
@@ -78,6 +73,8 @@ const StyledMyDayProgress = styled(Card)(({ theme }) => {
 });
 
 const Home = memo(() => {
+    const [selected, setSelected] = useState<Date>(new Date());
+
     return (
         <StyledHomeContainer>
             <StyledQuickStats direction="column" rowGap="16px">
@@ -120,8 +117,15 @@ const Home = memo(() => {
             <StyledMyDayTasksList />
             <StyledOverdueTasksList />
             <StyledUpcomingTasksList />
-            <StyledStats />
-            <StyledCalender />
+            <StyledCalender>
+                <DayPicker
+                    required={false}
+                    animate
+                    mode="single"
+                    selected={selected}
+                    onSelect={(Date) => setSelected(Date!)}
+                />
+            </StyledCalender>
         </StyledHomeContainer>
     );
 });
