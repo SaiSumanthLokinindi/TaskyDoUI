@@ -1,14 +1,14 @@
-import { Theme } from './theme.types';
-
 const dark = {
     spacing: '0.5rem',
     baseColors: {
         primary: '#0D0D0D',
         secondary: '#1C1C1C',
         tertiary: '#1EA941',
-        error: 'red',
         clicked: '#1C943A',
         secondaryHover: 'rgba(171,171,171,0.25)',
+        danger: '#D21B1B',
+        success: '#1EA941',
+        warning: '#D27D1B',
     },
     text: {
         primary: '#FFFFFF',
@@ -47,6 +47,12 @@ const dark = {
                 xxl: '2.074rem',
                 xxxl: '2.488rem',
                 title: '2.2986rem',
+            },
+        },
+        badge: {
+            colors: {
+                high: '#D14F4F',
+                info: '#FFFFFF',
             },
         },
     },

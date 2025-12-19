@@ -5,7 +5,7 @@ export const StyledCard = styled.article(({ theme }) => {
     return css`
         width: 100%;
         box-sizing: border-box;
-        padding: calc(3 * ${theme.spacing});
+        padding: calc(2 * ${theme.spacing});
         background-color: #1c1c1c;
         /* box-shadow:
             0px 0px 2.2px rgba(0, 0, 0, 0.027),

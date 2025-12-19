@@ -14,6 +14,8 @@ export const StyledFlex = styled.div<FlexProps>(
         columnGap,
         height,
         width,
+        grow,
+        shrink,
     }) => {
         return css`
             display: ${inline ? 'inline-flex' : 'flex'};
@@ -32,7 +34,7 @@ export const StyledFlex = styled.div<FlexProps>(
                 row-gap: ${rowGap};
             `}
 
-        ${columnGap !== undefined &&
+            ${columnGap !== undefined &&
             css`
                 column-gap: ${columnGap};
             `}
@@ -43,6 +45,14 @@ export const StyledFlex = styled.div<FlexProps>(
             ${width &&
             css`
                 width: ${width};
+            `}
+            ${grow !== undefined &&
+            css`
+                flex-grow: ${grow};
+            `}
+            ${shrink !== undefined &&
+            css`
+                flex-shrink: ${shrink};
             `}
         `;
     },
@@ -78,6 +88,8 @@ interface FlexProps {
     children?: ReactNode;
     height?: string;
     width?: string;
+    grow?: number;
+    shrink?: number;
 }
 
 const Flex = ({ children, ...restProps }: FlexProps) => {

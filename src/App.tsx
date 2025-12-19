@@ -19,6 +19,7 @@ function App() {
     return (
         <Provider store={store}>
             <Router>
+                {/* This has global styles and theme provider */}
                 <Configuration>
                     <UserProvider>
                         <AuthProvider>

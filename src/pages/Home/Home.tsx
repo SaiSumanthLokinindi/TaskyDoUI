@@ -7,6 +7,8 @@ import Text from 'src/components/Text/Text';
 import Progress from 'src/components/Progress/Progress';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/style.css';
+import Task from 'src/components/Task/Task';
+import { Priority } from 'src/components/Task/Task.types';
 
 const StyledQuickStats = styled(Flex)`
     grid-area: quickinfo;
@@ -16,6 +18,7 @@ const StyledMyDayTasksList = styled(Card)(({ theme }) => {
     return css`
         padding: calc(1.5 * ${theme.spacing});
         grid-area: myday;
+        background-color: transparent;
     `;
 });
 
@@ -114,7 +117,19 @@ const Home = memo(() => {
                     </Flex>
                 </StyledMyDayProgress>
             </StyledQuickStats>
-            <StyledMyDayTasksList />
+            <StyledMyDayTasksList>
+                <Text variant="h2">My Day</Text>
+                <Flex
+                    direction="column"
+                    rowGap="8px"
+                    style={{ marginTop: '16px' }}
+                >
+                    <Task priority={Priority.Medium} />
+                    <Task priority={Priority.High} />
+                    <Task priority={Priority.Low} />
+                    <Task priority={Priority.Critical} />
+                </Flex>
+            </StyledMyDayTasksList>
             <StyledOverdueTasksList />
             <StyledUpcomingTasksList />
             <StyledCalender>

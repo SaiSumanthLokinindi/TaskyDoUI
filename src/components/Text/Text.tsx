@@ -75,9 +75,10 @@ export const StyledText = styled.span<
 );
 
 const Text: FC<PropsWithChildren<TextProps>> = memo(
-    ({ children, variant, size = 'rg' }) => {
+    ({ children, variant, size = 'rg', ...restProps }) => {
         return (
             <StyledText
+                {...restProps}
                 as={
                     variant &&
                     ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].includes(variant)
