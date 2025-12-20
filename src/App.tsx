@@ -10,8 +10,9 @@ import store from './store/index';
 
 const StyledBody = styled(Flex)(() => {
     return css`
-        height: 100%;
+        height: 100vh;
         width: 100%;
+        overflow: hidden;
     `;
 });
 

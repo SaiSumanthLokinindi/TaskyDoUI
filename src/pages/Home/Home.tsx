@@ -1,6 +1,6 @@
 import { memo, useState } from 'react';
 import DueCard from './DueCard';
-import Flex, { StyledFlex } from 'src/components/Flex/flex';
+import Flex from 'src/components/Flex/flex';
 import styled, { css } from 'styled-components';
 import Card from 'src/components/Card/card';
 import Text from 'src/components/Text/Text';
@@ -18,9 +18,18 @@ const StyledMyDayTasksList = styled(Card)(({ theme }) => {
     return css`
         padding: calc(1.5 * ${theme.spacing});
         grid-area: myday;
-        background-color: transparent;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
     `;
 });
+
+const StyledTaskList = styled(Flex)`
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+    margin-block-start: calc(1.5 * ${({ theme }) => theme.spacing});
+`;
 
 const StyledOverdueTasksList = styled(Card)(({ theme }) => {
     return css`
@@ -44,19 +53,22 @@ const StyledCalender = styled(Card)(({ theme: { spacing } }) => {
 });
 const StyledHomeContainer = styled.div(({ theme: { spacing } }) => {
     return css`
-        padding-block: calc(3 * ${spacing});
         width: 100%;
-        height: 100%;
         display: grid;
+        box-sizing: border-box;
+        margin-block-start: calc(2 * ${spacing});
+
         grid-template-columns: 20% 1fr 1fr;
-        grid-template-rows: repeat(6, auto);
+        /* grid-template-rows: repeat(6, 1fr); */
+
         grid-template-areas:
             'quickinfo myday overdue'
             'quickinfo myday overdue'
-            'calender myday overdue'
-            'calender myday upcoming'
-            'calender myday upcoming'
-            'calender myday upcoming';
+            'calender  myday overdue'
+            'calender  myday upcoming'
+            'calender  myday upcoming'
+            'calender  myday upcoming';
+
         gap: calc(2 * ${spacing});
     `;
 });
@@ -119,16 +131,16 @@ const Home = memo(() => {
             </StyledQuickStats>
             <StyledMyDayTasksList>
                 <Text variant="h2">My Day</Text>
-                <Flex
-                    direction="column"
-                    rowGap="8px"
-                    style={{ marginTop: '16px' }}
-                >
+                <StyledTaskList direction="column" rowGap="8px">
                     <Task priority={Priority.Medium} />
                     <Task priority={Priority.High} />
                     <Task priority={Priority.Low} />
                     <Task priority={Priority.Critical} />
-                </Flex>
+                    <Task priority={Priority.Medium} />
+                    <Task priority={Priority.High} />
+                    <Task priority={Priority.Low} />
+                    <Task priority={Priority.Critical} />
+                </StyledTaskList>
             </StyledMyDayTasksList>
             <StyledOverdueTasksList />
             <StyledUpcomingTasksList />

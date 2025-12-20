@@ -16,6 +16,9 @@ const StyledFlex = styled(Flex)(({ theme: { spacing, breakpoints } }) => {
     return css`
         padding: calc(4 * ${spacing});
         width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        min-height: 0;
 
         @media (max-width: ${breakpoints.sm}) {
             padding: calc(1.5 * ${spacing});
@@ -103,7 +106,7 @@ const AppContainer = memo(() => {
                     </Button>
                 </StyledNavigationWrapper>
             </Flex>
-            <Flex>
+            <Flex style={{ flex: 1, minHeight: 0 }}>
                 <Outlet />
             </Flex>
         </StyledFlex>

@@ -10,11 +10,14 @@ const StyledTaskCard = styled(Card)(({ theme }) => {
         display: flex;
         column-gap: calc(1.5 * ${theme.spacing});
         padding: calc(1.5 * ${theme.spacing});
+        border: 0.25px solid ${theme.baseColors.secondaryHover};
+        box-sizing: border-box;
     `;
 });
 
 const StyledTaskLabel = styled.span`
-    font-size: 1rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
 `;
 
 const badgeBackgroundMapping: Record<Priority, string> = {

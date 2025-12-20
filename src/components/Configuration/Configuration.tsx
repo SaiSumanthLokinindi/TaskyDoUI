@@ -10,6 +10,8 @@ const GlobalStyles = createGlobalStyle(({ theme }) => {
     return css`
         :root {
             font-size: 16px;
+            height: 100%;
+            margin: 0;
         }
 
         * {
@@ -21,6 +23,11 @@ const GlobalStyles = createGlobalStyle(({ theme }) => {
             background-color: ${theme.baseColors.primary};
             color: ${theme.text.primary};
             margin: 0;
+            box-sizing: border-box;
+        }
+
+        #root {
+            height: 100%;
         }
     `;
 });
