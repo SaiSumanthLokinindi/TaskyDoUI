@@ -35,6 +35,9 @@ const StyledOverdueTasksList = styled(Card)(({ theme }) => {
     return css`
         padding: calc(1.5 * ${theme.spacing});
         grid-area: overdue;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
     `;
 });
 
@@ -42,6 +45,9 @@ const StyledUpcomingTasksList = styled(Card)(({ theme }) => {
     return css`
         padding: calc(1.5 * ${theme.spacing});
         grid-area: upcoming;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
     `;
 });
 
@@ -130,7 +136,20 @@ const Home = memo(() => {
                 </StyledMyDayProgress>
             </StyledQuickStats>
             <StyledMyDayTasksList>
-                <Text variant="h2">My Day</Text>
+                <Text variant="h4">My Day</Text>
+                <StyledTaskList direction="column" rowGap="8px">
+                    <Task priority={Priority.Medium} completed />
+                    <Task priority={Priority.High} />
+                    <Task priority={Priority.Low} />
+                    <Task priority={Priority.Critical} />
+                    <Task priority={Priority.Medium} />
+                    <Task priority={Priority.High} />
+                    <Task priority={Priority.Low} />
+                    <Task priority={Priority.Critical} />
+                </StyledTaskList>
+            </StyledMyDayTasksList>
+            <StyledOverdueTasksList>
+                <Text variant="h4">Overdue Tasks</Text>
                 <StyledTaskList direction="column" rowGap="8px">
                     <Task priority={Priority.Medium} />
                     <Task priority={Priority.High} />
@@ -141,9 +160,20 @@ const Home = memo(() => {
                     <Task priority={Priority.Low} />
                     <Task priority={Priority.Critical} />
                 </StyledTaskList>
-            </StyledMyDayTasksList>
-            <StyledOverdueTasksList />
-            <StyledUpcomingTasksList />
+            </StyledOverdueTasksList>
+            <StyledUpcomingTasksList>
+                <Text variant="h4">Upcoming Tasks</Text>
+                <StyledTaskList direction="column" rowGap="8px">
+                    <Task priority={Priority.Medium} />
+                    <Task priority={Priority.High} />
+                    <Task priority={Priority.Low} />
+                    <Task priority={Priority.Critical} />
+                    <Task priority={Priority.Medium} />
+                    <Task priority={Priority.High} />
+                    <Task priority={Priority.Low} />
+                    <Task priority={Priority.Critical} />
+                </StyledTaskList>
+            </StyledUpcomingTasksList>
             <StyledCalender>
                 <DayPicker
                     required={false}

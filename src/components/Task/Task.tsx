@@ -9,16 +9,26 @@ const StyledTaskCard = styled(Card)(({ theme }) => {
     return css`
         display: flex;
         column-gap: calc(1.5 * ${theme.spacing});
-        padding: calc(1.5 * ${theme.spacing});
+        padding: ${theme.spacing};
         border: 0.25px solid ${theme.baseColors.secondaryHover};
         box-sizing: border-box;
     `;
 });
 
-const StyledTaskLabel = styled.span`
-    font-size: 0.85rem;
-    line-height: 1.5;
-`;
+const StyledTaskLabel = styled.span<Pick<TaskProps, 'completed'>>(
+    ({ completed }) => {
+        return css`
+            font-size: 0.85rem;
+            line-height: 1.5;
+
+            ${completed &&
+            css`
+                text-decoration: line-through;
+                color: rgba(255, 255, 255, 0.6);
+            `}
+        `;
+    },
+);
 
 const badgeBackgroundMapping: Record<Priority, string> = {
     Low: 'success',
@@ -30,9 +40,9 @@ const badgeBackgroundMapping: Record<Priority, string> = {
 const Task = ({ label, completed, dueDate, priority }: TaskProps) => {
     return (
         <StyledTaskCard>
-            <input type="checkbox" />
+            <input type="checkbox" checked={completed} />
             <Flex direction="column" grow={1} rowGap="8px">
-                <StyledTaskLabel>
+                <StyledTaskLabel completed={completed}>
                     Complete agile studio test cases for C11n search update user
                     story, Complete agile studio test cases for C11n search
                     update user story
