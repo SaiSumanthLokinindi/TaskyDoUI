@@ -1,16 +1,23 @@
+/* eslint-disable no-console */
 import {
     Dispatch,
     PropsWithChildren,
     SetStateAction,
     createContext,
-    useContext,
-    useMemo,
+    useEffect,
     useState,
+    memo,
 } from 'react';
 import axios from 'src/axios-instance/axios-instance';
-import { UserContext, type UserInfo } from '../UserContext/UserContext';
 import { isExpired } from 'react-jwt';
 import { AxiosError } from 'axios';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from 'src/store';
+import {
+    setUserInfoLoading,
+    setUserProfile,
+    UserInfo,
+} from 'src/store/User/UserSlice';
 
 type Auth = {
     isAuthenticated: boolean;
@@ -24,51 +31,56 @@ export const AuthContext = createContext<Auth>({
     setIsAuthenticated: () => undefined,
 });
 
-const AuthProvider = ({ children }: PropsWithChildren) => {
-    const { setUserInfo, setLoading } = useContext(UserContext);
+const AuthProvider = memo(({ children }: PropsWithChildren) => {
+    const dispatch = useDispatch<AppDispatch>();
 
-    const isAccessTokenValid = useMemo(() => {
-        const accessToken = localStorage.getItem('accessToken');
+    const accessToken = localStorage.getItem('accessToken');
+    const tokenValid = accessToken && !isExpired(accessToken);
 
-        // return !!accessToken && !isExpired(accessToken);
+    const [isAuthenticated, setIsAuthenticated] = useState(!!tokenValid);
 
-        if (!accessToken || isExpired(accessToken)) return false;
-        else {
-            setLoading(true);
-            axios
-                .get('/user')
-                .then((response) => {
-                    if (response.status === 200) {
-                        setUserInfo(response.data.user);
-                    } else {
-                        console.log(
-                            'Unable to fetch user details with current token',
-                        );
-                    }
-                    setLoading(false);
-                })
-                .catch(
-                    (
-                        error: AxiosError<{
-                            code: string;
-                            message: string;
-                        }>,
-                    ) => {
-                        console.log(error.message);
-                        setLoading(false);
-                    },
-                );
-            return true;
+    useEffect(() => {
+        if (!tokenValid) {
+            setIsAuthenticated(false);
+            return;
         }
-    }, []);
 
-    const [isAuthenticated, setIsAuthenticated] = useState(isAccessTokenValid);
+        dispatch(setUserInfoLoading(true));
+        axios
+            .get('/user')
+            .then((response) => {
+                if (response.status === 200) {
+                    dispatch(setUserProfile(response.data.user as UserInfo));
+                    console.log('User authenticated');
+                    setIsAuthenticated(true);
+                } else {
+                    console.log(
+                        'Unable to fetch user details with current token',
+                    );
+                    setIsAuthenticated(false);
+                }
+            })
+            .catch(
+                (
+                    error: AxiosError<{
+                        code: string;
+                        message: string;
+                    }>,
+                ) => {
+                    setIsAuthenticated(false);
+                    console.log(error.message);
+                },
+            )
+            .finally(() => {
+                dispatch(setUserInfoLoading(false));
+            });
+    }, []);
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
             {children}
         </AuthContext.Provider>
     );
-};
+});
 
 export default AuthProvider;

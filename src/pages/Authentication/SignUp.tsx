@@ -18,8 +18,10 @@ import {
     AuthContext,
     AuthResponse,
 } from 'src/contexts/AuthContext/AuthContext';
-import { UserContext } from 'src/contexts/UserContext/UserContext';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from 'src/store';
+import { setUserProfile } from 'src/store/User/UserSlice';
 
 const SignUp = memo(
     ({
@@ -28,7 +30,7 @@ const SignUp = memo(
         setFormError: Dispatch<SetStateAction<string | undefined>>;
     }) => {
         const { setIsAuthenticated } = useContext(AuthContext);
-        const { setUserInfo } = useContext(UserContext);
+        const dispatch = useDispatch<AppDispatch>();
         const [signUpPasswordInfo, setSignUpPasswordInfo] = useState<string>();
         const [loading, setLoading] = useState<boolean>(false);
         const navigate = useNavigate();
@@ -92,7 +94,7 @@ const SignUp = memo(
                                 'accessToken',
                                 response.data.token,
                             );
-                            setUserInfo(response.data.user);
+                            dispatch(setUserProfile(response.data.user));
                             navigate('/');
                         }
                     })

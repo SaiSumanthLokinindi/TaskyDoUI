@@ -1,4 +1,4 @@
-import { memo, useContext } from 'react';
+import { memo } from 'react';
 import { IoAdd } from 'react-icons/io5';
 import UserInfo from 'src/components/UserInfo/UserInfo';
 import Image from '../../components/Image/Image';
@@ -10,7 +10,8 @@ import { Outlet } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import Button, { StyledButton } from 'src/components/Button/button';
 import useBreakpoint from 'src/hooks/useBreakpoint';
-import { UserContext } from 'src/contexts/UserContext/UserContext';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/store';
 
 const StyledFlex = styled(Flex)(({ theme: { spacing, breakpoints } }) => {
     return css`
@@ -75,7 +76,10 @@ const StyledNavigationWrapper = styled(Flex)(({
 
 const AppContainer = memo(() => {
     const isMediumScreenOrAbove = useBreakpoint('md');
-    const { name, loading: userLoading } = useContext(UserContext);
+    const { name, loading: userLoading } = useSelector((state: RootState) => ({
+        name: state.user.profile.name,
+        loading: state.user.loading,
+    }));
 
     return (
         <StyledFlex direction="column">
