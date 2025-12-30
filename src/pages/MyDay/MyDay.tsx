@@ -1,18 +1,9 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchMyDayTasks } from 'src/store/Task/TaskActions';
+import { useFetchTasksOnLoad } from 'src/store/hooks/useFetchTasksOnLoad';
+import { fetchMyDay } from 'src/store/Task/MyDaySlice';
 
 const MyDay = () => {
-    const myDayTasks = useSelector((state) => state.task.myDay);
-    const dispatch = useDispatch();
+    useFetchTasksOnLoad(fetchMyDay);
 
-    useEffect(() => {
-        console.log('myDay', myDayTasks);
-    }, [myDayTasks]);
-
-    useEffect(() => {
-        dispatch(fetchMyDayTasks());
-    }, [dispatch]);
     return <div>MyDay</div>;
 };
 
