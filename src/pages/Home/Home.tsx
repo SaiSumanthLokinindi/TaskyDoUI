@@ -7,8 +7,13 @@ import Text from 'src/components/Text/Text';
 import Progress from 'src/components/Progress/Progress';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/style.css';
-import Task from 'src/components/Task/Task';
-import { Priority } from 'src/components/Task/Task.types';
+import TaskList from 'src/components/TaskList/TaskList';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/store';
+import { useFetchTasksOnLoad } from 'src/store/hooks/useFetchTasksOnLoad';
+import { fetchMyDay } from 'src/store/Task/MyDaySlice';
+import { fetchUpcomingTasks } from 'src/store/Task/UpcomingTasksSlice';
+import { fetchOverdueTasks } from 'src/store/Task/OverdueTasksSlice';
 
 const StyledQuickStats = styled(Flex)`
     grid-area: quickinfo;
@@ -23,13 +28,6 @@ const StyledMyDayTasksList = styled(Card)(({ theme }) => {
         min-height: 0;
     `;
 });
-
-const StyledTaskList = styled(Flex)`
-    flex: 1;
-    overflow-y: auto;
-    min-height: 0;
-    margin-block-start: calc(1.5 * ${({ theme }) => theme.spacing});
-`;
 
 const StyledOverdueTasksList = styled(Card)(({ theme }) => {
     return css`
@@ -95,6 +93,26 @@ const StyledMyDayProgress = styled(Card)(({ theme }) => {
 
 const Home = memo(() => {
     const [selected, setSelected] = useState<Date>(new Date());
+    useFetchTasksOnLoad(fetchMyDay);
+    useFetchTasksOnLoad(fetchUpcomingTasks);
+    useFetchTasksOnLoad(fetchOverdueTasks);
+    const {
+        loading: myDayTasksLoading,
+        error: myDayTasksError,
+        tasks: myDayTasks,
+    } = useSelector((state: RootState) => state.myDay);
+
+    const {
+        loading: overdueTasksLoading,
+        error: overdueTasksError,
+        tasks: overdueTasks,
+    } = useSelector((state: RootState) => state.overdueTasks);
+
+    const {
+        loading: upcomingTasksLoading,
+        error: upcomingTasksError,
+        tasks: upcomingTasks,
+    } = useSelector((state: RootState) => state.upcomingTasks);
 
     return (
         <StyledHomeContainer>
@@ -136,43 +154,25 @@ const Home = memo(() => {
                 </StyledMyDayProgress>
             </StyledQuickStats>
             <StyledMyDayTasksList>
-                <Text variant="h4">My Day</Text>
-                <StyledTaskList direction="column" rowGap="8px">
-                    <Task priority={Priority.Medium} completed />
-                    <Task priority={Priority.High} />
-                    <Task priority={Priority.Low} />
-                    <Task priority={Priority.Critical} />
-                    <Task priority={Priority.Medium} />
-                    <Task priority={Priority.High} />
-                    <Task priority={Priority.Low} />
-                    <Task priority={Priority.Critical} />
-                </StyledTaskList>
+                <TaskList
+                    label="My Day"
+                    tasks={myDayTasks}
+                    loading={myDayTasksLoading}
+                />
             </StyledMyDayTasksList>
             <StyledOverdueTasksList>
-                <Text variant="h4">Overdue Tasks</Text>
-                <StyledTaskList direction="column" rowGap="8px">
-                    <Task priority={Priority.Medium} />
-                    <Task priority={Priority.High} />
-                    <Task priority={Priority.Low} />
-                    <Task priority={Priority.Critical} />
-                    <Task priority={Priority.Medium} />
-                    <Task priority={Priority.High} />
-                    <Task priority={Priority.Low} />
-                    <Task priority={Priority.Critical} />
-                </StyledTaskList>
+                <TaskList
+                    label="Overdue Tasks"
+                    tasks={overdueTasks}
+                    loading={overdueTasksLoading}
+                />
             </StyledOverdueTasksList>
             <StyledUpcomingTasksList>
-                <Text variant="h4">Upcoming Tasks</Text>
-                <StyledTaskList direction="column" rowGap="8px">
-                    <Task priority={Priority.Medium} />
-                    <Task priority={Priority.High} />
-                    <Task priority={Priority.Low} />
-                    <Task priority={Priority.Critical} />
-                    <Task priority={Priority.Medium} />
-                    <Task priority={Priority.High} />
-                    <Task priority={Priority.Low} />
-                    <Task priority={Priority.Critical} />
-                </StyledTaskList>
+                <TaskList
+                    label="Upcoming Tasks"
+                    tasks={upcomingTasks}
+                    loading={upcomingTasksLoading}
+                />
             </StyledUpcomingTasksList>
             <StyledCalender>
                 <DayPicker

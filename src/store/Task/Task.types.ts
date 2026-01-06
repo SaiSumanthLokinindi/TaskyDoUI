@@ -5,7 +5,13 @@ export enum TaskPriority {
     LOW = 'low',
 }
 
-export type Task = {
+export type TasksState = {
+    tasks: TaskInfo[];
+    loading: boolean;
+    error?: string;
+};
+
+export type TaskInfo = {
     id: string;
     label: string;
     description?: string;
@@ -13,5 +19,5 @@ export type Task = {
     dueDate?: Date;
     category?: string;
     priority?: TaskPriority;
-    status: { completed: boolean; completedOn?: Date };
+    status?: { completed?: boolean; completedOn?: Date };
 };

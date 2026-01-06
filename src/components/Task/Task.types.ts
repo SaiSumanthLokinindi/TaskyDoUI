@@ -7,7 +7,7 @@ export enum Priority {
 
 export interface TaskProps {
     label: string;
-    completed: boolean;
+    completed?: boolean;
     dueDate?: Date;
     priority?: Priority;
 }

@@ -1,36 +1,34 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchTasksThunk, tasksInitialState } from './utils';
 
-export const fetchMyDay = fetchTasksThunk('myDay/fetch', 'myday');
+export const fetchOverdueTasks = fetchTasksThunk('overdue/fetch', 'overdue');
 
-const myDaySlice = createSlice({
-    name: 'myDay',
+const overdueTasksSlice = createSlice({
+    name: 'overdueTasks',
     initialState: tasksInitialState,
     reducers: {
-        clearMyDay(state) {
+        clearOverdueTasks(state) {
             state.tasks = [];
             state.error = undefined;
             state.loading = false;
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(fetchMyDay.pending, (state) => {
+        builder.addCase(fetchOverdueTasks.pending, (state) => {
             state.loading = true;
             state.error = undefined;
         });
-
-        builder.addCase(fetchMyDay.fulfilled, (state, action) => {
-            console.log('Fetched MyDay tasks:', action.payload);
+        builder.addCase(fetchOverdueTasks.fulfilled, (state, action) => {
+            console.log('Fetched Overdue tasks:', action.payload);
             state.tasks = action.payload;
             state.loading = false;
         });
-
-        builder.addCase(fetchMyDay.rejected, (state, action) => {
+        builder.addCase(fetchOverdueTasks.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload as string;
         });
     },
 });
 
-export const { clearMyDay } = myDaySlice.actions;
-export default myDaySlice.reducer;
+export const { clearOverdueTasks } = overdueTasksSlice.actions;
+export default overdueTasksSlice.reducer;
