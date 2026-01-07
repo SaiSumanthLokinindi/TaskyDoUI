@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import Flex from 'src/components/Flex/flex';
 import { memo } from 'react';
 import Task from '../Task/Task';
-import { Priority } from '../Task/Task.types';
 import Text from 'src/components/Text/Text';
 import { type TaskInfo } from 'src/store/Task/Task.types';
 
@@ -15,6 +14,20 @@ const StyledTaskList = styled(Flex)`
     overflow-y: auto;
     min-height: 0;
     margin-block-start: calc(1.5 * ${({ theme }) => theme.spacing});
+
+    /* Add smooth scrollbar behavior */
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: ${({ theme }) => theme.baseColors.secondaryHover};
+        border-radius: 4px;
+    }
 `;
 
 export interface TaskListProps {
@@ -31,14 +44,15 @@ const TaskList = memo(({ label, tasks, loading }: TaskListProps) => {
                 <Text>Loading...</Text>
             ) : (
                 <StyledTaskList direction="column" rowGap="8px">
-                    {tasks.map((task: TaskInfo) => {
+                    {tasks.map((task: TaskInfo, index) => {
                         return (
                             <Task
                                 key={task.id}
                                 label={task.label}
                                 completed={task.status?.completed}
                                 dueDate={task.dueDate}
-                                priority={Priority.Medium}
+                                priority={task.priority}
+                                animationDelay={index * 0.5}
                             />
                         );
                     })}

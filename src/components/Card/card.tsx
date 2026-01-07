@@ -23,8 +23,12 @@ export interface CardProps {
     className?: string;
 }
 
-const Card = ({ children, className }: CardProps) => {
-    return <StyledCard className={className}>{children}</StyledCard>;
+const Card = ({ children, className, ...restProps }: CardProps) => {
+    return (
+        <StyledCard {...restProps} className={className}>
+            {children}
+        </StyledCard>
+    );
 };
 
 export default Card;

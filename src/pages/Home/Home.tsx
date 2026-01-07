@@ -125,7 +125,7 @@ const Home = memo(() => {
                     />
                     <DueCard
                         label="Overdue"
-                        count={15}
+                        count={overdueTasks.length}
                         helperText="Tasks overdue"
                     />
                 </Flex>
@@ -136,7 +136,10 @@ const Home = memo(() => {
                             alignItems="baseline"
                         >
                             <Text variant="h5">My Day</Text>
-                            <span>12 tasks</span>
+                            <span>
+                                {myDayTasks.length}{' '}
+                                {myDayTasks.length === 1 ? 'task' : 'tasks'}
+                            </span>
                         </StyledHeader>
                         <Flex direction="column" rowGap="8px">
                             <Flex direction="column">
