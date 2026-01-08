@@ -5,7 +5,7 @@ import Text from '../Text/Text';
 import Badge, { BadgeProps } from '../Badge/Badge';
 import { Priority, TaskProps } from './Task.types';
 import { ChangeEvent, useEffect, useMemo, useState } from 'react';
-import Checkbox from '../Checkbox/Checkbox';
+import Checkbox, { StyledCheckbox } from '../Checkbox/Checkbox';
 import { formatDueDate } from 'src/utils/dates';
 
 const slideUpFadeIn = keyframes`
@@ -30,7 +30,7 @@ const StyledTaskCard = styled(Card)<{ $animationDelay?: number }>(({
         border: 0.25px solid ${theme.baseColors.secondaryHover};
         box-sizing: border-box;
         cursor: pointer;
-        align-items: center;
+        align-items: flex-start;
         opacity: 0;
         transition:
             border-color 330ms ease,
@@ -41,6 +41,10 @@ const StyledTaskCard = styled(Card)<{ $animationDelay?: number }>(({
         &:hover {
             border-color: ${theme.baseColors.tertiary};
             background-color: #252525;
+        }
+
+        ${StyledCheckbox} {
+            margin-top: 3px;
         }
     `;
 });
@@ -104,35 +108,30 @@ const Task = ({
             <Flex
                 direction="column"
                 grow={1}
-                rowGap={
-                    !taskCompleted && (priority || dueDateInfo) ? '4px' : '0'
-                }
+                rowGap={priority || dueDateInfo ? '4px' : '0'}
             >
                 <StyledTaskLabel completed={taskCompleted}>
                     {label}
                 </StyledTaskLabel>
-                {!taskCompleted && (
-                    <Flex
-                        justifyContent={
-                            priority && dueDateInfo
-                                ? 'space-between'
-                                : priority
-                                ? 'flex-end'
-                                : 'flex-start'
-                        }
-                        alignItems="center"
-                    >
-                        {dueDateInfo && (
-                            <Text variant="helper">{dueDateInfo}</Text>
-                        )}
-                        {priority && (
-                            <Badge
-                                type={badgeBackgroundMapping[priority]}
-                                label={priority}
-                            />
-                        )}
-                    </Flex>
-                )}
+
+                <Flex
+                    justifyContent={
+                        priority && dueDateInfo
+                            ? 'space-between'
+                            : priority
+                            ? 'flex-end'
+                            : 'flex-start'
+                    }
+                    alignItems="center"
+                >
+                    {dueDateInfo && <Text variant="helper">{dueDateInfo}</Text>}
+                    {priority && (
+                        <Badge
+                            type={badgeBackgroundMapping[priority]}
+                            label={priority}
+                        />
+                    )}
+                </Flex>
             </Flex>
         </StyledTaskCard>
     );

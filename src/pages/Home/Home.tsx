@@ -63,7 +63,7 @@ const StyledHomeContainer = styled.div(({ theme: { spacing } }) => {
         margin-block-start: calc(2 * ${spacing});
 
         grid-template-columns: 20% 1fr 1fr;
-        /* grid-template-rows: repeat(6, 1fr); */
+        grid-template-rows: repeat(6, 1fr);
 
         grid-template-areas:
             'quickinfo myday overdue'
