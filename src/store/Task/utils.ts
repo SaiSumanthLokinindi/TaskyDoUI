@@ -1,12 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { TaskInfo, TasksState } from './Task.types';
+import { TaskInfo } from './Task.types';
 import axios from 'src/axios-instance/axios-instance';
-
-export const tasksInitialState: TasksState = {
-    tasks: [],
-    loading: false,
-    error: undefined,
-};
 
 export const fetchTasksThunk = (
     identifier: string,
@@ -27,3 +21,26 @@ export const fetchTasksThunk = (
         }
     });
 };
+
+export const updateTaskCompletion = createAsyncThunk<
+    TaskInfo,
+    { id: string; completed: boolean },
+    { rejectValue: { id: string; completed: boolean; message: string } }
+>('task/update', async ({ id, completed }, { rejectWithValue }) => {
+    try {
+        const res = await axios.patch<TaskInfo>(`task/${id}`, {
+            status: { completed },
+        });
+        if (res.status === 200) {
+            return res.data;
+        } else {
+            throw new Error();
+        }
+    } catch (err) {
+        return rejectWithValue({
+            id,
+            completed,
+            message: 'Failed to update task completion',
+        });
+    }
+});

@@ -1,8 +1,7 @@
-import { memo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import DueCard from './DueCard';
 import Flex from 'src/components/Flex/flex';
-import styled, { css } from 'styled-components';
-import Card from 'src/components/Card/card';
+
 import Text from 'src/components/Text/Text';
 import Progress from 'src/components/Progress/Progress';
 import { DayPicker } from 'react-day-picker';
@@ -11,108 +10,55 @@ import TaskList from 'src/components/TaskList/TaskList';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import { useFetchTasksOnLoad } from 'src/store/hooks/useFetchTasksOnLoad';
-import { fetchMyDay } from 'src/store/Task/MyDaySlice';
-import { fetchUpcomingTasks } from 'src/store/Task/UpcomingTasksSlice';
-import { fetchOverdueTasks } from 'src/store/Task/OverdueTasksSlice';
-
-const StyledQuickStats = styled(Flex)`
-    grid-area: quickinfo;
-`;
-
-const StyledMyDayTasksList = styled(Card)(({ theme }) => {
-    return css`
-        padding: calc(1.5 * ${theme.spacing});
-        grid-area: myday;
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-    `;
-});
-
-const StyledOverdueTasksList = styled(Card)(({ theme }) => {
-    return css`
-        padding: calc(1.5 * ${theme.spacing});
-        grid-area: overdue;
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-    `;
-});
-
-const StyledUpcomingTasksList = styled(Card)(({ theme }) => {
-    return css`
-        padding: calc(1.5 * ${theme.spacing});
-        grid-area: upcoming;
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-    `;
-});
-
-const StyledCalender = styled(Card)(({ theme: { spacing } }) => {
-    return css`
-        padding: calc(1.5 * ${spacing});
-        grid-area: calender;
-    `;
-});
-const StyledHomeContainer = styled.div(({ theme: { spacing } }) => {
-    return css`
-        width: 100%;
-        display: grid;
-        box-sizing: border-box;
-        margin-block-start: calc(2 * ${spacing});
-
-        grid-template-columns: 20% 1fr 1fr;
-        grid-template-rows: repeat(6, 1fr);
-
-        grid-template-areas:
-            'quickinfo myday overdue'
-            'quickinfo myday overdue'
-            'calender  myday overdue'
-            'calender  myday upcoming'
-            'calender  myday upcoming'
-            'calender  myday upcoming';
-
-        gap: calc(2 * ${spacing});
-    `;
-});
-
-const StyledHeader = styled(Flex)`
-    font-size: 0.875rem;
-`;
-
-const StyledProgressContainer = styled(Flex)`
-    font-size: 0.725rem;
-`;
-
-const StyledMyDayProgress = styled(Card)(({ theme }) => {
-    return css`
-        padding: calc(1.5 * ${theme.spacing});
-    `;
-});
+import { fetchMyDay } from 'src/store/Task/TaskSlice';
+import { fetchUpcomingTasks } from 'src/store/Task/TaskSlice';
+import { fetchOverdueTasks } from 'src/store/Task/TaskSlice';
+import {
+    StyledHomeContainer,
+    StyledQuickStats,
+    StyledMyDayProgress,
+    StyledHeader,
+    StyledProgressContainer,
+    StyledMyDayTasksList,
+    StyledOverdueTasksList,
+    StyledUpcomingTasksList,
+    StyledCalender,
+} from './Home.styles';
+import {
+    selectMyDayTasks,
+    selectOverdueTasks,
+    selectUpcomingTasks,
+} from 'src/store/Task/TaskSelectors';
 
 const Home = memo(() => {
     const [selected, setSelected] = useState<Date>(new Date());
     useFetchTasksOnLoad(fetchMyDay);
     useFetchTasksOnLoad(fetchUpcomingTasks);
     useFetchTasksOnLoad(fetchOverdueTasks);
-    const {
-        loading: myDayTasksLoading,
-        error: myDayTasksError,
-        tasks: myDayTasks,
-    } = useSelector((state: RootState) => state.myDay);
+    const { loading: myDayTasksLoading, error: myDayTasksError } = useSelector(
+        (state: RootState) => state.tasks.myDayState,
+    );
+    const myDayTasks = useSelector(selectMyDayTasks);
+    const [myDayTasksCompletedCount, myDayTasksCompletionPercentage] =
+        useMemo(() => {
+            const completedCount = myDayTasks.reduce((acc, current) => {
+                if (current.status?.completed) {
+                    return acc + 1;
+                }
+                return acc;
+            }, 0);
+            const completionPercentage =
+                (completedCount / myDayTasks.length) * 100;
+            return [completedCount, Math.ceil(completionPercentage)];
+        }, [myDayTasks]);
 
-    const {
-        loading: overdueTasksLoading,
-        error: overdueTasksError,
-        tasks: overdueTasks,
-    } = useSelector((state: RootState) => state.overdueTasks);
+    const { loading: overdueTasksLoading, error: overdueTasksError } =
+        useSelector((state: RootState) => state.tasks.overdueState);
+    const overdueTasks = useSelector(selectOverdueTasks);
 
-    const {
-        loading: upcomingTasksLoading,
-        error: upcomingTasksError,
-        tasks: upcomingTasks,
-    } = useSelector((state: RootState) => state.upcomingTasks);
+    const { loading: upcomingTasksLoading, error: upcomingTasksError } =
+        useSelector((state: RootState) => state.tasks.upcomingState);
+    const upcomingTasks = useSelector(selectUpcomingTasks);
 
     return (
         <StyledHomeContainer>
@@ -145,12 +91,16 @@ const Home = memo(() => {
                             <Flex direction="column">
                                 <StyledProgressContainer justifyContent="space-between">
                                     <span>Progress</span>
-                                    <span>32%</span>
+                                    <span>
+                                        {myDayTasksCompletionPercentage}%
+                                    </span>
                                 </StyledProgressContainer>
-                                <Progress value="65" />
+                                <Progress
+                                    value={myDayTasksCompletionPercentage.toString()}
+                                />
                             </Flex>
                             <Text size="xs" variant="helper">
-                                5 tasks completed
+                                {myDayTasksCompletedCount} tasks completed
                             </Text>
                         </Flex>
                     </Flex>

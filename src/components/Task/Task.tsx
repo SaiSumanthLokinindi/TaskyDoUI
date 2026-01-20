@@ -7,6 +7,10 @@ import { Priority, TaskProps } from './Task.types';
 import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import Checkbox, { StyledCheckbox } from '../Checkbox/Checkbox';
 import { formatDueDate } from 'src/utils/dates';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from 'src/store';
+import { markTaskCompleted } from 'src/store/Task/TaskSlice';
+import { updateTaskCompletion } from 'src/store/Task/utils';
 
 const slideUpFadeIn = keyframes`
     from {
@@ -71,46 +75,60 @@ const StyledTaskLabel = styled.span<Pick<TaskProps, 'completed'>>(
 );
 
 const badgeBackgroundMapping: Record<Priority, BadgeProps['type']> = {
-    low: 'success',
-    medium: 'warning',
-    high: 'high',
-    critical: 'error',
+    0: 'success',
+    1: 'warning',
+    2: 'high',
+    3: 'error',
+};
+
+const priorityLabelMapping: Record<Priority, string> = {
+    0: 'low',
+    1: 'medium',
+    2: 'high',
+    3: 'critical',
 };
 
 const Task = ({
+    id,
     label,
     completed,
     dueDate,
     priority,
     animationDelay,
+    onClick,
+    onTaskCompletionChange,
 }: TaskProps) => {
-    const [taskCompleted, setTaskCompleted] = useState(completed || false);
-
+    const dispatch = useDispatch<AppDispatch>();
     const dueDateInfo = useMemo(() => {
         if (!dueDate) return null;
         return formatDueDate(dueDate);
     }, [dueDate]);
 
-    useEffect(() => {
-        setTaskCompleted(completed || false);
-    }, [completed]);
+    const handleTaskCompletionChange = (
+        e?: React.ChangeEvent<HTMLInputElement>,
+    ) => {
+        onTaskCompletionChange?.(id, e);
+        dispatch(
+            markTaskCompleted({ id, completed: e?.target.checked || false }),
+        );
 
-    const onTaskCompletionChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setTaskCompleted(event.target.checked);
+        dispatch(
+            updateTaskCompletion({ id, completed: e?.target.checked || false }),
+        );
     };
 
     return (
         <StyledTaskCard $animationDelay={animationDelay || 0}>
             <Checkbox
-                checked={taskCompleted}
-                onChange={onTaskCompletionChange}
+                checked={completed || false}
+                onChange={handleTaskCompletionChange}
             />
             <Flex
                 direction="column"
                 grow={1}
                 rowGap={priority || dueDateInfo ? '4px' : '0'}
             >
-                <StyledTaskLabel completed={taskCompleted}>
+                <StyledTaskLabel completed={completed || false}>
                     {label}
                 </StyledTaskLabel>
 
@@ -128,7 +146,7 @@ const Task = ({
                     {priority && (
                         <Badge
                             type={badgeBackgroundMapping[priority]}
-                            label={priority}
+                            label={priorityLabelMapping[priority]}
                         />
                     )}
                 </Flex>

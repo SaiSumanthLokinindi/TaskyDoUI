@@ -47,6 +47,7 @@ const TaskList = memo(({ label, tasks, loading }: TaskListProps) => {
                     {tasks.map((task: TaskInfo, index) => {
                         return (
                             <Task
+                                id={task.id}
                                 key={task.id}
                                 label={task.label}
                                 completed={task.status?.completed}

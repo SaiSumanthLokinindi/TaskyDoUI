@@ -1,5 +1,4 @@
 import { memo } from 'react';
-import Text from '../Text/Text';
 import styled, { css } from 'styled-components';
 
 export const StyledBadge = styled.span<Pick<BadgeProps, 'type'>>(

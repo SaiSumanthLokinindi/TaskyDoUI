@@ -1,15 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import MyDayReducer from './Task/MyDaySlice';
 import UserReducer from './User/UserSlice';
-import UpcomingTasksReducer from './Task/UpcomingTasksSlice';
-import OverdueTasksReducer from './Task/OverdueTasksSlice';
+import TaskReducer from './Task/TaskSlice';
 
 const store = configureStore({
     reducer: {
         user: UserReducer,
-        myDay: MyDayReducer,
-        upcomingTasks: UpcomingTasksReducer,
-        overdueTasks: OverdueTasksReducer,
+        tasks: TaskReducer,
     },
 });
 
