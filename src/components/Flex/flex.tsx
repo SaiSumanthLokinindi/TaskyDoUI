@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { HTMLAttributes, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
 export const StyledFlex = styled.div<FlexProps>(
@@ -58,7 +58,7 @@ export const StyledFlex = styled.div<FlexProps>(
     },
 );
 
-interface FlexProps {
+interface FlexProps extends HTMLAttributes<HTMLDivElement> {
     inline?: boolean;
     direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
     alignItems?: 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline';

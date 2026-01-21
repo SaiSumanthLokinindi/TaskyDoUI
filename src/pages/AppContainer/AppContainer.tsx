@@ -12,6 +12,7 @@ import Button, { StyledButton } from 'src/components/Button/button';
 import useBreakpoint from 'src/hooks/useBreakpoint';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
+import { useModal } from 'src/components/Modal/ModalContext';
 
 const StyledFlex = styled(Flex)(({ theme: { spacing, breakpoints } }) => {
     return css`
@@ -55,6 +56,10 @@ const StyledNavigationWrapper = styled(Flex)(({
             flex-shrink: 0;
         }
 
+        ${StyledButton}:last-child {
+            border-radius: 50px;
+        }
+
         @media (max-width: ${breakpoints.md}) {
             ${StyledButton}:last-child {
                 border-radius: 100%;
@@ -81,6 +86,27 @@ const AppContainer = memo(() => {
         loading: state.user.loading,
     }));
 
+    const { openModal, closeModal } = useModal();
+
+    const openAddTaskModal = () => {
+        openModal({
+            title: 'New Task',
+            body: <div>Add Task</div>,
+            actions: [
+                {
+                    label: 'Cancel',
+                    onClick: () => closeModal(),
+                    variant: 'secondary',
+                },
+                {
+                    label: 'Add Task',
+                    onClick: () => {},
+                    variant: 'primary',
+                },
+            ],
+        });
+    };
+
     return (
         <StyledFlex direction="column">
             <Flex alignItems="center" justifyContent="space-between">
@@ -104,7 +130,7 @@ const AppContainer = memo(() => {
                 />
                 <StyledNavigationWrapper columnGap="0.5rem" alignItems="center">
                     <Navigation />
-                    <Button>
+                    <Button onClick={openAddTaskModal}>
                         <IoAdd />{' '}
                         {isMediumScreenOrAbove && <span> Add Task</span>}
                     </Button>

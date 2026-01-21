@@ -17,10 +17,21 @@ export const StyledButton = styled.button<{
     $progress: ButtonProps['progress'];
     $variant: ButtonProps['variant'];
 }>(({ $progress, $variant, theme }) => {
-    const backgroundColor: string =
-        $variant === 'link'
-            ? 'transparent'
-            : (theme.baseColors.tertiary as string);
+    let backgroundColor: string = theme.baseColors.tertiary;
+
+    switch ($variant) {
+        case 'primary':
+            backgroundColor = theme.baseColors.tertiary;
+            break;
+        case 'secondary':
+            backgroundColor = theme.baseColors.secondary;
+            break;
+        case 'link':
+            backgroundColor = 'transparent';
+            break;
+        default:
+            backgroundColor = theme.baseColors.tertiary;
+    }
 
     return css`
         appearance: none;
@@ -33,9 +44,8 @@ export const StyledButton = styled.button<{
         font-weight: 500;
         white-space: nowrap;
         outline: none;
-        min-height: 2.5rem;
-        min-width: 6rem;
         padding: 8px calc(3 * ${theme.spacing});
+        transition: background-color 0.2s ease-in-out;
 
         &:hover {
             background-color: #1dbe45;
@@ -76,6 +86,11 @@ export const StyledButton = styled.button<{
                 margin-bottom: -2px;
                 outline: none;
             }
+        `}
+
+        ${$variant === 'secondary' &&
+        css`
+            border: 1.75px solid ${theme.baseColors.tertiary};
         `}
 
         ${$progress &&

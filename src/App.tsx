@@ -6,6 +6,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import AppRoutes from './routing/AppRoutes';
 import { Provider } from 'react-redux';
 import store from './store/index';
+import ModalProvider from './components/Modal/ModalProvider';
 
 const StyledBody = styled(Flex)(() => {
     return css`
@@ -21,14 +22,16 @@ function App() {
             <Router>
                 {/* This has global styles and theme provider */}
                 <Configuration>
-                    <AuthProvider>
-                        <StyledBody
-                            justifyContent="center"
-                            alignItems="flex-start"
-                        >
-                            <AppRoutes />
-                        </StyledBody>
-                    </AuthProvider>
+                    <ModalProvider>
+                        <AuthProvider>
+                            <StyledBody
+                                justifyContent="center"
+                                alignItems="flex-start"
+                            >
+                                <AppRoutes />
+                            </StyledBody>
+                        </AuthProvider>
+                    </ModalProvider>
                 </Configuration>
             </Router>
         </Provider>
