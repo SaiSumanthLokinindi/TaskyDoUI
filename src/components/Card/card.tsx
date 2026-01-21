@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { HTMLAttributes, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
 export const StyledCard = styled.article(({ theme }) => {
@@ -18,7 +18,7 @@ export const StyledCard = styled.article(({ theme }) => {
     `;
 });
 
-export interface CardProps {
+export interface CardProps extends HTMLAttributes<HTMLElement> {
     children: ReactNode;
     className?: string;
 }

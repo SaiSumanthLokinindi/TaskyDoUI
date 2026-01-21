@@ -16,10 +16,7 @@ export interface TaskProps {
     dueDate?: TaskInfo['dueDate'];
     priority?: string;
     animationDelay?: number;
-    onClick?: (
-        id: TaskInfo['id'],
-        e?: React.MouseEvent<HTMLDivElement>,
-    ) => void;
+    onClick?: (id: TaskInfo['id'], e?: React.MouseEvent<HTMLElement>) => void;
     onTaskCompletionChange?: (
         id: TaskInfo['id'],
         e?: React.ChangeEvent<HTMLInputElement>,

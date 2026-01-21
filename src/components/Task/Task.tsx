@@ -4,7 +4,7 @@ import Flex from '../Flex/flex';
 import Text from '../Text/Text';
 import Badge, { BadgeProps } from '../Badge/Badge';
 import { Priority, TaskProps } from './Task.types';
-import { ChangeEvent, useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import Checkbox, { StyledCheckbox } from '../Checkbox/Checkbox';
 import { formatDueDate } from 'src/utils/dates';
 import { useDispatch } from 'react-redux';
@@ -118,10 +118,14 @@ const Task = ({
     };
 
     return (
-        <StyledTaskCard $animationDelay={animationDelay || 0}>
+        <StyledTaskCard
+            $animationDelay={animationDelay || 0}
+            onClick={(e) => onClick?.(id, e)}
+        >
             <Checkbox
                 checked={completed || false}
                 onChange={handleTaskCompletionChange}
+                onClick={(e) => e.stopPropagation()}
             />
             <Flex
                 direction="column"
