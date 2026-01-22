@@ -38,7 +38,7 @@ const StyledModal = styled(Card)(({ theme: { spacing } }) => {
         padding: calc(2 * ${spacing});
         display: flex;
         flex-direction: column;
-        row-gap: ${spacing};
+        row-gap: calc(2 * ${spacing});
         animation: ${slideUpFadeIn} 0.3s ease-in-out forwards;
         box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.25);
     `;

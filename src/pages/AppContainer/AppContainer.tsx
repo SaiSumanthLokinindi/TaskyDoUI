@@ -13,6 +13,7 @@ import useBreakpoint from 'src/hooks/useBreakpoint';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import { useModal } from 'src/components/Modal/ModalContext';
+import EditTask from '../EditTask/EditTask';
 
 const StyledFlex = styled(Flex)(({ theme: { spacing, breakpoints } }) => {
     return css`
@@ -91,7 +92,7 @@ const AppContainer = memo(() => {
     const openAddTaskModal = () => {
         openModal({
             title: 'New Task',
-            body: <div>Add Task</div>,
+            body: <EditTask />,
             actions: [
                 {
                     label: 'Cancel',

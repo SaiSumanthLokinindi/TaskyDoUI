@@ -4,9 +4,15 @@ import { memo } from 'react';
 import Task from '../Task/Task';
 import Text from 'src/components/Text/Text';
 import { type TaskInfo } from 'src/store/Task/Task.types';
+import Loader, { StyledLoader } from '../Loader/Loader';
 
 const StyledListWrapper = styled(Flex)`
     min-height: 0;
+    height: 100%;
+    ${StyledLoader} {
+        height: 2rem;
+        width: 2rem;
+    }
 `;
 
 const StyledTaskList = styled(Flex)`
@@ -41,7 +47,14 @@ const TaskList = memo(({ label, tasks, loading }: TaskListProps) => {
         <StyledListWrapper direction="column">
             {label && <Text variant="h4">{label}</Text>}
             {loading ? (
-                <Text>Loading...</Text>
+                <Flex
+                    style={{ height: '100%', width: '100%' }}
+                    alignItems="center"
+                    justifyContent="center"
+                    grow={1}
+                >
+                    <Loader />
+                </Flex>
             ) : (
                 <StyledTaskList direction="column" rowGap="8px">
                     {tasks.map((task: TaskInfo, index) => {

@@ -28,49 +28,57 @@ const StyledInputWrapper = styled.div`
     width: 100%;
 `;
 
-export const StyledInput = styled.input<{ status: InputProps['status'] }>(
-    ({ status, theme }) => {
-        return css`
-            background-color: ${theme.components.input.backgroundColor};
-            color: ${theme.text.primary};
-            appearance: none;
-            outline: none;
-            border: 2px solid transparent;
-            border-radius: 4px;
-            height: 40px;
-            padding: ${theme.spacing} calc(2 * ${theme.spacing});
-            width: 100%;
-            font-size: 0.9rem;
-            box-sizing: border-box;
+export const StyledInput = styled.input<{
+    status: InputProps['status'];
+    type: InputProps['type'];
+}>(({ status, theme, type }) => {
+    return css`
+        background-color: ${theme.components.input.backgroundColor};
+        color: ${theme.text.primary};
+        appearance: none;
+        outline: none;
+        border: 2px solid transparent;
+        border-radius: 4px;
+        height: 40px;
+        padding: ${theme.spacing} calc(2 * ${theme.spacing});
+        width: 100%;
+        font-size: 0.9rem;
+        box-sizing: border-box;
+
+        ${type === 'textarea' &&
+        css`
+            height: auto;
+            min-height: 100px;
+            max-height: 300px;
+            resize: vertical;
+        `}
+
+        &::placeholder {
+            color: ${theme.components.input.placeholderColor};
+        }
+
+        &:focus {
+            outline: 2.5px solid ${theme.baseColors.tertiary};
+            box-shadow: 0 0 8px 4px rgba(30, 169, 65, 0.2);
+        }
+
+        &:disabled {
+            color: ${theme.text.disabled};
+            background-color: ${theme.components.input.disabledBackgroundColor};
 
             &::placeholder {
-                color: ${theme.components.input.placeholderColor};
-            }
-
-            &:focus {
-                outline: 2.5px solid ${theme.baseColors.tertiary};
-                box-shadow: 0 0 8px 4px rgba(30, 169, 65, 0.2);
-            }
-
-            &:disabled {
                 color: ${theme.text.disabled};
-                background-color: ${theme.components.input
-                    .disabledBackgroundColor};
-
-                &::placeholder {
-                    color: ${theme.text.disabled};
-                }
             }
+        }
 
-            ${status === 'error' &&
-            css`
-                &:not(:focus) {
-                    border: 2px solid red;
-                }
-            `}
-        `;
-    },
-);
+        ${status === 'error' &&
+        css`
+            &:not(:focus) {
+                border: 2px solid red;
+            }
+        `}
+    `;
+});
 
 export const StyledInfo = styled.div(
     ({
