@@ -9,14 +9,17 @@ import {
 } from 'react';
 import styled, { css } from 'styled-components';
 
+// Union type for both input and textarea elements
+type InputElement = HTMLInputElement | HTMLTextAreaElement;
+
 export interface InputProps {
     defaultValue?: string;
     disabled?: boolean;
     info?: string | string[];
     name?: string;
-    onChange?: (e?: ChangeEvent<HTMLInputElement>) => void;
-    onBlur?: (e?: FocusEvent<HTMLInputElement>) => void;
-    onFocus?: (e?: FocusEvent<HTMLInputElement>) => void;
+    onChange?: (e?: ChangeEvent<InputElement>) => void;
+    onBlur?: (e?: FocusEvent<InputElement>) => void;
+    onFocus?: (e?: FocusEvent<InputElement>) => void;
     placeholder?: string;
     readOnly?: boolean;
     required?: boolean;
@@ -28,30 +31,20 @@ const StyledInputWrapper = styled.div`
     width: 100%;
 `;
 
-export const StyledInput = styled.input<{
-    status: InputProps['status'];
-    type: InputProps['type'];
-}>(({ status, theme, type }) => {
-    return css`
+// Shared styles for input, textarea, and select
+export const sharedInputStyles = css<{ status?: InputProps['status'] }>`
+    ${({ status, theme }) => css`
         background-color: ${theme.components.input.backgroundColor};
         color: ${theme.text.primary};
         appearance: none;
         outline: none;
         border: 2px solid transparent;
         border-radius: 4px;
-        height: 40px;
         padding: ${theme.spacing} calc(2 * ${theme.spacing});
         width: 100%;
         font-size: 0.9rem;
+        font-family: inherit;
         box-sizing: border-box;
-
-        ${type === 'textarea' &&
-        css`
-            height: auto;
-            min-height: 100px;
-            max-height: 300px;
-            resize: vertical;
-        `}
 
         &::placeholder {
             color: ${theme.components.input.placeholderColor};
@@ -77,8 +70,28 @@ export const StyledInput = styled.input<{
                 border: 2px solid red;
             }
         `}
-    `;
-});
+    `}
+`;
+
+export const StyledInput = styled.input<{
+    status: InputProps['status'];
+}>`
+    ${sharedInputStyles}
+    height: 40px;
+`;
+
+export const StyledTextarea = styled.textarea<{
+    status: InputProps['status'];
+}>`
+    ${sharedInputStyles}
+    display: block;
+    height: auto;
+    min-height: 100px;
+    max-height: 300px;
+    resize: vertical;
+    line-height: 1.5;
+    border: none;
+`;
 
 export const StyledInfo = styled.div(
     ({
@@ -100,9 +113,7 @@ export const StyledInfo = styled.div(
     },
 );
 
-// StyledInput.defaultProps = Theme
-
-const Input = forwardRef(
+const Input = forwardRef<InputElement, PropsWithoutRef<InputProps>>(
     (
         {
             type = 'text',
@@ -111,8 +122,8 @@ const Input = forwardRef(
             info,
             status,
             ...restProps
-        }: PropsWithoutRef<InputProps>,
-        ref?: Ref<HTMLInputElement>,
+        },
+        ref,
     ) => {
         const [value, setValue] = useState(defaultValue);
 
@@ -120,23 +131,39 @@ const Input = forwardRef(
             setValue(defaultValue);
         }, [defaultValue]);
 
+        const handleChange = (e: ChangeEvent<InputElement>) => {
+            setValue(e.currentTarget.value);
+            onChange?.(e);
+        };
+
+        const isTextarea = type === 'textarea';
+
         return (
             <StyledInputWrapper>
-                <StyledInput
-                    {...restProps}
-                    status={status}
-                    ref={ref}
-                    value={value}
-                    type={type}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                        setValue(e.currentTarget.value);
-                        onChange?.(e);
-                    }}
-                ></StyledInput>
+                {isTextarea ? (
+                    <StyledTextarea
+                        {...restProps}
+                        status={status}
+                        ref={ref as Ref<HTMLTextAreaElement>}
+                        value={value}
+                        onChange={handleChange}
+                    />
+                ) : (
+                    <StyledInput
+                        {...restProps}
+                        status={status}
+                        ref={ref as Ref<HTMLInputElement>}
+                        value={value}
+                        type={type}
+                        onChange={handleChange}
+                    />
+                )}
                 <StyledInfo>
                     {info &&
                         (Array.isArray(info) ? (
-                            info.map((message) => <span>{message}</span>)
+                            info.map((message, index) => (
+                                <span key={index}>{message}</span>
+                            ))
                         ) : (
                             <span>{info}</span>
                         ))}
