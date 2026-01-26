@@ -1,7 +1,9 @@
 import { memo } from 'react';
+import DesktopDateInput from 'src/components/DesktopDateInput/DesktopDateInput';
 import Flex from 'src/components/Flex/flex';
 import Input, { StyledInput } from 'src/components/Input/input';
 import Select from 'src/components/Select/Select';
+import { useMedia } from 'src/styles/useMedia';
 import styled, { css } from 'styled-components';
 
 const StyledEditTaskContainer = styled(Flex)(({ theme: { spacing } }) => {
@@ -14,12 +16,14 @@ const StyledEditTaskContainer = styled(Flex)(({ theme: { spacing } }) => {
 });
 
 const EditTask = () => {
+    const { isDesktop } = useMedia();
+
     return (
         <StyledEditTaskContainer direction="column" rowGap="8px">
             <Input type="text" placeholder="Task Name" name="task-label" />
             <Input
                 type="textarea"
-                placeholder="description of task"
+                placeholder="Description of task"
                 name="task-description"
             />
             <Select
@@ -28,16 +32,25 @@ const EditTask = () => {
             />
 
             <Flex columnGap="8px">
-                <Input
-                    type="date"
-                    placeholder="Schedule Date"
-                    name="task-due-date"
-                />
-                <Input
-                    type="date"
-                    placeholder="Due Date"
-                    name="task-due-date"
-                />
+                {isDesktop ? (
+                    <>
+                        <DesktopDateInput label="Schedule Date" />
+                        <DesktopDateInput label="Due Date" />
+                    </>
+                ) : (
+                    <>
+                        <Input
+                            type="date"
+                            placeholder="Schedule Date"
+                            name="task-schedule-date"
+                        />
+                        <Input
+                            type="date"
+                            placeholder="Due Date"
+                            name="task-due-date"
+                        />
+                    </>
+                )}
             </Flex>
         </StyledEditTaskContainer>
     );
