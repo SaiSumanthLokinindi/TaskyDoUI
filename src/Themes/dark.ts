@@ -6,7 +6,7 @@ const dark = {
         tertiary: '#1EA941',
         clicked: '#1C943A',
         secondaryHover: 'rgba(171,171,171,0.25)',
-        danger: '#D21B1B',
+        danger: '#ca3535ff',
         success: '#1EA941',
         warning: '#D27D1B',
     },

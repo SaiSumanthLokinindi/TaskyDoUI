@@ -19,23 +19,36 @@ const EditTask = () => {
     const { isDesktop } = useMedia();
 
     return (
-        <StyledEditTaskContainer direction="column" rowGap="8px">
-            <Input type="text" placeholder="Task Name" name="task-label" />
+        <StyledEditTaskContainer direction="column" rowGap="24px">
+            <Input
+                type="text"
+                placeholder="Title of task"
+                name="task-label"
+                label="Title"
+            />
             <Input
                 type="textarea"
-                placeholder="Description of task"
+                placeholder="Add more details about this task"
                 name="task-description"
+                label="Description"
             />
             <Select
-                placeholder="Priority"
                 options={['Critical', 'High', 'Medium', 'Low']}
+                label="Priority"
+                placeholder="Select priority"
             />
 
             <Flex columnGap="8px">
                 {isDesktop ? (
                     <>
-                        <DesktopDateInput label="Schedule Date" />
-                        <DesktopDateInput label="Due Date" />
+                        <DesktopDateInput
+                            placeholder="DD-MMM-YYYY"
+                            label="Schedule Date"
+                        />
+                        <DesktopDateInput
+                            placeholder="DD-MMM-YYYY"
+                            label="Due Date"
+                        />
                     </>
                 ) : (
                     <>

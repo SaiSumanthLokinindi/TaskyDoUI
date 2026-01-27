@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useState } from 'react';
-import Modal, { ModalProps } from './Model';
+import Modal, { ModalProps } from './Modal';
 import { ModalContext } from './ModalContext';
 
 export const ModalProvider = ({ children }: { children: ReactNode }) => {

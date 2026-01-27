@@ -18,6 +18,7 @@ export const StyledButton = styled.button<{
     $variant: ButtonProps['variant'];
 }>(({ $progress, $variant, theme }) => {
     let backgroundColor: string = theme.baseColors.tertiary;
+    let color: string = theme.text.primary;
 
     switch ($variant) {
         case 'primary':
@@ -25,6 +26,7 @@ export const StyledButton = styled.button<{
             break;
         case 'secondary':
             backgroundColor = theme.baseColors.secondary;
+            color = theme.baseColors.tertiary;
             break;
         case 'link':
             backgroundColor = 'transparent';
@@ -39,7 +41,7 @@ export const StyledButton = styled.button<{
         background-color: ${backgroundColor};
         border-radius: 4px;
         border: none;
-        color: ${theme.text.primary};
+        color: ${color};
         font-size: 1rem;
         font-weight: 500;
         white-space: nowrap;
@@ -50,6 +52,7 @@ export const StyledButton = styled.button<{
         &:hover {
             background-color: #1dbe45;
             cursor: pointer;
+            color: ${theme.text.primary};
         }
 
         &:active {

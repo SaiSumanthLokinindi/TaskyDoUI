@@ -32,7 +32,7 @@ const StyledModal = styled(Card)(({ theme: { spacing } }) => {
         left: 50%;
         transform: translate(-50%, -50%);
         width: 100%;
-        max-width: 400px;
+        max-width: 600px;
         max-height: 600px;
         z-index: 1000;
         padding: calc(2 * ${spacing});
@@ -51,6 +51,7 @@ export const StyledModalHeader = styled(Flex)(({ theme }) => {
             padding: ${theme.spacing} ${theme.spacing};
             display: flex;
             align-items: center;
+            border-radius: 50%;
         }
     `;
 });
@@ -59,7 +60,7 @@ export const StyledModalFooter = styled(Flex)(({ theme }) => {
     return css`
         ${StyledButton} {
             font-size: 0.8rem;
-            padding: calc(0.75 * ${theme.spacing}) calc(2 * ${theme.spacing});
+            padding: calc(1 * ${theme.spacing}) calc(3 * ${theme.spacing});
         }
     `;
 });

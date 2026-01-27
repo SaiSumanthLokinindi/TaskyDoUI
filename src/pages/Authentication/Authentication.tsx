@@ -27,7 +27,7 @@ const Authentication = memo(
                     <StyledHeader justifyContent="center" alignItems="center">
                         <img alt="logo of tasky do app" src={TaskyDoLogo} />
                     </StyledHeader>
-                    <StyledError>{formError}</StyledError>
+                    {formError && <StyledError>{formError}</StyledError>}
                     {authType === 'login' ? (
                         <Login setFormError={setFormError} />
                     ) : (

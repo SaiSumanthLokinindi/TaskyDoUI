@@ -91,8 +91,9 @@ const Login = memo(
             <form onSubmit={handleLogin}>
                 <Flex direction="column" rowGap="16px" alignItems="center">
                     <Input
-                        placeholder="email"
                         name="email"
+                        label="Email"
+                        placeholder="name@company.com"
                         onChange={() => {
                             setFormError('');
                             resetError('email');
@@ -105,11 +106,15 @@ const Login = memo(
                                 ? formErrors.email
                                 : undefined
                         }
+                        status={
+                            formErrors.email?.length > 0 ? 'error' : undefined
+                        }
                     />
                     <Input
                         type="password"
                         name="password"
-                        placeholder="password"
+                        label="Password"
+                        placeholder="********"
                         onChange={() => {
                             setFormError('');
                             resetError('password');
@@ -123,6 +128,11 @@ const Login = memo(
                         info={
                             formErrors.password?.length > 0
                                 ? formErrors.password
+                                : undefined
+                        }
+                        status={
+                            formErrors.password?.length > 0
+                                ? 'error'
                                 : undefined
                         }
                     />

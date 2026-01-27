@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { ModalProps } from './Model';
+import { ModalProps } from './Modal';
 
 type ModalContextType = {
     openModal: (modalConfig: ModalProps) => void;

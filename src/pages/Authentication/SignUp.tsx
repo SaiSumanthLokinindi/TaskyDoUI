@@ -121,7 +121,8 @@ const SignUp = memo(
             <form onSubmit={handleSignUp}>
                 <Flex direction="column" rowGap="16px" alignItems="center">
                     <Input
-                        placeholder="Name"
+                        label="Full Name"
+                        placeholder="eg: John Doe"
                         name="name"
                         onChange={() => {
                             setFormError('');
@@ -140,9 +141,10 @@ const SignUp = memo(
                         }
                     />
                     <Input
+                        label="Email"
                         type="email"
                         name="email"
-                        placeholder="email"
+                        placeholder="eg: jondoe@company.com"
                         onChange={() => {
                             setFormError('');
                             resetError('email');
@@ -160,9 +162,10 @@ const SignUp = memo(
                         }
                     />
                     <Input
+                        label="Password"
                         type="password"
                         name="password"
-                        placeholder="password"
+                        placeholder="*******"
                         onChange={() => {
                             setFormError('');
                             resetError('password');
@@ -191,7 +194,7 @@ const SignUp = memo(
                         }
                     />
                     <Button type="submit" progress={loading}>
-                        signUp
+                        Sign Up
                     </Button>
                 </Flex>
             </form>

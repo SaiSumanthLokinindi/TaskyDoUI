@@ -1,6 +1,6 @@
 import { memo, useState, useRef, useEffect, KeyboardEvent } from 'react';
 import styled, { css } from 'styled-components';
-import { sharedInputStyles } from '../Input/input';
+import { sharedInputStyles, sharedLableStyles } from '../Input/input';
 
 export interface SelectProps {
     options: string[];
@@ -9,9 +9,20 @@ export interface SelectProps {
     onChange?: (value: string) => void;
     status?: 'error' | 'info' | 'warning';
     disabled?: boolean;
+    label?: string;
 }
 
-const SelectWrapper = styled.div`
+const StyledInputWrapper = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+`;
+
+const StyledLabel = styled.label`
+    ${sharedLableStyles}
+`;
+
+const SelectContainer = styled.div`
     position: relative;
     width: 100%;
 `;
@@ -127,10 +138,14 @@ const Select = memo(
         onChange,
         status,
         disabled = false,
+        label,
     }: SelectProps) => {
         const [isOpen, setIsOpen] = useState(false);
         const [selectedValue, setSelectedValue] = useState(value || '');
         const [highlightedIndex, setHighlightedIndex] = useState(-1);
+        const [id] = useState(
+            () => `select-${Math.random().toString(36).substr(2, 9)}`,
+        );
         const wrapperRef = useRef<HTMLDivElement>(null);
         const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -202,46 +217,50 @@ const Select = memo(
         };
 
         return (
-            <SelectWrapper ref={wrapperRef}>
-                <SelectTrigger
-                    ref={triggerRef}
-                    type="button"
-                    status={status}
-                    isOpen={isOpen}
-                    disabled={disabled}
-                    onClick={() => !disabled && setIsOpen(!isOpen)}
-                    onKeyDown={handleKeyDown}
-                    aria-haspopup="listbox"
-                    aria-expanded={isOpen}
-                >
-                    {selectedValue ? (
-                        selectedValue
-                    ) : (
-                        <Placeholder>{placeholder}</Placeholder>
-                    )}
-                    <Arrow isOpen={isOpen}>
-                        <svg viewBox="0 0 24 24">
-                            <polyline points="6 9 12 15 18 9" />
-                        </svg>
-                    </Arrow>
-                </SelectTrigger>
+            <StyledInputWrapper>
+                {label && <StyledLabel htmlFor={id}>{label}</StyledLabel>}
+                <SelectContainer ref={wrapperRef}>
+                    <SelectTrigger
+                        id={id}
+                        ref={triggerRef}
+                        type="button"
+                        status={status}
+                        isOpen={isOpen}
+                        disabled={disabled}
+                        onClick={() => !disabled && setIsOpen(!isOpen)}
+                        onKeyDown={handleKeyDown}
+                        aria-haspopup="listbox"
+                        aria-expanded={isOpen}
+                    >
+                        {selectedValue ? (
+                            selectedValue
+                        ) : (
+                            <Placeholder>{placeholder}</Placeholder>
+                        )}
+                        <Arrow isOpen={isOpen}>
+                            <svg viewBox="0 0 24 24">
+                                <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                        </Arrow>
+                    </SelectTrigger>
 
-                <Dropdown isOpen={isOpen} role="listbox">
-                    {options.map((option, index) => (
-                        <Option
-                            key={index}
-                            role="option"
-                            isSelected={option === selectedValue}
-                            isHighlighted={index === highlightedIndex}
-                            aria-selected={option === selectedValue}
-                            onClick={() => handleSelect(option)}
-                            onMouseEnter={() => setHighlightedIndex(index)}
-                        >
-                            {option}
-                        </Option>
-                    ))}
-                </Dropdown>
-            </SelectWrapper>
+                    <Dropdown isOpen={isOpen} role="listbox">
+                        {options.map((option, index) => (
+                            <Option
+                                key={index}
+                                role="option"
+                                isSelected={option === selectedValue}
+                                isHighlighted={index === highlightedIndex}
+                                aria-selected={option === selectedValue}
+                                onClick={() => handleSelect(option)}
+                                onMouseEnter={() => setHighlightedIndex(index)}
+                            >
+                                {option}
+                            </Option>
+                        ))}
+                    </Dropdown>
+                </SelectContainer>
+            </StyledInputWrapper>
         );
     },
 );

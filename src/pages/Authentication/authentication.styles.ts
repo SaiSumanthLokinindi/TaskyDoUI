@@ -28,14 +28,18 @@ export const StyledHeader = styled(Flex)(() => {
 export const StyledSeparator = styled(Flex)(({ theme }) => {
     return css`
         margin-block: calc(3 * ${theme.spacing});
+        opacity: 0.4;
+        font-size: 0.725rem;
+
         hr {
             appearance: none;
             border: 0;
             outline: none;
-            width: 30%;
+            width: 40%;
             height: 0.05rem;
             background: white;
             margin: 0;
+            opacity: 0.2;
         }
     `;
 });
@@ -45,13 +49,20 @@ export const StyledError = styled.div(
         theme: {
             spacing,
             text: { helperText },
+            baseColors: { danger },
         },
     }) => {
         return css`
-            color: ${helperText.color};
             font-size: ${helperText.size.md};
-            padding-block-end: ${spacing};
-            line-height: ${helperText.lineHeight};
+            margin-block: calc(0.5 * ${spacing}) calc(4 * ${spacing});
+            display: flex;
+            align-items: center;
+            padding-inline: calc(2 * ${spacing});
+            height: 40px;
+            color: ${danger};
+            background-color: rgba(202, 53, 53, 0.2);
+            border: 1px solid ${danger};
+            border-radius: 5px;
         `;
     },
 );

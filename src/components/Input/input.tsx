@@ -16,6 +16,7 @@ export interface InputProps {
     defaultValue?: string;
     disabled?: boolean;
     info?: string | string[];
+    label?: string;
     name?: string;
     onChange?: (e?: ChangeEvent<InputElement>) => void;
     onBlur?: (e?: FocusEvent<InputElement>) => void;
@@ -29,6 +30,20 @@ export interface InputProps {
 
 const StyledInputWrapper = styled.div`
     width: 100%;
+    display: flex;
+    flex-direction: column;
+`;
+
+export const sharedLableStyles = css`
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: ${({ theme }) => theme.spacing};
+    text-align: left;
+`;
+
+const StyledLabel = styled.label`
+    ${sharedLableStyles}
 `;
 
 // Shared styles for input, textarea, and select
@@ -38,7 +53,7 @@ export const sharedInputStyles = css<{ status?: InputProps['status'] }>`
         color: ${theme.text.primary};
         appearance: none;
         outline: none;
-        border: 2px solid transparent;
+        border: 1px solid transparent;
         border-radius: 4px;
         padding: ${theme.spacing} calc(2 * ${theme.spacing});
         width: 100%;
@@ -67,7 +82,7 @@ export const sharedInputStyles = css<{ status?: InputProps['status'] }>`
         ${status === 'error' &&
         css`
             &:not(:focus) {
-                border: 2px solid red;
+                border: 1px solid ${theme.baseColors.danger};
             }
         `}
     `}
@@ -121,11 +136,15 @@ const Input = forwardRef<InputElement, PropsWithoutRef<InputProps>>(
             onChange,
             info,
             status,
+            label,
             ...restProps
         },
         ref,
     ) => {
         const [value, setValue] = useState(defaultValue);
+        const [id] = useState(
+            () => `input-${Math.random().toString(36).substr(2, 9)}`,
+        );
 
         useEffect(() => {
             setValue(defaultValue);
@@ -140,9 +159,11 @@ const Input = forwardRef<InputElement, PropsWithoutRef<InputProps>>(
 
         return (
             <StyledInputWrapper>
+                {label && <StyledLabel htmlFor={id}>{label}</StyledLabel>}
                 {isTextarea ? (
                     <StyledTextarea
                         {...restProps}
+                        id={id}
                         status={status}
                         ref={ref as Ref<HTMLTextAreaElement>}
                         value={value}
@@ -151,6 +172,7 @@ const Input = forwardRef<InputElement, PropsWithoutRef<InputProps>>(
                 ) : (
                     <StyledInput
                         {...restProps}
+                        id={id}
                         status={status}
                         ref={ref as Ref<HTMLInputElement>}
                         value={value}

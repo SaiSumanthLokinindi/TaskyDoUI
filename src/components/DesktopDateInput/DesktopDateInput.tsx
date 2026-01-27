@@ -1,47 +1,140 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useState, useRef } from 'react';
 import Flex from '../Flex/flex';
 import { GoCalendar } from 'react-icons/go';
 import styled, { css } from 'styled-components';
-import { sharedInputStyles } from '../Input/input';
+import { sharedInputStyles, sharedLableStyles } from '../Input/input';
+import Dialog from '../Dialog/Dialog';
+import { DayPicker } from 'react-day-picker';
+import 'react-day-picker/dist/style.css';
 
 export interface DesktopDateInputProps {
     defaultDate?: string;
     onChange?: (date: string) => void;
     label?: string;
+    placeholder?: string;
+    status?: 'error' | 'info' | 'warning';
 }
 
-const StyledLabel = styled.span`
+const StyledInputWrapper = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+`;
+
+const StyledLabel = styled.label`
+    ${sharedLableStyles}
+`;
+
+const StyledPlaceholderLabel = styled.span`
     color: ${({ theme }) => theme.components.input.placeholderColor};
 `;
 
-const StyledDesktopDateInput = styled(Flex)(({ theme }) => {
-    return css`
-        ${sharedInputStyles}
-        justify-content: space-between;
-        align-items: center;
-        cursor: pointer;
-        min-height: 40px;
-        min-width: 150px;
-    `;
-});
+const StyledDesktopDateInput = styled(Flex)<{
+    status?: DesktopDateInputProps['status'];
+}>`
+    ${sharedInputStyles}
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    min-height: 40px;
+    min-width: 150px;
+
+    /* Custom styles for react-day-picker to match theme */
+    .rdp {
+        --rdp-cell-size: 40px;
+        --rdp-accent-color: ${({ theme }) => theme.baseColors.tertiary};
+        --rdp-background-color: ${({ theme }) =>
+            theme.components.input.backgroundColor};
+        margin: 0;
+    }
+
+    .rdp-day_selected,
+    .rdp-day_selected:focus-visible,
+    .rdp-day_selected:hover {
+        background-color: var(--rdp-accent-color);
+        color: white;
+    }
+`;
 
 const DesktopDateInput = memo(
-    ({ defaultDate, onChange, label }: DesktopDateInputProps) => {
+    ({
+        defaultDate,
+        onChange,
+        label,
+        placeholder,
+        status,
+    }: DesktopDateInputProps & { placeholder?: string }) => {
         const [date, setDate] = useState(defaultDate);
+        const [isDialogOpen, setIsDialogOpen] = useState(false);
+        const [id] = useState(
+            () => `date-input-${Math.random().toString(36).substr(2, 9)}`,
+        );
+        const containerRef = useRef<HTMLDivElement>(null);
 
         useEffect(() => {
             setDate(defaultDate);
         }, [defaultDate]);
 
+        const handleDateSelect = (selectedDate: Date | undefined) => {
+            if (selectedDate) {
+                const monthNames = [
+                    'Jan',
+                    'Feb',
+                    'Mar',
+                    'Apr',
+                    'May',
+                    'Jun',
+                    'Jul',
+                    'Aug',
+                    'Sep',
+                    'Oct',
+                    'Nov',
+                    'Dec',
+                ];
+
+                const day = String(selectedDate.getDate()).padStart(2, '0');
+                const month = monthNames[selectedDate.getMonth()];
+                const year = selectedDate.getFullYear();
+
+                const formattedDate = `${day} ${month} ${year}`;
+
+                setDate(formattedDate);
+                onChange?.(selectedDate.toISOString());
+                setIsDialogOpen(false);
+            }
+        };
+
         return (
-            <StyledDesktopDateInput>
-                {date ? (
-                    <span>{date}</span>
-                ) : (
-                    <StyledLabel>{label}</StyledLabel>
-                )}
-                <GoCalendar />
-            </StyledDesktopDateInput>
+            <StyledInputWrapper>
+                {label && <StyledLabel htmlFor={id}>{label}</StyledLabel>}
+                <StyledDesktopDateInput
+                    id={id}
+                    ref={containerRef}
+                    status={status}
+                    onClick={() => setIsDialogOpen(true)}
+                >
+                    {date ? (
+                        <span>{date}</span>
+                    ) : (
+                        <StyledPlaceholderLabel>
+                            {placeholder || label}
+                        </StyledPlaceholderLabel>
+                    )}
+                    <GoCalendar />
+                </StyledDesktopDateInput>
+
+                <Dialog
+                    isOpen={isDialogOpen}
+                    onClose={() => setIsDialogOpen(false)}
+                    anchor={containerRef.current}
+                >
+                    <DayPicker
+                        mode="single"
+                        selected={date ? new Date(date) : undefined}
+                        onSelect={handleDateSelect}
+                    />
+                </Dialog>
+            </StyledInputWrapper>
         );
     },
 );
