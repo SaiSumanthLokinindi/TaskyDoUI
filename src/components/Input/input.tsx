@@ -49,25 +49,37 @@ const StyledLabel = styled.label`
 // Shared styles for input, textarea, and select
 export const sharedInputStyles = css<{ status?: InputProps['status'] }>`
     ${({ status, theme }) => css`
-        background-color: ${theme.components.input.backgroundColor};
+        background-color: rgba(42, 42, 42, 0.7);
         color: ${theme.text.primary};
         appearance: none;
         outline: none;
-        border: 1px solid transparent;
-        border-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
         padding: ${theme.spacing} calc(2 * ${theme.spacing});
         width: 100%;
-        font-size: 0.9rem;
+        font-size: 0.825rem;
         font-family: inherit;
         box-sizing: border-box;
+        transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 
         &::placeholder {
             color: ${theme.components.input.placeholderColor};
+            font-size: 0.825rem;
+        }
+
+        &:hover {
+            background-color: rgba(50, 50, 50, 0.8);
+            border-color: rgba(255, 255, 255, 0.1);
         }
 
         &:focus {
-            outline: 2.5px solid ${theme.baseColors.tertiary};
-            box-shadow: 0 0 8px 4px rgba(30, 169, 65, 0.2);
+            outline: none;
+            border-color: ${theme.baseColors.tertiary};
+            box-shadow:
+                inset 0 2px 4px rgba(0, 0, 0, 0.3),
+                0 0 0 1px ${theme.baseColors.tertiary},
+                0 0 12px 2px rgba(30, 169, 65, 0.3);
         }
 
         &:disabled {
@@ -92,7 +104,7 @@ export const StyledInput = styled.input<{
     status: InputProps['status'];
 }>`
     ${sharedInputStyles}
-    height: 40px;
+    height: 48px; /* Standardize height */
 `;
 
 export const StyledTextarea = styled.textarea<{
@@ -101,11 +113,13 @@ export const StyledTextarea = styled.textarea<{
     ${sharedInputStyles}
     display: block;
     height: auto;
-    min-height: 100px;
-    max-height: 300px;
+    min-height: 120px;
+    max-height: 400px;
     resize: vertical;
-    line-height: 1.5;
-    border: none;
+    line-height: 1.6;
+    border: 1px solid rgba(255, 255, 255, 0.05); /* Match boarder */
+    margin: 0; /* Reset margins to help clipping */
+    vertical-align: top;
 `;
 
 export const StyledInfo = styled.div(

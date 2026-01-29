@@ -37,7 +37,7 @@ export const StyledSeparator = styled(Flex)(({ theme }) => {
             outline: none;
             width: 40%;
             height: 0.05rem;
-            background: white;
+            background: ${({ theme }) => theme.text.primary};
             margin: 0;
             opacity: 0.2;
         }

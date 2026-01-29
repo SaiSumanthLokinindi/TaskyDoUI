@@ -48,17 +48,13 @@ const StyledNavigationWrapper = styled(Flex)(({
             display: flex;
             align-items: center;
             column-gap: ${spacing};
-            color: #ffffff;
+            color: ${({ theme }) => theme.text.primary};
         }
 
         & > ${StyledButton} > svg {
             height: 1.5em;
             width: 1.5em;
             flex-shrink: 0;
-        }
-
-        ${StyledButton}:last-child {
-            border-radius: 50px;
         }
 
         @media (max-width: ${breakpoints.md}) {
@@ -97,7 +93,7 @@ const AppContainer = memo(() => {
                 {
                     label: 'Cancel',
                     onClick: () => closeModal(),
-                    variant: 'secondary',
+                    variant: 'basic',
                 },
                 {
                     label: 'Add Task',

@@ -6,7 +6,7 @@ export const StyledBadge = styled.span<Pick<BadgeProps, 'type'>>(
         return css`
             padding: calc(0.25 * ${theme.spacing}) ${theme.spacing};
             border-radius: calc(2 * ${theme.spacing});
-            color: ${theme.text.primary};
+            color: ${theme.text.heading};
             background-color: ${theme.components.badge.colors.info};
             font-weight: 500;
             font-size: 0.675rem;

@@ -3,6 +3,7 @@ import DesktopDateInput from 'src/components/DesktopDateInput/DesktopDateInput';
 import Flex from 'src/components/Flex/flex';
 import Input, { StyledInput } from 'src/components/Input/input';
 import Select from 'src/components/Select/Select';
+import Toggle from 'src/components/Toggle/Toggle';
 import { useMedia } from 'src/styles/useMedia';
 import styled, { css } from 'styled-components';
 
@@ -20,6 +21,7 @@ const EditTask = () => {
 
     return (
         <StyledEditTaskContainer direction="column" rowGap="24px">
+            <Toggle label="Mark Task as Completed" id="task-completed" />
             <Input
                 type="text"
                 placeholder="Title of task"

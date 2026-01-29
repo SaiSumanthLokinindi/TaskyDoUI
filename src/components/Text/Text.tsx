@@ -28,6 +28,11 @@ export const StyledText = styled.span<
             font-size: ${size[textSize]};
             margin: unset;
 
+            ${['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(variant!) &&
+            css`
+                color: ${({ theme }) => theme.text.heading};
+            `}
+
             ${variant === 'h1' &&
             css`
                 font-size: ${size.title};

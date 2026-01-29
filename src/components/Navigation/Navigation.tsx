@@ -30,7 +30,7 @@ export const StyledNavigation = styled(Flex)<{ activeRoute: Route }>(({
 
             li {
                 display: inline-block;
-                color: #ffffff;
+                color: ${({ theme }) => theme.text.primary};
                 border-radius: 50px;
 
                 a {

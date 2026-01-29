@@ -3,7 +3,7 @@ import Card from '../Card/card';
 import Flex from '../Flex/flex';
 import Text from '../Text/Text';
 import Badge, { BadgeProps } from '../Badge/Badge';
-import { Priority, TaskProps } from './Task.types';
+import { TaskPriority, TaskProps } from './Task.types';
 import { useMemo } from 'react';
 import Checkbox, { StyledCheckbox } from '../Checkbox/Checkbox';
 import { formatDueDate } from 'src/utils/dates';
@@ -74,18 +74,14 @@ const StyledTaskLabel = styled.span<Pick<TaskProps, 'completed'>>(
     },
 );
 
-const badgeBackgroundMapping: Record<Priority, BadgeProps['type']> = {
-    0: 'success',
-    1: 'warning',
-    2: 'high',
-    3: 'error',
-};
-
-const priorityLabelMapping: Record<Priority, string> = {
-    0: 'low',
-    1: 'medium',
-    2: 'high',
-    3: 'critical',
+const PRIORITY_CONFIG: Record<
+    Exclude<TaskPriority, 0>,
+    { label: string; type: BadgeProps['type'] }
+> = {
+    1: { label: 'low', type: 'success' },
+    2: { label: 'medium', type: 'warning' },
+    3: { label: 'high', type: 'high' },
+    4: { label: 'critical', type: 'error' },
 };
 
 const Task = ({
@@ -117,6 +113,11 @@ const Task = ({
         );
     };
 
+    const priorityConfig = useMemo(
+        () => (priority ? PRIORITY_CONFIG[priority] : null),
+        [priority],
+    );
+
     return (
         <StyledTaskCard
             $animationDelay={animationDelay || 0}
@@ -130,7 +131,7 @@ const Task = ({
             <Flex
                 direction="column"
                 grow={1}
-                rowGap={priority || dueDateInfo ? '4px' : '0'}
+                rowGap={priorityConfig || dueDateInfo ? '4px' : '0'}
             >
                 <StyledTaskLabel completed={completed || false}>
                     {label}
@@ -138,19 +139,19 @@ const Task = ({
 
                 <Flex
                     justifyContent={
-                        priority && dueDateInfo
+                        priorityConfig && dueDateInfo
                             ? 'space-between'
-                            : priority
+                            : priorityConfig
                             ? 'flex-end'
                             : 'flex-start'
                     }
                     alignItems="center"
                 >
                     {dueDateInfo && <Text variant="helper">{dueDateInfo}</Text>}
-                    {priority && (
+                    {priorityConfig && (
                         <Badge
-                            type={badgeBackgroundMapping[priority]}
-                            label={priorityLabelMapping[priority]}
+                            type={priorityConfig.type}
+                            label={priorityConfig.label}
                         />
                     )}
                 </Flex>

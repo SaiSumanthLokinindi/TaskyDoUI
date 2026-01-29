@@ -1,9 +1,4 @@
-export enum TaskPriority {
-    CRITICAL = 'critical',
-    HIGH = 'high',
-    MEDIUM = 'medium',
-    LOW = 'low',
-}
+import { TaskPriority } from 'src/components/Task/Task.types';
 
 export type TasksState = {
     entities: Record<TaskInfo['id'], TaskInfo>;
@@ -30,7 +25,7 @@ export type TaskInfo = {
     description?: string;
     scheduleDate?: string;
     dueDate?: string;
-    category?: string;
+    tags?: string[];
     priority?: TaskPriority;
     status?: { completed?: boolean; completedOn?: string };
 };

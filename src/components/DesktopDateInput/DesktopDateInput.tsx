@@ -1,7 +1,7 @@
 import { memo, useEffect, useState, useRef } from 'react';
 import Flex from '../Flex/flex';
 import { GoCalendar } from 'react-icons/go';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { sharedInputStyles, sharedLableStyles } from '../Input/input';
 import Dialog from '../Dialog/Dialog';
 import { DayPicker } from 'react-day-picker';
@@ -19,6 +19,7 @@ const StyledInputWrapper = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
+    font-size: 0.825rem;
 `;
 
 const StyledLabel = styled.label`
@@ -27,6 +28,7 @@ const StyledLabel = styled.label`
 
 const StyledPlaceholderLabel = styled.span`
     color: ${({ theme }) => theme.components.input.placeholderColor};
+    font-size: 0.725rem;
 `;
 
 const StyledDesktopDateInput = styled(Flex)<{
@@ -43,15 +45,19 @@ const StyledDesktopDateInput = styled(Flex)<{
     .rdp {
         --rdp-cell-size: 40px;
         --rdp-accent-color: ${({ theme }) => theme.baseColors.tertiary};
-        --rdp-background-color: ${({ theme }) =>
-            theme.components.input.backgroundColor};
+        --rdp-background-color: transparent;
         margin: 0;
     }
 
     .rdp-day_selected,
     .rdp-day_selected:focus-visible,
     .rdp-day_selected:hover {
-        background-color: var(--rdp-accent-color);
+        background: linear-gradient(
+            145deg,
+            ${({ theme }) => theme.baseColors.tertiary},
+            ${({ theme }) => theme.baseColors.clicked}
+        );
+        box-shadow: 0 4px 10px rgba(30, 169, 65, 0.3);
         color: white;
     }
 `;

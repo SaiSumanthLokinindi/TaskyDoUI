@@ -87,7 +87,9 @@ const UserInfo: FC<UserInfoProps> = memo(
                     {loading ? (
                         <span>Loading...</span>
                     ) : (
-                        <Text size="xl">{primary}</Text>
+                        <Text size="xl" variant="h4">
+                            {primary}
+                        </Text>
                     )}
                     <Text variant="helper">{secondary}</Text>
                 </Flex>

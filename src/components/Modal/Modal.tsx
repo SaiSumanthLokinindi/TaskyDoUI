@@ -85,7 +85,7 @@ const Modal = memo(({ body, title, actions, onDismiss }: ModalProps) => {
             <StyledModal>
                 <StyledModalHeader justifyContent="space-between">
                     <Text variant="h5">{title}</Text>
-                    <Button onClick={onDismiss} variant="secondary">
+                    <Button onClick={onDismiss} variant="basic">
                         <GrClose />
                     </Button>
                 </StyledModalHeader>

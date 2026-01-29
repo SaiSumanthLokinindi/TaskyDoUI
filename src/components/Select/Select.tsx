@@ -59,37 +59,37 @@ const Arrow = styled.span<{ isOpen: boolean }>`
     svg {
         width: 16px;
         height: 16px;
-        stroke: white;
-        stroke-width: 2;
+        stroke: rgba(255, 255, 255, 0.8);
+        stroke-width: 2.5;
         fill: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 `;
 
 const Dropdown = styled.ul<{ isOpen: boolean }>`
-    ${({ theme, isOpen }) => css`
+    ${({ isOpen }) => css`
         position: absolute;
-        top: calc(100% + 4px);
+        top: calc(100% + 8px);
         left: 0;
         right: 0;
-        background-color: ${theme.components.input.backgroundColor};
-        border-radius: 4px;
-        border: 2px solid ${theme.baseColors.tertiary};
+        background-color: rgba(30, 30, 30, 0.85);
+        backdrop-filter: blur(12px);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
         list-style: none;
         margin: 0;
         display: flex;
         flex-direction: column;
         row-gap: 4px;
-        padding: 4px;
+        padding: 6px;
         z-index: 1000;
-        max-height: 200px;
+        max-height: 250px;
         overflow-y: auto;
         opacity: ${isOpen ? 1 : 0};
         visibility: ${isOpen ? 'visible' : 'hidden'};
-        transform: ${isOpen ? 'translateY(0)' : 'translateY(-8px)'};
-        transition:
-            opacity 0.2s ease,
-            transform 0.2s ease,
-            visibility 0.2s;
+        transform: ${isOpen ? 'translateY(0)' : 'translateY(-12px)'};
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     `}
 `;
 

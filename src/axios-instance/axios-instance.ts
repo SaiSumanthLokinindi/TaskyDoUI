@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-    baseURL: 'http://192.168.0.109:5000/',
+    baseURL: 'http://localhost:5000/',
     timeout: 10000,
     headers: {
         Authorization: `Bearer ${localStorage.getItem('accessToken') || ''}`,

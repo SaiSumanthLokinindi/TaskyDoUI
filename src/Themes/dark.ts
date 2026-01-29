@@ -9,9 +9,11 @@ const dark = {
         danger: '#ca3535ff',
         success: '#1EA941',
         warning: '#D27D1B',
+        dimWhite: '#E0E0E0',
     },
     text: {
-        primary: '#FFFFFF',
+        primary: '#E0E0E0',
+        heading: '#FFFFFF',
         secondary: '#8D8D8D',
         disabled: 'rgba(143, 143, 143, 0.2)',
         helperText: {
@@ -27,8 +29,8 @@ const dark = {
     components: {
         input: {
             backgroundColor: '#2a2a2a',
-            placeholderColor: 'rgba(255, 255, 255, 0.3)',
-            textColor: '#FFFFFF',
+            placeholderColor: 'rgba(255, 255, 255, 0.2)',
+            textColor: '#E0E0E0',
             shadow: '0 0 4px 1px rgba(0,0,0,0.15)',
             disabledBackgroundColor: 'rgba(61, 61, 61, 0.3)',
             info: {
