@@ -33,7 +33,8 @@ const StyledModal = styled(Card)(({ theme: { spacing } }) => {
         transform: translate(-50%, -50%);
         width: 100%;
         max-width: 600px;
-        max-height: 600px;
+        height: auto;
+        max-height: 900px;
         z-index: 1000;
         padding: calc(2 * ${spacing});
         display: flex;
@@ -46,6 +47,7 @@ const StyledModal = styled(Card)(({ theme: { spacing } }) => {
 
 export const StyledModalHeader = styled(Flex)(({ theme }) => {
     return css`
+        flex-shrink: 0;
         ${StyledButton} {
             font-size: 0.825rem;
             padding: ${theme.spacing} ${theme.spacing};
@@ -55,9 +57,14 @@ export const StyledModalHeader = styled(Flex)(({ theme }) => {
         }
     `;
 });
-export const StyledModalBody = styled(Flex)``;
+export const StyledModalBody = styled(Flex)`
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+`;
 export const StyledModalFooter = styled(Flex)(({ theme }) => {
     return css`
+        flex-shrink: 0;
         ${StyledButton} {
             font-size: 0.8rem;
             padding: calc(1 * ${theme.spacing}) calc(3 * ${theme.spacing});
@@ -89,7 +96,7 @@ const Modal = memo(({ body, title, actions, onDismiss }: ModalProps) => {
                         <GrClose />
                     </Button>
                 </StyledModalHeader>
-                <StyledModalBody grow={1}>{body}</StyledModalBody>
+                <StyledModalBody>{body}</StyledModalBody>
 
                 {actions?.length && (
                     <StyledModalFooter

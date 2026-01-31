@@ -32,7 +32,7 @@ const SelectTrigger = styled.button<{
     isOpen: boolean;
 }>`
     ${sharedInputStyles}
-    height: 40px;
+    height: 48px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -66,14 +66,22 @@ const Arrow = styled.span<{ isOpen: boolean }>`
     }
 `;
 
-const Dropdown = styled.ul<{ isOpen: boolean }>`
-    ${({ isOpen }) => css`
+const Dropdown = styled.ul<{ isOpen: boolean; openAbove: boolean }>`
+    ${({ isOpen, openAbove }) => css`
         position: absolute;
-        top: calc(100% + 8px);
+        ${openAbove
+            ? css`
+                  bottom: calc(100% + 8px);
+                  top: auto;
+              `
+            : css`
+                  top: calc(100% + 8px);
+                  bottom: auto;
+              `}
         left: 0;
         right: 0;
         background-color: rgba(30, 30, 30, 0.85);
-        backdrop-filter: blur(12px);
+        backdrop-filter: blur(4px);
         border-radius: 12px;
         border: 1px solid rgba(255, 255, 255, 0.1);
         list-style: none;
@@ -82,14 +90,20 @@ const Dropdown = styled.ul<{ isOpen: boolean }>`
         flex-direction: column;
         row-gap: 4px;
         padding: 6px;
-        z-index: 1000;
+        z-index: 1200;
         max-height: 250px;
         overflow-y: auto;
         opacity: ${isOpen ? 1 : 0};
         visibility: ${isOpen ? 'visible' : 'hidden'};
-        transform: ${isOpen ? 'translateY(0)' : 'translateY(-12px)'};
+        transform: ${isOpen
+            ? 'translateY(0)'
+            : openAbove
+            ? 'translateY(12px)'
+            : 'translateY(-12px)'};
         transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        box-shadow: ${openAbove
+            ? '0 -10px 30px rgba(0, 0, 0, 0.5)'
+            : '0 10px 30px rgba(0, 0, 0, 0.5)'};
     `}
 `;
 
@@ -143,11 +157,54 @@ const Select = memo(
         const [isOpen, setIsOpen] = useState(false);
         const [selectedValue, setSelectedValue] = useState(value || '');
         const [highlightedIndex, setHighlightedIndex] = useState(-1);
+        const [openAbove, setOpenAbove] = useState(false);
         const [id] = useState(
             () => `select-${Math.random().toString(36).substr(2, 9)}`,
         );
         const wrapperRef = useRef<HTMLDivElement>(null);
         const triggerRef = useRef<HTMLButtonElement>(null);
+        const dropdownHeight = 250; // max-height of dropdown
+
+        // Find the nearest scrollable ancestor container
+        const getScrollableParent = (
+            element: HTMLElement | null,
+        ): HTMLElement | null => {
+            if (!element) return null;
+            let parent = element.parentElement;
+            while (parent) {
+                const overflowY = window.getComputedStyle(parent).overflowY;
+                if (overflowY === 'auto' || overflowY === 'scroll') {
+                    return parent;
+                }
+                parent = parent.parentElement;
+            }
+            return null; // No scrollable parent found, use viewport
+        };
+
+        const calculateDirection = () => {
+            if (!triggerRef.current) return false;
+            const triggerRect = triggerRef.current.getBoundingClientRect();
+
+            // Find the scrollable container (modal body)
+            const scrollableParent = getScrollableParent(triggerRef.current);
+
+            let spaceBelow: number;
+            let spaceAbove: number;
+
+            if (scrollableParent) {
+                // Calculate space relative to the scrollable container
+                const containerRect = scrollableParent.getBoundingClientRect();
+                spaceBelow = containerRect.bottom - triggerRect.bottom;
+                spaceAbove = triggerRect.top - containerRect.top;
+            } else {
+                // Fall back to viewport if no scrollable container
+                spaceBelow = window.innerHeight - triggerRect.bottom;
+                spaceAbove = triggerRect.top;
+            }
+
+            // Open above if not enough space below and more space above
+            return spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
+        };
 
         // Close dropdown when clicking outside
         useEffect(() => {
@@ -189,12 +246,16 @@ const Select = memo(
                     if (isOpen && highlightedIndex >= 0) {
                         handleSelect(options[highlightedIndex]);
                     } else {
+                        if (!isOpen) {
+                            setOpenAbove(calculateDirection());
+                        }
                         setIsOpen(!isOpen);
                     }
                     break;
                 case 'ArrowDown':
                     e.preventDefault();
                     if (!isOpen) {
+                        setOpenAbove(calculateDirection());
                         setIsOpen(true);
                     } else {
                         setHighlightedIndex((prev) =>
@@ -227,7 +288,14 @@ const Select = memo(
                         status={status}
                         isOpen={isOpen}
                         disabled={disabled}
-                        onClick={() => !disabled && setIsOpen(!isOpen)}
+                        onClick={() => {
+                            if (!disabled) {
+                                if (!isOpen) {
+                                    setOpenAbove(calculateDirection());
+                                }
+                                setIsOpen(!isOpen);
+                            }
+                        }}
                         onKeyDown={handleKeyDown}
                         aria-haspopup="listbox"
                         aria-expanded={isOpen}
@@ -244,21 +312,29 @@ const Select = memo(
                         </Arrow>
                     </SelectTrigger>
 
-                    <Dropdown isOpen={isOpen} role="listbox">
-                        {options.map((option, index) => (
-                            <Option
-                                key={index}
-                                role="option"
-                                isSelected={option === selectedValue}
-                                isHighlighted={index === highlightedIndex}
-                                aria-selected={option === selectedValue}
-                                onClick={() => handleSelect(option)}
-                                onMouseEnter={() => setHighlightedIndex(index)}
-                            >
-                                {option}
-                            </Option>
-                        ))}
-                    </Dropdown>
+                    {isOpen && (
+                        <Dropdown
+                            isOpen={isOpen}
+                            openAbove={openAbove}
+                            role="listbox"
+                        >
+                            {options.map((option, index) => (
+                                <Option
+                                    key={index}
+                                    role="option"
+                                    isSelected={option === selectedValue}
+                                    isHighlighted={index === highlightedIndex}
+                                    aria-selected={option === selectedValue}
+                                    onClick={() => handleSelect(option)}
+                                    onMouseEnter={() =>
+                                        setHighlightedIndex(index)
+                                    }
+                                >
+                                    {option}
+                                </Option>
+                            ))}
+                        </Dropdown>
+                    )}
                 </SelectContainer>
             </StyledInputWrapper>
         );

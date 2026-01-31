@@ -38,7 +38,7 @@ const StyledDesktopDateInput = styled(Flex)<{
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    min-height: 40px;
+    min-height: 48px;
     min-width: 150px;
 
     /* Custom styles for react-day-picker to match theme */
@@ -115,9 +115,15 @@ const DesktopDateInput = memo(
                 {label && <StyledLabel htmlFor={id}>{label}</StyledLabel>}
                 <StyledDesktopDateInput
                     id={id}
+                    tabIndex={0}
                     ref={containerRef}
                     status={status}
                     onClick={() => setIsDialogOpen(true)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            setIsDialogOpen(true);
+                        }
+                    }}
                 >
                     {date ? (
                         <span>{date}</span>

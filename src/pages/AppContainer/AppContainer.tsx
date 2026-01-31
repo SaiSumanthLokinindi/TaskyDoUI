@@ -93,7 +93,7 @@ const AppContainer = memo(() => {
                 {
                     label: 'Cancel',
                     onClick: () => closeModal(),
-                    variant: 'basic',
+                    variant: 'simple',
                 },
                 {
                     label: 'Add Task',

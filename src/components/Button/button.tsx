@@ -4,7 +4,7 @@ import { PropsWithoutRef, ReactNode, Ref, forwardRef } from 'react';
 export interface ButtonProps {
     children: ReactNode;
     disabled?: boolean;
-    variant?: 'primary' | 'secondary' | 'link' | 'basic';
+    variant?: 'primary' | 'secondary' | 'link' | 'basic' | 'simple';
     id?: string;
     onBlur?: () => void;
     onClick?: () => void;
@@ -114,6 +114,19 @@ export const StyledButton = styled.button<{
             &:disabled {
                 background: rgba(43, 43, 43, 0.5);
                 color: rgba(255, 255, 255, 0.25);
+            }
+        `}
+
+        ${$variant === 'simple' &&
+        css`
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            color: ${theme.text.secondary};
+            font-weight: bold;
+
+            &:hover {
+                background: ${theme.baseColors.secondaryHover};
             }
         `}
 

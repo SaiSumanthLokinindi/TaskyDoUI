@@ -113,7 +113,7 @@ export const StyledTextarea = styled.textarea<{
     ${sharedInputStyles}
     display: block;
     height: auto;
-    min-height: 120px;
+    min-height: 50px;
     max-height: 400px;
     resize: vertical;
     line-height: 1.6;

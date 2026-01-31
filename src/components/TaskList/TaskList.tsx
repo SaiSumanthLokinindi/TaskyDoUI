@@ -20,20 +20,6 @@ const StyledTaskList = styled(Flex)`
     overflow-y: auto;
     min-height: 0;
     margin-block-start: calc(1.5 * ${({ theme }) => theme.spacing});
-
-    /* Add smooth scrollbar behavior */
-    &::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    &::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background: ${({ theme }) => theme.baseColors.secondaryHover};
-        border-radius: 4px;
-    }
 `;
 
 export interface TaskListProps {

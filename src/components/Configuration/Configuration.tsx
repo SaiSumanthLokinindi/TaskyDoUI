@@ -26,6 +26,25 @@ const GlobalStyles = createGlobalStyle(({ theme }) => {
             box-sizing: border-box;
         }
 
+        /* Global scrollbar styles for all scrollable elements */
+        *::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        *::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background: ${theme.baseColors.secondaryHover};
+            border-radius: 4px;
+        }
+
+        *::-webkit-scrollbar-thumb:hover {
+            background: ${theme.text.secondary};
+        }
+
         #root {
             height: 100%;
         }

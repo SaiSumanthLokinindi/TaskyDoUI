@@ -3,6 +3,7 @@ import DesktopDateInput from 'src/components/DesktopDateInput/DesktopDateInput';
 import Flex from 'src/components/Flex/flex';
 import Input, { StyledInput } from 'src/components/Input/input';
 import Select from 'src/components/Select/Select';
+import Tag from 'src/components/Tag/Tag';
 import Toggle from 'src/components/Toggle/Toggle';
 import { useMedia } from 'src/styles/useMedia';
 import styled, { css } from 'styled-components';
@@ -58,14 +59,27 @@ const EditTask = () => {
                             type="date"
                             placeholder="Schedule Date"
                             name="task-schedule-date"
+                            label="Schedule Date"
                         />
                         <Input
                             type="date"
                             placeholder="Due Date"
                             name="task-due-date"
+                            label="Due Date"
                         />
                     </>
                 )}
+            </Flex>
+            <Input
+                type="text"
+                placeholder="Add tags"
+                name="task-tags"
+                label="Tags"
+            />
+            <Flex columnGap="0.5rem">
+                <Tag label="work" />
+                <Tag label="shopping" />
+                <Tag label="office" />
             </Flex>
         </StyledEditTaskContainer>
     );
