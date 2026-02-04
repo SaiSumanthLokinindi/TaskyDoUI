@@ -99,7 +99,7 @@ const Login = memo(
                             resetError('email');
                         }}
                         onBlur={(e) => {
-                            setFieldValue('email', e?.target?.value as string);
+                            setFieldValue('email', e.target.value);
                         }}
                         info={
                             formErrors.email?.length > 0
@@ -120,10 +120,7 @@ const Login = memo(
                             resetError('password');
                         }}
                         onBlur={(e) => {
-                            setFieldValue(
-                                'password',
-                                e?.target?.value as string,
-                            );
+                            setFieldValue('password', e.target.value);
                         }}
                         info={
                             formErrors.password?.length > 0

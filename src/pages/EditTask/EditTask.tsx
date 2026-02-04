@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import DesktopDateInput from 'src/components/DesktopDateInput/DesktopDateInput';
+import FilterableListInput from 'src/components/FilterableListInput/FilterableListInput';
 import Flex from 'src/components/Flex/flex';
 import Input, { StyledInput } from 'src/components/Input/input';
 import Select from 'src/components/Select/Select';
@@ -70,7 +71,7 @@ const EditTask = () => {
                     </>
                 )}
             </Flex>
-            <Input
+            <FilterableListInput
                 type="text"
                 placeholder="Add tags"
                 name="task-tags"

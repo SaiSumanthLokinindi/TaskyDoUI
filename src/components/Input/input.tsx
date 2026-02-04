@@ -4,28 +4,17 @@ import {
     useEffect,
     Ref,
     forwardRef,
-    PropsWithoutRef,
-    FocusEvent,
+    InputHTMLAttributes,
 } from 'react';
 import styled, { css } from 'styled-components';
 
 // Union type for both input and textarea elements
 type InputElement = HTMLInputElement | HTMLTextAreaElement;
 
-export interface InputProps {
-    defaultValue?: string;
-    disabled?: boolean;
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
     info?: string | string[];
     label?: string;
-    name?: string;
-    onChange?: (e?: ChangeEvent<InputElement>) => void;
-    onBlur?: (e?: FocusEvent<InputElement>) => void;
-    onFocus?: (e?: FocusEvent<InputElement>) => void;
-    placeholder?: string;
-    readOnly?: boolean;
-    required?: boolean;
     status?: 'error' | 'info' | 'warning';
-    type?: string;
 }
 
 const StyledInputWrapper = styled.div`
@@ -142,7 +131,7 @@ export const StyledInfo = styled.div(
     },
 );
 
-const Input = forwardRef<InputElement, PropsWithoutRef<InputProps>>(
+const Input = forwardRef<InputElement, InputProps>(
     (
         {
             type = 'text',
@@ -151,22 +140,35 @@ const Input = forwardRef<InputElement, PropsWithoutRef<InputProps>>(
             info,
             status,
             label,
+            value: propValue,
             ...restProps
         },
         ref,
     ) => {
-        const [value, setValue] = useState(defaultValue);
+        const [value, setValue] = useState(propValue ?? defaultValue);
         const [id] = useState(
             () => `input-${Math.random().toString(36).substr(2, 9)}`,
         );
 
         useEffect(() => {
-            setValue(defaultValue);
-        }, [defaultValue]);
+            if (propValue !== undefined) {
+                setValue(propValue);
+            }
+        }, [propValue]);
 
-        const handleChange = (e: ChangeEvent<InputElement>) => {
-            setValue(e.currentTarget.value);
-            onChange?.(e);
+        useEffect(() => {
+            if (propValue === undefined && defaultValue !== undefined) {
+                setValue(defaultValue);
+            }
+        }, [defaultValue, propValue]);
+
+        const handleChange = (
+            e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+        ) => {
+            if (propValue === undefined) {
+                setValue(e.currentTarget.value);
+            }
+            onChange?.(e as ChangeEvent<HTMLInputElement>);
         };
 
         const isTextarea = type === 'textarea';
@@ -176,7 +178,7 @@ const Input = forwardRef<InputElement, PropsWithoutRef<InputProps>>(
                 {label && <StyledLabel htmlFor={id}>{label}</StyledLabel>}
                 {isTextarea ? (
                     <StyledTextarea
-                        {...restProps}
+                        {...(restProps as any)}
                         id={id}
                         status={status}
                         ref={ref as Ref<HTMLTextAreaElement>}

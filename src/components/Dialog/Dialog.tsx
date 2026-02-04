@@ -7,99 +7,103 @@ import {
     useRef,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { DialogContainer } from './DialogStyles';
+import { StyledDialogContainer } from './DialogStyles';
 
 interface DialogProps {
     children: ReactNode;
     isOpen: boolean;
     onClose: () => void;
     anchor: HTMLElement | null;
+    className?: string;
 }
 
-const Dialog = memo(({ children, isOpen, onClose, anchor }: DialogProps) => {
-    const [coords, setCoords] = useState({ top: 0, left: 0 });
-    const [isVisible, setIsVisible] = useState(false);
-    const dialogRef = useRef<HTMLDivElement>(null);
+const Dialog = memo(
+    ({ children, isOpen, onClose, anchor, className }: DialogProps) => {
+        const [coords, setCoords] = useState({ top: 0, left: 0 });
+        const [isVisible, setIsVisible] = useState(false);
+        const dialogRef = useRef<HTMLDivElement>(null);
 
-    const updatePosition = () => {
-        if (!anchor || !dialogRef.current) return;
+        const updatePosition = () => {
+            if (!anchor || !dialogRef.current) return;
 
-        const anchorRect = anchor.getBoundingClientRect();
-        const dialogRect = dialogRef.current.getBoundingClientRect();
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
+            const anchorRect = anchor.getBoundingClientRect();
+            const dialogRect = dialogRef.current.getBoundingClientRect();
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
 
-        let top = anchorRect.bottom + 8;
-        let left = anchorRect.left;
+            let top = anchorRect.bottom + 8;
+            let left = anchorRect.left;
 
-        // Vertical collision detection
-        if (top + dialogRect.height > viewportHeight) {
-            // Flip to top if no space at bottom
-            top = anchorRect.top - dialogRect.height - 8;
-        }
-
-        // Horizontal collision detection
-        if (left + dialogRect.height > viewportWidth) {
-            left = viewportWidth - dialogRect.width - 10;
-        }
-
-        if (left < 10) {
-            left = 10;
-        }
-
-        setCoords({ top, left });
-        setIsVisible(true);
-    };
-
-    useLayoutEffect(() => {
-        if (isOpen && anchor) {
-            updatePosition();
-        } else {
-            setIsVisible(false);
-        }
-    }, [isOpen, anchor]);
-
-    useEffect(() => {
-        if (!isOpen) return;
-
-        const handleResize = () => updatePosition();
-        const handleScroll = () => updatePosition();
-
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                dialogRef.current &&
-                !dialogRef.current.contains(event.target as Node) &&
-                anchor &&
-                !anchor.contains(event.target as Node)
-            ) {
-                onClose();
+            // Vertical collision detection
+            if (top + dialogRect.height > viewportHeight) {
+                // Flip to top if no space at bottom
+                top = anchorRect.top - dialogRect.height - 8;
             }
+
+            // Horizontal collision detection
+            if (left + dialogRect.height > viewportWidth) {
+                left = viewportWidth - dialogRect.width - 10;
+            }
+
+            if (left < 10) {
+                left = 10;
+            }
+
+            setCoords({ top, left });
+            setIsVisible(true);
         };
 
-        window.addEventListener('resize', handleResize);
-        window.addEventListener('scroll', handleScroll, true);
-        document.addEventListener('mousedown', handleClickOutside);
+        useLayoutEffect(() => {
+            if (isOpen && anchor) {
+                updatePosition();
+            } else {
+                setIsVisible(false);
+            }
+        }, [isOpen, anchor]);
 
-        return () => {
-            window.removeEventListener('resize', handleResize);
-            window.removeEventListener('scroll', handleScroll, true);
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [isOpen, anchor, onClose]);
+        useEffect(() => {
+            if (!isOpen) return;
 
-    if (!isOpen) return null;
+            const handleResize = () => updatePosition();
+            const handleScroll = () => updatePosition();
 
-    return createPortal(
-        <DialogContainer
-            ref={dialogRef}
-            top={coords.top}
-            left={coords.left}
-            isVisible={isVisible}
-        >
-            {children}
-        </DialogContainer>,
-        document.body,
-    );
-});
+            const handleClickOutside = (event: MouseEvent) => {
+                if (
+                    dialogRef.current &&
+                    !dialogRef.current.contains(event.target as Node) &&
+                    anchor &&
+                    !anchor.contains(event.target as Node)
+                ) {
+                    onClose();
+                }
+            };
+
+            window.addEventListener('resize', handleResize);
+            window.addEventListener('scroll', handleScroll, true);
+            document.addEventListener('mousedown', handleClickOutside);
+
+            return () => {
+                window.removeEventListener('resize', handleResize);
+                window.removeEventListener('scroll', handleScroll, true);
+                document.removeEventListener('mousedown', handleClickOutside);
+            };
+        }, [isOpen, anchor, onClose]);
+
+        if (!isOpen) return null;
+
+        return createPortal(
+            <StyledDialogContainer
+                ref={dialogRef}
+                top={coords.top}
+                left={coords.left}
+                isVisible={isVisible}
+                className={className}
+            >
+                {children}
+            </StyledDialogContainer>,
+            document.body,
+        );
+    },
+);
 
 export default Dialog;

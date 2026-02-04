@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const DialogContainer = styled.div<{
+export const StyledDialogContainer = styled.div<{
     top: number;
     left: number;
     isVisible: boolean;
