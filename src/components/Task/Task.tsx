@@ -31,7 +31,7 @@ const StyledTaskCard = styled(Card)<{ $animationDelay?: number }>(({
         display: flex;
         column-gap: calc(1.5 * ${theme.spacing});
         padding: ${theme.spacing};
-        border: 0.5px solid #393939;
+        border: 1.5px solid #393939;
         box-sizing: border-box;
         cursor: pointer;
         align-items: flex-start;

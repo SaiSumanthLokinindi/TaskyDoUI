@@ -11,12 +11,13 @@ export interface TagProps {
 
 export const StyledTag = styled(Flex)(({ theme }) => {
     return css`
-        background-color: ${theme.baseColors.tertiary};
-        color: ${theme.text.primary};
-        padding: calc(0.5 * ${theme.spacing}) ${theme.spacing};
+        background-color: #393939;
+        color: ${theme.baseColors.dimWhite};
+        padding: calc(0.25 * ${theme.spacing}) ${theme.spacing};
         border-radius: 16px;
-        font-size: 0.825rem;
+        font-size: 0.8rem;
         font-weight: 500;
+        padding-inline-end: calc(0.5 * ${theme.spacing});
 
         ${StyledButton} {
             padding: calc(0.5 * ${theme.spacing});

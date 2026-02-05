@@ -8,6 +8,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { StyledDialogContainer } from './DialogStyles';
+import { useEscape } from 'src/hooks/useEscape';
 
 interface DialogProps {
     children: ReactNode;
@@ -22,6 +23,10 @@ const Dialog = memo(
         const [coords, setCoords] = useState({ top: 0, left: 0 });
         const [isVisible, setIsVisible] = useState(false);
         const dialogRef = useRef<HTMLDivElement>(null);
+
+        useEscape(() => {
+            onClose();
+        });
 
         const updatePosition = () => {
             if (!anchor || !dialogRef.current) return;

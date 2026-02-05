@@ -1,10 +1,13 @@
-import { memo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import Input, { InputProps } from '../Input/input';
 import Flex from '../Flex/flex';
 import styled, { css } from 'styled-components';
 import Dialog from '../Dialog/Dialog';
+import MenuItem, { type MenuItemProps } from '../Menu/MenuItem';
 
-export interface FilterableListProps extends InputProps {}
+export interface FilterableListProps extends InputProps {
+    menuItems: MenuItemProps[];
+}
 
 export const StyledMenu = styled.ul(({ theme }) => {
     return css`
@@ -16,55 +19,63 @@ export const StyledMenu = styled.ul(({ theme }) => {
     `;
 });
 
-export const StyledMenuItem = styled.li(({ theme }) => {
-    return css`
-        padding: ${theme.spacing};
-        border-bottom: 1px solid #393939;
-        font-size: 0.825rem;
-        border-radius: 4px;
-        color: ${theme.baseColors.dimWhite};
-
-        &:hover {
-            background-color: ${theme.baseColors.secondaryHover};
-            cursor: pointer;
-        }
-    `;
-});
-
-export const StyledDialog = styled(Dialog)`
+export const StyledDialog = styled(Dialog)<{ $maxWidth?: number }>`
     padding: 0;
     width: 50%;
+    max-height: 300px;
+    overflow: auto;
+    max-width: ${({ $maxWidth }) => ($maxWidth ? `${$maxWidth}px` : '100%')};
 `;
 
-const FilterableListInput = memo((props: FilterableListProps) => {
-    const inputRef = useRef<HTMLInputElement | null>(null);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+const FilterableListInput = memo(
+    ({ menuItems, value, ...restProps }: FilterableListProps) => {
+        const inputRef = useRef<HTMLInputElement | null>(null);
+        const [inputValue, setInputValue] = useState(value);
+        const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    return (
-        <Flex direction="column">
-            <Input
-                {...props}
-                ref={inputRef}
-                onClick={() => {
-                    setIsMenuOpen(true);
-                }}
-            />
-            <StyledDialog
-                anchor={inputRef.current}
-                isOpen={isMenuOpen}
-                onClose={() => {
-                    setIsMenuOpen(false);
-                }}
-            >
-                <StyledMenu>
-                    <StyledMenuItem>#work</StyledMenuItem>
-                    <StyledMenuItem>#work</StyledMenuItem>
-                    <StyledMenuItem>#work</StyledMenuItem>
-                    <StyledMenuItem>#work</StyledMenuItem>
-                </StyledMenu>
-            </StyledDialog>
-        </Flex>
-    );
-});
+        useEffect(() => {
+            setInputValue(value ?? '');
+        }, [value]);
+
+        const menuItemSelectHandler = useCallback((id: MenuItemProps['id']) => {
+            const menuItem = menuItems.find((item) => item.id === id);
+            if (menuItem) {
+                setInputValue(menuItem.label);
+            }
+            setIsMenuOpen(false);
+        }, []);
+
+        return (
+            <Flex direction="column">
+                <Input
+                    {...restProps}
+                    ref={inputRef}
+                    onClick={() => {
+                        setIsMenuOpen(true);
+                    }}
+                    value={inputValue}
+                />
+                <StyledDialog
+                    anchor={inputRef.current}
+                    isOpen={isMenuOpen}
+                    onClose={() => {
+                        setIsMenuOpen(false);
+                    }}
+                    $maxWidth={inputRef.current?.offsetWidth}
+                >
+                    <StyledMenu>
+                        {menuItems.map((menuItem) => (
+                            <MenuItem
+                                key={menuItem.id}
+                                {...menuItem}
+                                onSelect={menuItemSelectHandler}
+                            />
+                        ))}
+                    </StyledMenu>
+                </StyledDialog>
+            </Flex>
+        );
+    },
+);
 
 export default FilterableListInput;

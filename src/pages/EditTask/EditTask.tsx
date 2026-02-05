@@ -76,6 +76,10 @@ const EditTask = () => {
                 placeholder="Add tags"
                 name="task-tags"
                 label="Tags"
+                menuItems={[{ id: 'work', label: '#work' }]}
+                onChange={(event) => {
+                    console.log(event.target.value);
+                }}
             />
             <Flex columnGap="0.5rem">
                 <Tag label="work" />

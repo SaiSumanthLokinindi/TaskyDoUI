@@ -29,6 +29,7 @@ export const sharedLableStyles = css`
     color: rgba(255, 255, 255, 0.5);
     margin-bottom: ${({ theme }) => theme.spacing};
     text-align: left;
+    width: max-content;
 `;
 
 const StyledLabel = styled.label`
