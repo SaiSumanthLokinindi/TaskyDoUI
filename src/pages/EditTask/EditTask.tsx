@@ -1,4 +1,5 @@
-import { memo } from 'react';
+import { ChangeEvent, memo, useCallback, useState } from 'react';
+import Button from 'src/components/Button/button';
 import DesktopDateInput from 'src/components/DesktopDateInput/DesktopDateInput';
 import FilterableListInput from 'src/components/FilterableListInput/FilterableListInput';
 import Flex from 'src/components/Flex/flex';
@@ -8,6 +9,8 @@ import Tag from 'src/components/Tag/Tag';
 import Toggle from 'src/components/Toggle/Toggle';
 import { useMedia } from 'src/styles/useMedia';
 import styled, { css } from 'styled-components';
+import axios from 'src/axios-instance/axios-instance';
+import { MenuItemProps } from 'src/components/Menu/MenuItem';
 
 const StyledEditTaskContainer = styled(Flex)(({ theme: { spacing } }) => {
     return css`
@@ -20,6 +23,43 @@ const StyledEditTaskContainer = styled(Flex)(({ theme: { spacing } }) => {
 
 const EditTask = () => {
     const { isDesktop } = useMedia();
+
+    const [tagSuggestions, setTagSuggestions] = useState<MenuItemProps[]>([]);
+    const [tagsLoading, setTagsLoading] = useState(false);
+
+    const [tagInputValue, setTagInputValue] = useState('');
+
+    const tagsInputChangeHandler = useCallback(
+        (event: ChangeEvent<HTMLInputElement>) => {
+            setTagsLoading(true);
+            axios
+                .get('/tags/suggest', {
+                    params: {
+                        q: event.target.value,
+                    },
+                })
+                .then((res) => {
+                    if (res.status === 200) {
+                        const tags = res.data.map(
+                            (tag: { label: string; id: string }) => {
+                                return {
+                                    id: tag.id,
+                                    label: '#' + tag.label,
+                                    selected: false,
+                                };
+                            },
+                        );
+                        console.log('tags', tags);
+                        setTagSuggestions(tags);
+                    }
+                })
+                .catch((err) => {})
+                .finally(() => {
+                    setTagsLoading(false);
+                });
+        },
+        [],
+    );
 
     return (
         <StyledEditTaskContainer direction="column" rowGap="24px">
@@ -71,16 +111,19 @@ const EditTask = () => {
                     </>
                 )}
             </Flex>
-            <FilterableListInput
-                type="text"
-                placeholder="Add tags"
-                name="task-tags"
-                label="Tags"
-                menuItems={[{ id: 'work', label: '#work' }]}
-                onChange={(event) => {
-                    console.log(event.target.value);
-                }}
-            />
+            <Flex alignItems="flex-end" columnGap="1rem">
+                <FilterableListInput
+                    type="text"
+                    placeholder="Add tags"
+                    name="task-tags"
+                    label="Tags"
+                    menuItems={tagSuggestions}
+                    style={{ flexGrow: 1 }}
+                    onChange={tagsInputChangeHandler}
+                    menuLoading={tagsLoading}
+                />
+                <Button variant="simple">Add Tag</Button>
+            </Flex>
             <Flex columnGap="0.5rem">
                 <Tag label="work" />
                 <Tag label="shopping" />

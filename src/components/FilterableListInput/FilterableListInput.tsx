@@ -1,23 +1,26 @@
-import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import {
+    ChangeEvent,
+    memo,
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import Input, { InputProps } from '../Input/input';
 import Flex from '../Flex/flex';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import Dialog from '../Dialog/Dialog';
 import MenuItem, { type MenuItemProps } from '../Menu/MenuItem';
+import Menu from '../Menu/Menu';
+import Loader from '../Loader/Loader';
 
 export interface FilterableListProps extends InputProps {
     menuItems: MenuItemProps[];
+    /**
+     * @default false
+     */
+    menuLoading?: boolean;
 }
-
-export const StyledMenu = styled.ul(({ theme }) => {
-    return css`
-        display: flex;
-        flex-direction: column;
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    `;
-});
 
 export const StyledDialog = styled(Dialog)<{ $maxWidth?: number }>`
     padding: 0;
@@ -28,7 +31,15 @@ export const StyledDialog = styled(Dialog)<{ $maxWidth?: number }>`
 `;
 
 const FilterableListInput = memo(
-    ({ menuItems, value, ...restProps }: FilterableListProps) => {
+    ({
+        menuItems,
+        value,
+        onChange,
+        style,
+        className,
+        menuLoading = false,
+        ...restProps
+    }: FilterableListProps) => {
         const inputRef = useRef<HTMLInputElement | null>(null);
         const [inputValue, setInputValue] = useState(value);
         const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -37,21 +48,29 @@ const FilterableListInput = memo(
             setInputValue(value ?? '');
         }, [value]);
 
+        useEffect(() => {
+            if (menuLoading || menuItems.length) {
+                setIsMenuOpen(true);
+            }
+        }, [menuLoading, menuItems.length]);
+
         const menuItemSelectHandler = useCallback((id: MenuItemProps['id']) => {
             const menuItem = menuItems.find((item) => item.id === id);
             if (menuItem) {
+                console.log(menuItem.label);
                 setInputValue(menuItem.label);
             }
             setIsMenuOpen(false);
         }, []);
 
         return (
-            <Flex direction="column">
+            <Flex direction="column" style={style} className={className}>
                 <Input
                     {...restProps}
                     ref={inputRef}
-                    onClick={() => {
-                        setIsMenuOpen(true);
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                        setInputValue(e.target.value);
+                        onChange?.(e);
                     }}
                     value={inputValue}
                 />
@@ -63,15 +82,27 @@ const FilterableListInput = memo(
                     }}
                     $maxWidth={inputRef.current?.offsetWidth}
                 >
-                    <StyledMenu>
+                    <Menu>
                         {menuItems.map((menuItem) => (
                             <MenuItem
                                 key={menuItem.id}
                                 {...menuItem}
-                                onSelect={menuItemSelectHandler}
+                                onSelect={(id) => {
+                                    menuItemSelectHandler(id);
+                                    menuItem.onSelect?.(id);
+                                }}
                             />
                         ))}
-                    </StyledMenu>
+                        {menuLoading && (
+                            <Flex
+                                justifyContent="center"
+                                alignItems="center"
+                                style={{ padding: '0.5rem' }}
+                            >
+                                <Loader />
+                            </Flex>
+                        )}
+                    </Menu>
                 </StyledDialog>
             </Flex>
         );

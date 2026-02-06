@@ -1,11 +1,12 @@
-import { memo, MouseEvent, ReactNode } from 'react';
+import { memo, ReactNode } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import Card from '../Card/card';
 import { createPortal } from 'react-dom';
 import Flex from '../Flex/flex';
-import Button, { ButtonProps, StyledButton } from '../Button/button';
+import Button, { StyledButton } from '../Button/button';
 import { GrClose } from 'react-icons/gr';
 import Text from '../Text/Text';
+import Actions, { Action } from '../Actions/Actions';
 
 const StyledBackdrop = styled.div`
     position: fixed;
@@ -72,12 +73,6 @@ export const StyledModalFooter = styled(Flex)(({ theme }) => {
     `;
 });
 
-export type Action = {
-    label: string;
-    onClick: (e?: MouseEvent<HTMLElement>) => void;
-    variant?: Exclude<ButtonProps['variant'], 'link'>;
-};
-
 export interface ModalProps {
     title: string;
     body: ReactNode;
@@ -103,17 +98,7 @@ const Modal = memo(({ body, title, actions, onDismiss }: ModalProps) => {
                         justifyContent="flex-end"
                         columnGap="0.5rem"
                     >
-                        {actions.map((action) => {
-                            return (
-                                <Button
-                                    key={action.label}
-                                    onClick={action.onClick}
-                                    variant={action.variant}
-                                >
-                                    {action.label}
-                                </Button>
-                            );
-                        })}
+                        <Actions actions={actions} />
                     </StyledModalFooter>
                 )}
             </StyledModal>
