@@ -1,16 +1,16 @@
 import styled, { css } from 'styled-components';
-import { PropsWithoutRef, ReactNode, Ref, forwardRef } from 'react';
+import {
+    ButtonHTMLAttributes,
+    PropsWithoutRef,
+    ReactNode,
+    Ref,
+    forwardRef,
+} from 'react';
 
-export interface ButtonProps {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     children: ReactNode;
-    disabled?: boolean;
     variant?: 'primary' | 'secondary' | 'link' | 'basic' | 'simple';
-    id?: string;
-    onBlur?: () => void;
-    onClick?: () => void;
-    onFocus?: () => void;
     progress?: boolean;
-    type?: 'submit' | 'reset';
 }
 
 export const StyledButton = styled.button<{

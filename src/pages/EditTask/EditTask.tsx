@@ -11,6 +11,7 @@ import { useMedia } from 'src/styles/useMedia';
 import styled, { css } from 'styled-components';
 import axios from 'src/axios-instance/axios-instance';
 import { MenuItemProps } from 'src/components/Menu/MenuItem';
+import { debounce } from 'src/shared/utils';
 
 const StyledEditTaskContainer = styled(Flex)(({ theme: { spacing } }) => {
     return css`
@@ -30,7 +31,11 @@ const EditTask = () => {
     const [tagInputValue, setTagInputValue] = useState('');
 
     const tagsInputChangeHandler = useCallback(
-        (event: ChangeEvent<HTMLInputElement>) => {
+        debounce((event: ChangeEvent<HTMLInputElement>) => {
+            if (!event.target.value) {
+                setTagSuggestions([]);
+                return;
+            }
             setTagsLoading(true);
             axios
                 .get('/tags/suggest', {
@@ -57,9 +62,13 @@ const EditTask = () => {
                 .finally(() => {
                     setTagsLoading(false);
                 });
-        },
+        }, 500),
         [],
     );
+
+    const addTagHandler = useCallback(() => {
+        console.log('tag Added');
+    }, []);
 
     return (
         <StyledEditTaskContainer direction="column" rowGap="24px">
@@ -75,6 +84,13 @@ const EditTask = () => {
                 placeholder="Add more details about this task"
                 name="task-description"
                 label="Description"
+                actions={[
+                    {
+                        label: 'Add Tag',
+                        onClick: addTagHandler,
+                        variant: 'simple',
+                    },
+                ]}
             />
             <Select
                 options={['Critical', 'High', 'Medium', 'Low']}
@@ -121,8 +137,14 @@ const EditTask = () => {
                     style={{ flexGrow: 1 }}
                     onChange={tagsInputChangeHandler}
                     menuLoading={tagsLoading}
+                    actions={[
+                        {
+                            label: 'Add Tag',
+                            onClick: addTagHandler,
+                            variant: 'simple',
+                        },
+                    ]}
                 />
-                <Button variant="simple">Add Tag</Button>
             </Flex>
             <Flex columnGap="0.5rem">
                 <Tag label="work" />

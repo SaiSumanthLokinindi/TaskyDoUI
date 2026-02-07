@@ -6,21 +6,31 @@ import {
     forwardRef,
     InputHTMLAttributes,
 } from 'react';
-import styled, { css } from 'styled-components';
+import styled, { css, useTheme } from 'styled-components';
+import Actions, { Action, StyledAction } from '../Actions/Actions';
+import Flex from '../Flex/flex';
+import { BaseCustomProps } from 'src/types/base.types';
 
 // Union type for both input and textarea elements
 type InputElement = HTMLInputElement | HTMLTextAreaElement;
 
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps
+    extends BaseCustomProps,
+        InputHTMLAttributes<HTMLInputElement> {
     info?: string | string[];
     label?: string;
     status?: 'error' | 'info' | 'warning';
+    actions?: Action[];
 }
 
 const StyledInputWrapper = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
+
+    ${StyledAction} {
+        font-size: 0.725rem;
+    }
 `;
 
 export const sharedLableStyles = css`
@@ -142,10 +152,12 @@ const Input = forwardRef<InputElement, InputProps>(
             status,
             label,
             value: propValue,
+            actions,
             ...restProps
         },
         ref,
     ) => {
+        const theme = useTheme();
         const [value, setValue] = useState(propValue ?? defaultValue);
         const [id] = useState(
             () => `input-${Math.random().toString(36).substr(2, 9)}`,
@@ -178,24 +190,35 @@ const Input = forwardRef<InputElement, InputProps>(
             <StyledInputWrapper>
                 {label && <StyledLabel htmlFor={id}>{label}</StyledLabel>}
                 {isTextarea ? (
-                    <StyledTextarea
-                        {...(restProps as any)}
-                        id={id}
-                        status={status}
-                        ref={ref as Ref<HTMLTextAreaElement>}
-                        value={value}
-                        onChange={handleChange}
-                    />
+                    <Flex direction="column" gap={theme.spacing}>
+                        <StyledTextarea
+                            {...(restProps as any)}
+                            id={id}
+                            status={status}
+                            ref={ref as Ref<HTMLTextAreaElement>}
+                            value={value}
+                            onChange={handleChange}
+                        />
+                        {actions?.length && (
+                            <Actions
+                                actions={actions}
+                                style={{ alignSelf: 'flex-end' }}
+                            />
+                        )}
+                    </Flex>
                 ) : (
-                    <StyledInput
-                        {...restProps}
-                        id={id}
-                        status={status}
-                        ref={ref as Ref<HTMLInputElement>}
-                        value={value}
-                        type={type}
-                        onChange={handleChange}
-                    />
+                    <Flex alignItems="center" gap={theme.spacing}>
+                        <StyledInput
+                            {...restProps}
+                            id={id}
+                            status={status}
+                            ref={ref as Ref<HTMLInputElement>}
+                            value={value}
+                            type={type}
+                            onChange={handleChange}
+                        />
+                        {actions?.length && <Actions actions={actions} />}
+                    </Flex>
                 )}
                 <StyledInfo>
                     {info &&

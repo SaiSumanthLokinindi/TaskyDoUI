@@ -8,7 +8,7 @@ import {
 } from 'react';
 import Input, { InputProps } from '../Input/input';
 import Flex from '../Flex/flex';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import Dialog from '../Dialog/Dialog';
 import MenuItem, { type MenuItemProps } from '../Menu/MenuItem';
 import Menu from '../Menu/Menu';
@@ -41,6 +41,7 @@ const FilterableListInput = memo(
         ...restProps
     }: FilterableListProps) => {
         const inputRef = useRef<HTMLInputElement | null>(null);
+        const theme = useTheme();
         const [inputValue, setInputValue] = useState(value);
         const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -97,7 +98,7 @@ const FilterableListInput = memo(
                             <Flex
                                 justifyContent="center"
                                 alignItems="center"
-                                style={{ padding: '0.5rem' }}
+                                style={{ padding: theme.spacing }}
                             >
                                 <Loader />
                             </Flex>
