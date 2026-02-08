@@ -1,7 +1,7 @@
-import { memo, MouseEvent, HTMLAttributes } from 'react';
+import { memo, MouseEvent } from 'react';
 import Button, { ButtonProps } from '../Button/button';
 import styled from 'styled-components';
-import { BaseCustomProps } from 'src/types/base.types';
+import { BaseUIProps } from 'src/types/base.types';
 
 export type Action = {
     label: string;
@@ -10,9 +10,7 @@ export type Action = {
 };
 
 export const StyledAction = styled(Button)``;
-export interface ActionsProps
-    extends BaseCustomProps,
-        HTMLAttributes<HTMLButtonElement> {
+export interface ActionsProps extends BaseUIProps<HTMLButtonElement> {
     actions: Action[];
 }
 

@@ -1,21 +1,27 @@
+import { HTMLAttributes } from 'react';
+
 /**
- * The "Custom Contract" for all UI components in the design system.
- * This interface contains ONLY company-specific properties that we want
- * to exist on every component.
+ * Custom company-specific properties that should exist
+ * on EVERY component in the design system.
  */
 export interface BaseCustomProps {
-    /**
-     * Optional testing identifier for automated tests (Cypress/Jest/Playwright)
-     */
+    /** Testing identifier for automated tests */
     'data-testid'?: string;
 
-    /**
-     * Optional tracking identifier for analytics.
-     */
+    /** Tracking identifier for analytics */
     'data-analytics-id'?: string;
 
-    /**
-     * Optional toggle for visibility without removing from DOM
-     */
+    /** Manual visibility toggle */
     hidden?: boolean;
 }
+
+/**
+ * The Master Contract for all UI components.
+ *
+ * @template T The HTML element type (e.g., HTMLDivElement)
+ * @template A Additional attributes to include (defaults to HTMLAttributes<T>)
+ */
+export type BaseUIProps<
+    T = HTMLElement,
+    A = HTMLAttributes<T>,
+> = BaseCustomProps & A;

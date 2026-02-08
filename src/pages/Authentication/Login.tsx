@@ -8,7 +8,7 @@ import {
     useState,
 } from 'react';
 import { useForm } from 'src/hooks/useForm';
-import { fieldRequiredValidator } from './authUtils';
+import { fieldRequiredValidator } from 'src/utils/validators';
 import axios from 'src/axios-instance/axios-instance';
 import { AxiosError } from 'axios';
 import Flex from 'src/components/Flex/flex';

@@ -9,14 +9,16 @@ import {
 import styled, { css, useTheme } from 'styled-components';
 import Actions, { Action, StyledAction } from '../Actions/Actions';
 import Flex from '../Flex/flex';
-import { BaseCustomProps } from 'src/types/base.types';
+import { BaseUIProps } from 'src/types/base.types';
 
 // Union type for both input and textarea elements
 type InputElement = HTMLInputElement | HTMLTextAreaElement;
 
 export interface InputProps
-    extends BaseCustomProps,
-        InputHTMLAttributes<HTMLInputElement> {
+    extends BaseUIProps<
+        HTMLInputElement,
+        InputHTMLAttributes<HTMLInputElement>
+    > {
     info?: string | string[];
     label?: string;
     status?: 'error' | 'info' | 'warning';

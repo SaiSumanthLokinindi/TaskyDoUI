@@ -1,5 +1,6 @@
-import { HTMLAttributes, memo } from 'react';
+import { HTMLAttributes, InputHTMLAttributes, memo } from 'react';
 import Flex from 'src/components/Flex/flex';
+import { BaseUIProps } from 'src/types/base.types';
 import styled, { css } from 'styled-components';
 
 const StyledToggleFormField = styled(Flex)(({ theme: { spacing } }) => {
@@ -68,7 +69,11 @@ const StyledToggle = styled.input(({ theme }) => {
     `;
 });
 
-export interface ToggleProps extends HTMLAttributes<HTMLInputElement> {
+export interface ToggleProps
+    extends BaseUIProps<
+        HTMLInputElement,
+        InputHTMLAttributes<HTMLInputElement>
+    > {
     label?: string;
 }
 
@@ -79,13 +84,7 @@ const Toggle = memo(({ label, ...restProps }: ToggleProps) => {
             justifyContent="space-between"
         >
             {label && <label htmlFor={restProps.id}>{label}</label>}
-            <StyledToggle
-                {...restProps}
-                type="checkbox"
-                onChange={(e) => {
-                    console.log(e.target.checked);
-                }}
-            />
+            <StyledToggle {...restProps} type="checkbox" />
         </StyledToggleFormField>
     );
 });
