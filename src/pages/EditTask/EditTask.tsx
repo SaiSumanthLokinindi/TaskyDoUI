@@ -1,5 +1,4 @@
 import { ChangeEvent, memo, useCallback, useEffect, useState } from 'react';
-import Button from 'src/components/Button/button';
 import DesktopDateInput from 'src/components/DesktopDateInput/DesktopDateInput';
 import FilterableListInput from 'src/components/FilterableListInput/FilterableListInput';
 import Flex from 'src/components/Flex/flex';
@@ -36,29 +35,38 @@ const EditTask = () => {
         data: taskData,
         errors: taskErrors,
         setFieldValue,
-        runValidators,
-        resetError,
+        runFieldValidators,
+        resetFieldError,
     } = useForm();
 
     useEffect(() => {
-        registerInput('taskCompleted');
-        registerInput('label', [fieldRequiredValidator('label')]);
-        registerInput('taskDescription');
-        registerInput('taskPriority');
-        registerInput('scheduleDate');
-        registerInput('dueDate');
-        registerInput('tags');
+        registerInput({ name: 'taskCompleted', validators: [] });
+        registerInput({
+            name: 'label',
+            validators: [fieldRequiredValidator('label')],
+        });
+        registerInput({ name: 'taskDescription', validators: [] });
+        registerInput({ name: 'taskPriority', validators: [] });
+        registerInput({ name: 'scheduleDate', validators: [] });
+        registerInput({ name: 'dueDate', validators: [] });
+        registerInput({ name: 'tags', validators: [] });
 
         return () => {
-            deregisterInput('taskCompleted');
-            deregisterInput('label');
-            deregisterInput('taskDescription');
-            deregisterInput('taskPriority');
-            deregisterInput('scheduleDate');
-            deregisterInput('dueDate');
-            deregisterInput('tags');
+            deregisterInput(
+                'taskCompleted',
+                'label',
+                'taskDescription',
+                'taskPriority',
+                'scheduleDate',
+                'dueDate',
+                'tags',
+            );
         };
     }, [registerInput, deregisterInput]);
+
+    useEffect(() => {
+        console.log('taskData', taskData);
+    }, [taskData]);
 
     const tagsInputChangeHandler = useCallback(
         debounce((event: ChangeEvent<HTMLInputElement>) => {
@@ -84,7 +92,6 @@ const EditTask = () => {
                                 };
                             },
                         );
-                        console.log('tags', tags);
                         setTagSuggestions(tags);
                     }
                 })
@@ -107,7 +114,7 @@ const EditTask = () => {
                 id="task-completed"
                 checked={taskData.taskCompleted as boolean}
                 onChange={(e) => {
-                    setFieldValue('label', e.target.checked);
+                    setFieldValue('taskCompleted', e.target.checked);
                 }}
             />
             <Input
@@ -117,7 +124,11 @@ const EditTask = () => {
                 label="Title"
                 value={taskData.label as string}
                 onChange={(e) => {
+                    resetFieldError('label');
                     setFieldValue('label', e.target.value);
+                }}
+                onBlur={() => {
+                    runFieldValidators('label');
                 }}
                 info={
                     taskErrors.label?.length > 0 ? taskErrors.label : undefined
@@ -131,17 +142,42 @@ const EditTask = () => {
                 label="Description"
                 value={taskData.taskDescription as string}
                 onChange={(e) => {
+                    resetFieldError('taskDescription');
                     setFieldValue('taskDescription', e.target.value);
                 }}
+                onBlur={() => {
+                    runFieldValidators('taskDescription');
+                }}
+                info={
+                    taskErrors.taskDescription?.length > 0
+                        ? taskErrors.taskDescription
+                        : undefined
+                }
+                status={
+                    taskErrors.taskDescription?.length > 0 ? 'error' : undefined
+                }
             />
             <Select
                 options={['Critical', 'High', 'Medium', 'Low']}
                 label="Priority"
+                name="taskPriority"
                 placeholder="Select priority"
                 value={taskData.taskPriority as string}
-                onChange={(option) => {
-                    setFieldValue('taskPriority', option);
+                onChange={(e) => {
+                    resetFieldError('taskPriority');
+                    setFieldValue('taskPriority', e.target.value);
                 }}
+                onBlur={() => {
+                    runFieldValidators('taskPriority');
+                }}
+                info={
+                    taskErrors.taskPriority?.length > 0
+                        ? taskErrors.taskPriority
+                        : undefined
+                }
+                status={
+                    taskErrors.taskPriority?.length > 0 ? 'error' : undefined
+                }
             />
 
             <Flex columnGap="8px">
@@ -150,10 +186,46 @@ const EditTask = () => {
                         <DesktopDateInput
                             placeholder="DD-MMM-YYYY"
                             label="Schedule Date"
+                            name="scheduleDate"
+                            onChange={(e) => {
+                                resetFieldError('scheduleDate');
+                                setFieldValue('scheduleDate', e.target.value);
+                            }}
+                            onBlur={() => {
+                                runFieldValidators('scheduleDate');
+                            }}
+                            info={
+                                taskErrors.scheduleDate?.length > 0
+                                    ? taskErrors.scheduleDate
+                                    : undefined
+                            }
+                            status={
+                                taskErrors.scheduleDate?.length > 0
+                                    ? 'error'
+                                    : undefined
+                            }
                         />
                         <DesktopDateInput
                             placeholder="DD-MMM-YYYY"
                             label="Due Date"
+                            name="dueDate"
+                            onChange={(e) => {
+                                resetFieldError('dueDate');
+                                setFieldValue('dueDate', e.target.value);
+                            }}
+                            onBlur={() => {
+                                runFieldValidators('dueDate');
+                            }}
+                            info={
+                                taskErrors.dueDate?.length > 0
+                                    ? taskErrors.dueDate
+                                    : undefined
+                            }
+                            status={
+                                taskErrors.dueDate?.length > 0
+                                    ? 'error'
+                                    : undefined
+                            }
                         />
                     </>
                 ) : (
@@ -201,8 +273,8 @@ const EditTask = () => {
                 />
             </Flex>
             <Flex columnGap="0.5rem">
-                {taskData?.(tags as string[])?.map((tag) => (
-                    <Tag key="tag" label={tag} />
+                {(taskData?.tags as string[])?.map((tag) => (
+                    <Tag key={tag} label={tag} />
                 ))}
             </Flex>
         </StyledEditTaskContainer>

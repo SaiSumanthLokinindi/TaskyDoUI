@@ -1,15 +1,30 @@
-import { memo, useState, useRef, useEffect, KeyboardEvent } from 'react';
+import {
+    memo,
+    useState,
+    useRef,
+    useEffect,
+    KeyboardEvent,
+    ChangeEvent,
+    FocusEvent,
+} from 'react';
 import styled, { css } from 'styled-components';
-import { sharedInputStyles, sharedLableStyles } from '../Input/input';
+import {
+    sharedInputStyles,
+    sharedLableStyles,
+    StyledInfo,
+} from '../Input/input';
 
 export interface SelectProps {
     options: string[];
     value?: string;
+    name?: string;
     placeholder?: string;
-    onChange?: (value: string) => void;
+    onChange?: (event: ChangeEvent<HTMLSelectElement>) => void;
+    onBlur?: (event: FocusEvent<HTMLButtonElement>) => void;
     status?: 'error' | 'info' | 'warning';
     disabled?: boolean;
     label?: string;
+    info?: string | string[];
 }
 
 const StyledInputWrapper = styled.div`
@@ -148,18 +163,21 @@ const Select = memo(
     ({
         options,
         value,
+        name,
         placeholder = 'Select an option',
         onChange,
+        onBlur,
         status,
         disabled = false,
         label,
+        info,
     }: SelectProps) => {
         const [isOpen, setIsOpen] = useState(false);
         const [selectedValue, setSelectedValue] = useState(value || '');
         const [highlightedIndex, setHighlightedIndex] = useState(-1);
         const [openAbove, setOpenAbove] = useState(false);
         const [id] = useState(
-            () => `select-${Math.random().toString(36).substr(2, 9)}`,
+            () => name || `select-${Math.random().toString(36).substr(2, 9)}`,
         );
         const wrapperRef = useRef<HTMLDivElement>(null);
         const triggerRef = useRef<HTMLButtonElement>(null);
@@ -230,8 +248,21 @@ const Select = memo(
         }, [value]);
 
         const handleSelect = (option: string) => {
+            const oldValue = selectedValue;
             setSelectedValue(option);
-            onChange?.(option);
+            if (onChange && oldValue !== option) {
+                const event = {
+                    target: {
+                        name,
+                        value: option,
+                    },
+                    currentTarget: {
+                        name,
+                        value: option,
+                    },
+                } as unknown as ChangeEvent<HTMLSelectElement>;
+                onChange(event);
+            }
             setIsOpen(false);
             triggerRef.current?.focus();
         };
@@ -285,9 +316,12 @@ const Select = memo(
                         id={id}
                         ref={triggerRef}
                         type="button"
+                        name={name}
+                        value={selectedValue}
                         status={status}
                         isOpen={isOpen}
                         disabled={disabled}
+                        onBlur={onBlur}
                         onClick={() => {
                             if (!disabled) {
                                 if (!isOpen) {
@@ -336,6 +370,16 @@ const Select = memo(
                         </Dropdown>
                     )}
                 </SelectContainer>
+                <StyledInfo>
+                    {info &&
+                        (Array.isArray(info) ? (
+                            info.map((message, index) => (
+                                <span key={index}>{message}</span>
+                            ))
+                        ) : (
+                            <span>{info}</span>
+                        ))}
+                </StyledInfo>
             </StyledInputWrapper>
         );
     },

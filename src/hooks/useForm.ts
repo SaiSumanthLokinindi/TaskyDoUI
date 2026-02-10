@@ -26,15 +26,46 @@ enum FormActionType {
     'DEREGISTER_INPUT' = 'deregisterInput',
 }
 
-interface FormAction {
-    type: FormActionType;
-    payload:
-        | {
+type FormAction =
+    | {
+          type: FormActionType.REGISTER_INPUT;
+          payload: {
               name: string;
-              value?: Validator[] | string[] | FieldValue;
-          }
-        | Record<string, string[]>;
-}
+              value?: FieldValue;
+              validators?: Validator[];
+          };
+      }
+    | {
+          type: FormActionType.SET_DATA;
+          payload: {
+              name: string;
+              value: FieldValue;
+          };
+      }
+    | {
+          type: FormActionType.SET_FIELD_ERROR;
+          payload: {
+              name: string;
+              value: string[];
+          };
+      }
+    | {
+          type: FormActionType.SET_ERRORS;
+          payload: Record<string, string[]>;
+      }
+    | {
+          type: FormActionType.RESET_FIELD_ERROR;
+          payload: { name: string };
+      }
+    | {
+          type: FormActionType.RESET_ERRORS;
+      }
+    | {
+          type: FormActionType.DEREGISTER_INPUT;
+          payload: {
+              inputs: string[];
+          };
+      };
 
 const initialFormState: FormState = {
     data: {},
@@ -49,12 +80,12 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
                 ...state,
                 data: {
                     ...state.data,
-                    [action.payload.name as string]: undefined,
+                    [action.payload.name as string]: action.payload.value,
                 },
                 validators: {
                     ...state.validators,
-                    [action.payload.name as string]: (action.payload.value ||
-                        []) as Validator[],
+                    [action.payload.name as string]: (action.payload
+                        .validators || []) as Validator[],
                 },
                 errors: {
                     ...state.errors,
@@ -125,14 +156,20 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
     }
 };
 
+export type FieldInfo = {
+    name: string;
+    defaultValue?: FieldValue;
+    validators: Validator[];
+};
+
 export const useForm = () => {
     const [formState, dispatch] = useReducer(formReducer, initialFormState);
 
     const registerInput = useCallback(
-        (name: string, validators?: Validator[]) => {
+        ({ name, defaultValue = undefined, validators }: FieldInfo) => {
             dispatch({
                 type: FormActionType.REGISTER_INPUT,
-                payload: { name, value: validators },
+                payload: { name, value: defaultValue, validators },
             });
         },
         [dispatch],
@@ -163,7 +200,7 @@ export const useForm = () => {
         [dispatch],
     );
 
-    const resetError = useCallback(
+    const resetFieldError = useCallback(
         (name: string) => {
             dispatch({
                 type: FormActionType.RESET_FIELD_ERROR,
@@ -173,7 +210,7 @@ export const useForm = () => {
         [dispatch],
     );
 
-    const runValidators = useCallback(() => {
+    const runAllValidators = useCallback(() => {
         const validators = formState.validators;
         const data = formState.data;
         let hasError = false;
@@ -200,13 +237,45 @@ export const useForm = () => {
         return hasError;
     }, [formState.validators, formState.data, dispatch]);
 
+    const runFieldValidators = useCallback(
+        (name: FieldInfo['name']) => {
+            const fieldValidators = formState.validators[name];
+            let hasError = false;
+
+            if (fieldValidators) {
+                const errors = fieldValidators.reduce(
+                    (result: string[], validator: Validator): string[] => {
+                        const error = validator(formState.data);
+                        if (error) {
+                            hasError = true;
+                            return [...result, error];
+                        } else return result;
+                    },
+                    [],
+                );
+
+                dispatch({
+                    type: FormActionType.SET_FIELD_ERROR,
+                    payload: {
+                        name,
+                        value: errors,
+                    },
+                });
+            }
+
+            return hasError;
+        },
+        [formState.data, dispatch],
+    );
+
     return {
         data: formState.data,
         errors: formState.errors,
         registerInput,
         deregisterInput,
         setFieldValue,
-        runValidators,
-        resetError,
+        runAllValidators,
+        runFieldValidators,
+        resetFieldError,
     };
 };

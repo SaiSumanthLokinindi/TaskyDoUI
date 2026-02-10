@@ -39,21 +39,27 @@ const Login = memo(
             registerInput,
             deregisterInput,
             setFieldValue,
-            runValidators,
-            resetError,
+            runAllValidators,
+            resetFieldError,
             data: formData,
         } = useForm();
 
         useEffect(() => {
-            registerInput('email', [fieldRequiredValidator('email')]);
-            registerInput('password', [fieldRequiredValidator('password')]);
+            registerInput({
+                name: 'email',
+                validators: [fieldRequiredValidator('email')],
+            });
+            registerInput({
+                name: 'password',
+                validators: [fieldRequiredValidator('password')],
+            });
             return () => {
                 deregisterInput('email', 'password');
             };
         }, [registerInput, deregisterInput]);
 
         const handleLogin = (e: FormEvent<HTMLFormElement>) => {
-            if (!runValidators()) {
+            if (!runAllValidators()) {
                 setLoading(true);
                 axios
                     .post<AuthResponse>('user/login', formData)
@@ -96,7 +102,7 @@ const Login = memo(
                         placeholder="name@company.com"
                         onChange={() => {
                             setFormError('');
-                            resetError('email');
+                            resetFieldError('email');
                         }}
                         onBlur={(e) => {
                             setFieldValue('email', e.target.value);
@@ -117,7 +123,7 @@ const Login = memo(
                         placeholder="********"
                         onChange={() => {
                             setFormError('');
-                            resetError('password');
+                            resetFieldError('password');
                         }}
                         onBlur={(e) => {
                             setFieldValue('password', e.target.value);

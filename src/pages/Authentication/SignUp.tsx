@@ -40,50 +40,61 @@ const SignUp = memo(
             registerInput,
             deregisterInput,
             setFieldValue,
-            runValidators,
-            resetError,
+            runAllValidators,
+            resetFieldError,
             data: formData,
         } = useForm();
 
         useEffect(() => {
-            registerInput('name', [
-                fieldRequiredValidator('name'),
-                (data) => {
-                    if (!data['name']) return '';
-                    return !/^[A-Za-z\s]{2,25}$/.test(data['name'])
-                        ? 'Name should be minimum of 2 and maximum of 25 character long and can only contain alphabets and spaces'
-                        : '';
-                },
-            ]);
-            registerInput('email', [
-                fieldRequiredValidator('email'),
-                (data) => {
-                    if (!data['email']) return '';
-                    return !/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/.test(
-                        data['email'],
-                    )
-                        ? 'email is invalid'
-                        : '';
-                },
-            ]);
-            registerInput('password', [
-                fieldRequiredValidator('password'),
-                (data) => {
-                    if (!data['password']) return '';
-                    return !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$/.test(
-                        data['password'],
-                    )
-                        ? 'Password should be 8 to 32 characters long, should contain at least one uppercase, lowercase, number and special character '
-                        : '';
-                },
-            ]);
+            registerInput({
+                name: 'name',
+                validators: [
+                    fieldRequiredValidator('name'),
+                    (data) => {
+                        if (!data['name']) return '';
+                        return !/^[A-Za-z\s]{2,25}$/.test(
+                            data['name'] as string,
+                        )
+                            ? 'Name should be minimum of 2 and maximum of 25 character long and can only contain alphabets and spaces'
+                            : '';
+                    },
+                ],
+            });
+            registerInput({
+                name: 'email',
+                validators: [
+                    fieldRequiredValidator('email'),
+                    (data) => {
+                        if (!data['email']) return '';
+                        return !/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/.test(
+                            data['email'] as string,
+                        )
+                            ? 'email is invalid'
+                            : '';
+                    },
+                ],
+            });
+            registerInput({
+                name: 'password',
+                validators: [
+                    fieldRequiredValidator('password'),
+                    (data) => {
+                        if (!data['password']) return '';
+                        return !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$/.test(
+                            data['password'] as string,
+                        )
+                            ? 'Password should be 8 to 32 characters long, should contain at least one uppercase, lowercase, number and special character '
+                            : '';
+                    },
+                ],
+            });
             return () => {
                 deregisterInput('name', 'email', 'password');
             };
         }, [registerInput, deregisterInput]);
 
         const handleSignUp = (e: FormEvent<HTMLFormElement>) => {
-            if (!runValidators()) {
+            if (!runAllValidators()) {
                 setLoading(true);
                 axios
                     .post<AuthResponse>('user', formData)
@@ -126,7 +137,7 @@ const SignUp = memo(
                         name="name"
                         onChange={() => {
                             setFormError('');
-                            resetError('name');
+                            resetFieldError('name');
                         }}
                         onBlur={(e) => {
                             setFieldValue('name', e.target.value);
@@ -147,7 +158,7 @@ const SignUp = memo(
                         placeholder="eg: jondoe@company.com"
                         onChange={() => {
                             setFormError('');
-                            resetError('email');
+                            resetFieldError('email');
                         }}
                         onBlur={(e) => {
                             setFieldValue('email', e.target.value);
@@ -168,7 +179,7 @@ const SignUp = memo(
                         placeholder="*******"
                         onChange={() => {
                             setFormError('');
-                            resetError('password');
+                            resetFieldError('password');
                         }}
                         onFocus={() => {
                             setSignUpPasswordInfo(

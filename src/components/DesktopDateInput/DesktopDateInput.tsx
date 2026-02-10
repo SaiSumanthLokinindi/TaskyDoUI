@@ -1,18 +1,32 @@
-import { memo, useEffect, useState, useRef } from 'react';
+import {
+    ChangeEvent,
+    FocusEvent,
+    memo,
+    useEffect,
+    useState,
+    useRef,
+} from 'react';
 import Flex from '../Flex/flex';
 import { GoCalendar } from 'react-icons/go';
 import styled from 'styled-components';
-import { sharedInputStyles, sharedLableStyles } from '../Input/input';
+import {
+    sharedInputStyles,
+    sharedLableStyles,
+    StyledInfo,
+} from '../Input/input';
 import Dialog from '../Dialog/Dialog';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 
 export interface DesktopDateInputProps {
     defaultDate?: string;
-    onChange?: (date: string) => void;
+    onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+    onBlur?: (event: FocusEvent<HTMLDivElement>) => void;
     label?: string;
+    name?: string;
     placeholder?: string;
     status?: 'error' | 'info' | 'warning';
+    info?: string | string[];
 }
 
 const StyledInputWrapper = styled.div`
@@ -66,14 +80,18 @@ const DesktopDateInput = memo(
     ({
         defaultDate,
         onChange,
+        onBlur,
         label,
+        name,
         placeholder,
         status,
-    }: DesktopDateInputProps & { placeholder?: string }) => {
+        info,
+    }: DesktopDateInputProps) => {
         const [date, setDate] = useState(defaultDate);
         const [isDialogOpen, setIsDialogOpen] = useState(false);
         const [id] = useState(
-            () => `date-input-${Math.random().toString(36).substr(2, 9)}`,
+            () =>
+                name || `date-input-${Math.random().toString(36).substr(2, 9)}`,
         );
         const containerRef = useRef<HTMLDivElement>(null);
 
@@ -105,7 +123,19 @@ const DesktopDateInput = memo(
                 const formattedDate = `${day} ${month} ${year}`;
 
                 setDate(formattedDate);
-                onChange?.(selectedDate.toISOString());
+                if (onChange) {
+                    const event = {
+                        target: {
+                            name,
+                            value: selectedDate.toISOString(),
+                        },
+                        currentTarget: {
+                            name,
+                            value: selectedDate.toISOString(),
+                        },
+                    } as unknown as ChangeEvent<HTMLInputElement>;
+                    onChange(event);
+                }
                 setIsDialogOpen(false);
             }
         };
@@ -119,6 +149,7 @@ const DesktopDateInput = memo(
                     ref={containerRef}
                     status={status}
                     onClick={() => setIsDialogOpen(true)}
+                    onBlur={onBlur}
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                             setIsDialogOpen(true);
@@ -146,6 +177,16 @@ const DesktopDateInput = memo(
                         onSelect={handleDateSelect}
                     />
                 </Dialog>
+                <StyledInfo>
+                    {info &&
+                        (Array.isArray(info) ? (
+                            info.map((message, index) => (
+                                <span key={index}>{message}</span>
+                            ))
+                        ) : (
+                            <span>{info}</span>
+                        ))}
+                </StyledInfo>
             </StyledInputWrapper>
         );
     },
