@@ -55,14 +55,21 @@ const FilterableListInput = memo(
             }
         }, [menuLoading, menuItems.length]);
 
-        const menuItemSelectHandler = useCallback((id: MenuItemProps['id']) => {
-            const menuItem = menuItems.find((item) => item.id === id);
-            if (menuItem) {
-                console.log(menuItem.label);
-                setInputValue(menuItem.label);
-            }
-            setIsMenuOpen(false);
-        }, []);
+        const menuItemSelectHandler = useCallback(
+            (id: MenuItemProps['id']) => {
+                const menuItem = menuItems.find((item) => item.id === id);
+                if (menuItem) {
+                    setInputValue(menuItem.label);
+                    if (inputRef.current)
+                        onChange?.({
+                            target: inputRef.current,
+                            currentTarget: inputRef.current,
+                        } as ChangeEvent<HTMLInputElement>);
+                }
+                setIsMenuOpen(false);
+            },
+            [menuItems],
+        );
 
         return (
             <Flex direction="column" style={style} className={className}>

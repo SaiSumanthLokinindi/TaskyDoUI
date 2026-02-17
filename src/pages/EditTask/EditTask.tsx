@@ -4,7 +4,7 @@ import FilterableListInput from 'src/components/FilterableListInput/FilterableLi
 import Flex from 'src/components/Flex/flex';
 import Input, { StyledInput } from 'src/components/Input/input';
 import Select from 'src/components/Select/Select';
-import Tag from 'src/components/Tag/Tag';
+import Tag, { TagProps } from 'src/components/Tag/Tag';
 import Toggle from 'src/components/Toggle/Toggle';
 import { useMedia } from 'src/styles/useMedia';
 import styled, { css } from 'styled-components';
@@ -13,19 +13,26 @@ import { MenuItemProps } from 'src/components/Menu/MenuItem';
 import { debounce } from 'src/shared/utils';
 import { useForm } from 'src/hooks/useForm';
 import { fieldRequiredValidator } from 'src/utils/validators';
+import { useModal } from 'src/components/Modal/ModalContext';
 
-const StyledEditTaskContainer = styled(Flex)(({ theme: { spacing } }) => {
+const StyledEditTaskContainer = styled.form(({ theme: { spacing } }) => {
     return css`
         width: 100%;
         & > *:not(:first-child) ${StyledInput} {
             font-size: 0.825rem;
         }
+
+        display: flex;
+        flex-direction: column;
+        row-gap: calc(3 * ${spacing});
     `;
 });
 
 const EditTask = () => {
     const { isDesktop } = useMedia();
+    const { setActions } = useModal();
 
+    const [tagInputValue, setTagInputValue] = useState('');
     const [tagSuggestions, setTagSuggestions] = useState<MenuItemProps[]>([]);
     const [tagsLoading, setTagsLoading] = useState(false);
 
@@ -49,7 +56,7 @@ const EditTask = () => {
         registerInput({ name: 'taskPriority', validators: [] });
         registerInput({ name: 'scheduleDate', validators: [] });
         registerInput({ name: 'dueDate', validators: [] });
-        registerInput({ name: 'tags', validators: [] });
+        registerInput({ name: 'tags', defaultValue: [], validators: [] });
 
         return () => {
             deregisterInput(
@@ -64,11 +71,25 @@ const EditTask = () => {
         };
     }, [registerInput, deregisterInput]);
 
+    const submitTaskData = useCallback(() => {
+        console.log('submitted task data');
+    }, []);
+
+    useEffect(() => {
+        setActions([
+            {
+                label: 'Add Task',
+                onClick: submitTaskData,
+                variant: 'primary',
+            },
+        ]);
+    }, [setActions, submitTaskData]);
+
     useEffect(() => {
         console.log('taskData', taskData);
     }, [taskData]);
 
-    const tagsInputChangeHandler = useCallback(
+    const fetchTagSuggestions = useCallback(
         debounce((event: ChangeEvent<HTMLInputElement>) => {
             if (!event.target.value) {
                 setTagSuggestions([]);
@@ -104,13 +125,32 @@ const EditTask = () => {
     );
 
     const addTagHandler = useCallback(() => {
-        console.log('tag Added');
-    }, []);
+        if (tagInputValue) {
+            setFieldValue('tags', [
+                ...(taskData.tags as string[]),
+                tagInputValue,
+            ]);
+        }
+    }, [taskData.tags, tagInputValue, setFieldValue]);
+
+    const removeTagHandler = useCallback(
+        (id: TagProps['id']) => {
+            setFieldValue(
+                'tags',
+                (taskData.tags as string[])?.filter((tag) => tag !== id),
+            );
+        },
+        [setFieldValue, taskData.tags],
+    );
 
     return (
-        <StyledEditTaskContainer direction="column" rowGap="24px">
+        <StyledEditTaskContainer
+            onSubmit={(e) => {
+                e.preventDefault();
+            }}
+        >
             <Toggle
-                label="Mark Task as Completed"
+                label="Mark task as completed"
                 id="task-completed"
                 checked={taskData.taskCompleted as boolean}
                 onChange={(e) => {
@@ -259,22 +299,32 @@ const EditTask = () => {
                     placeholder="Add tags"
                     name="task-tags"
                     label="Tags"
+                    value={tagInputValue}
                     menuItems={tagSuggestions}
                     style={{ flexGrow: 1 }}
-                    onChange={tagsInputChangeHandler}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                        setTagInputValue(event.target.value);
+                        fetchTagSuggestions(event);
+                    }}
                     menuLoading={tagsLoading}
                     actions={[
                         {
                             label: 'Add Tag',
                             onClick: addTagHandler,
                             variant: 'simple',
+                            type: 'button',
                         },
                     ]}
                 />
             </Flex>
             <Flex columnGap="0.5rem">
                 {(taskData?.tags as string[])?.map((tag) => (
-                    <Tag key={tag} label={tag} />
+                    <Tag
+                        id={tag}
+                        key={tag}
+                        label={tag}
+                        onRemove={removeTagHandler}
+                    />
                 ))}
             </Flex>
         </StyledEditTaskContainer>

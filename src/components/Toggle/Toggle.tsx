@@ -1,15 +1,15 @@
-import { HTMLAttributes, InputHTMLAttributes, memo } from 'react';
+import { InputHTMLAttributes, memo } from 'react';
 import Flex from 'src/components/Flex/flex';
 import { BaseUIProps } from 'src/types/base.types';
 import styled, { css } from 'styled-components';
 
-const StyledToggleFormField = styled(Flex)(({ theme: { spacing } }) => {
+export const StyledToggleFormField = styled(Flex)(({ theme: { spacing } }) => {
     return css`
         font-size: 0.825rem;
     `;
 });
 
-const StyledToggle = styled.input(({ theme }) => {
+export const StyledToggle = styled.input(({ theme }) => {
     return css`
         appearance: none;
         width: 2.8rem;

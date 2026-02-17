@@ -5,16 +5,18 @@ import { GrClose } from 'react-icons/gr';
 import Button, { StyledButton } from '../Button/button';
 
 export interface TagProps {
+    id: string;
     label: string;
-    onRemove?: (e?: MouseEvent<HTMLButtonElement>) => void;
+    onRemove?: (id: TagProps['id'], e?: MouseEvent<HTMLButtonElement>) => void;
 }
 
 export const StyledTag = styled(Flex)(({ theme }) => {
     return css`
         background-color: #393939;
         color: ${theme.baseColors.dimWhite};
-        padding: calc(0.25 * ${theme.spacing}) ${theme.spacing};
+        padding: calc(0.5 * ${theme.spacing}) ${theme.spacing};
         border-radius: 16px;
+        line-height: 1.45;
         font-size: 0.8rem;
         font-weight: 500;
         padding-inline-end: calc(0.5 * ${theme.spacing});
@@ -31,16 +33,22 @@ export const StyledTag = styled(Flex)(({ theme }) => {
     `;
 });
 
-const Tag = memo(({ label, onRemove, ...restProps }: TagProps) => {
+const Tag = memo(({ id, label, onRemove, ...restProps }: TagProps) => {
     return (
         <StyledTag
             {...restProps}
+            id={id}
             inline
             alignItems="center"
             columnGap={'0.25rem'}
         >
             <span>#{label}</span>
-            <Button variant="simple" onClick={onRemove}>
+            <Button
+                variant="simple"
+                onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                    onRemove?.(id, e);
+                }}
+            >
                 <GrClose />
             </Button>
         </StyledTag>

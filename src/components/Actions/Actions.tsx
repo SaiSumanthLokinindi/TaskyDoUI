@@ -1,13 +1,11 @@
-import { memo, MouseEvent } from 'react';
+import { memo } from 'react';
 import Button, { ButtonProps } from '../Button/button';
 import styled from 'styled-components';
 import { BaseUIProps } from 'src/types/base.types';
 
 export type Action = {
     label: string;
-    onClick: (e?: MouseEvent<HTMLElement>) => void;
-    variant?: Exclude<ButtonProps['variant'], 'link'>;
-};
+} & Partial<ButtonProps>;
 
 export const StyledAction = styled(Button)``;
 export interface ActionsProps extends BaseUIProps<HTMLButtonElement> {
@@ -15,15 +13,10 @@ export interface ActionsProps extends BaseUIProps<HTMLButtonElement> {
 }
 
 const Actions = memo(({ actions, ...restProps }: ActionsProps) => {
-    return actions.map((action) => {
+    return actions.map(({ label, ...actionProps }) => {
         return (
-            <StyledAction
-                {...restProps}
-                key={action.label}
-                onClick={action.onClick}
-                variant={action.variant}
-            >
-                {action.label}
+            <StyledAction {...restProps} {...actionProps} key={label}>
+                {label}
             </StyledAction>
         );
     });

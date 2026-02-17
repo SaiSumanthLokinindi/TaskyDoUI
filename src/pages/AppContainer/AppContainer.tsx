@@ -95,11 +95,6 @@ const AppContainer = memo(() => {
                     onClick: () => closeModal(),
                     variant: 'simple',
                 },
-                {
-                    label: 'Add Task',
-                    onClick: () => {},
-                    variant: 'primary',
-                },
             ],
         });
     };
