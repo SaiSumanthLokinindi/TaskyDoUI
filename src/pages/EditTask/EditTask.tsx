@@ -28,6 +28,8 @@ const StyledEditTaskContainer = styled.form(({ theme: { spacing } }) => {
     `;
 });
 
+
+
 const EditTask = () => {
     const { isDesktop } = useMedia();
     const { setActions } = useModal();
@@ -43,6 +45,7 @@ const EditTask = () => {
         errors: taskErrors,
         setFieldValue,
         runFieldValidators,
+        runAllValidators,
         resetFieldError,
     } = useForm();
 
@@ -72,8 +75,19 @@ const EditTask = () => {
     }, [registerInput, deregisterInput]);
 
     const submitTaskData = useCallback(() => {
-        console.log('submitted task data');
-    }, []);
+        if (!runAllValidators()) {
+            axios.post('/task', {
+                label: taskData.label,
+                description: taskData.description,
+                status: {
+                    completed: taskData.taskCompleted,
+                },
+                scheduleDate: taskData.scheduleDate,
+                dueDate: taskData.dueDate,
+                priority: taskData.
+            });
+        }
+    }, [taskData, runAllValidators]);
 
     useEffect(() => {
         setActions([
@@ -108,8 +122,11 @@ const EditTask = () => {
                             (tag: { label: string; id: string }) => {
                                 return {
                                     id: tag.id,
-                                    label: '#' + tag.label,
+                                    label: tag.label,
                                     selected: false,
+                                    onSelect: (selectedTag: MenuItemProps) => {
+                                        setTagInputValue(selectedTag.label);
+                                    },
                                 };
                             },
                         );
@@ -125,11 +142,15 @@ const EditTask = () => {
     );
 
     const addTagHandler = useCallback(() => {
-        if (tagInputValue) {
+        if (
+            tagInputValue &&
+            !(taskData.tags as string[]).includes(tagInputValue)
+        ) {
             setFieldValue('tags', [
                 ...(taskData.tags as string[]),
                 tagInputValue,
             ]);
+            setTagInputValue('');
         }
     }, [taskData.tags, tagInputValue, setFieldValue]);
 
@@ -313,6 +334,7 @@ const EditTask = () => {
                             onClick: addTagHandler,
                             variant: 'simple',
                             type: 'button',
+                            disabled: !tagInputValue,
                         },
                     ]}
                 />

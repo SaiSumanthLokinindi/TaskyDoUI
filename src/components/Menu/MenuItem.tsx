@@ -19,17 +19,17 @@ export interface MenuItemProps {
     id: string;
     label: string;
     selected?: boolean;
-    onSelect?: (id: MenuItemProps['id']) => void;
+    onSelect?: (menuItem: MenuItemProps) => void;
 }
 
-const MenuItem = ({ id, label, selected, onSelect }: MenuItemProps) => {
+const MenuItem = (props: MenuItemProps) => {
     return (
         <StyledMenuItem
-            onClick={() => {
-                onSelect?.(id);
+            onClick={function () {
+                props.onSelect?.(props);
             }}
         >
-            {label}
+            {props.label}
         </StyledMenuItem>
     );
 };

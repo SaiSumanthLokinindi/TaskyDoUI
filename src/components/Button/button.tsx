@@ -6,12 +6,16 @@ import {
     Ref,
     forwardRef,
 } from 'react';
+import Loader, { StyledLoader } from '../Loader/Loader';
+import Flex from '../Flex/flex';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     children: ReactNode;
     variant?: 'primary' | 'secondary' | 'link' | 'basic' | 'simple';
     progress?: boolean;
 }
+
+export const StyledButtonChildren = styled(Flex)``;
 
 export const StyledButton = styled.button<{
     $progress: ButtonProps['progress'];
@@ -49,6 +53,9 @@ export const StyledButton = styled.button<{
         padding: 10px calc(3 * ${theme.spacing});
         transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        display: flex;
+        column-gap: ${theme.spacing};
+        align-items: center;
 
         &:hover {
             filter: brightness(1.1);
@@ -74,6 +81,7 @@ export const StyledButton = styled.button<{
             color: rgba(255, 255, 255, 0.65);
             cursor: default;
             box-shadow: none;
+            pointer-events: none;
         }
 
         ${$variant === 'primary' &&
@@ -128,6 +136,11 @@ export const StyledButton = styled.button<{
             &:hover {
                 background: ${theme.baseColors.secondaryHover};
             }
+
+            &:disabled {
+                background: transparent;
+                opacity: 0.5;
+            }
         `}
 
         ${$variant === 'link' &&
@@ -165,35 +178,19 @@ export const StyledButton = styled.button<{
         `}
 
         ${$progress &&
-        $variant !== 'link' &&
         css`
-            &::before {
-                content: '';
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                margin-top: -11.5px;
-                margin-left: -11.5px;
-                width: 1rem;
-                height: 1rem;
-                border-radius: 50%;
-                border: 3px solid currentColor;
-                border-top-color: transparent;
-                animation: rotate 1s infinite linear;
-            }
+            pointer-events: none;
 
-            @keyframes rotate {
-                0% {
-                    transform: rotate(0deg);
-                }
-                50% {
-                    transform: rotate(180deg);
-                }
-                100% {
-                    transform: rotate(360deg);
-                }
+            & > ${StyledButtonChildren} {
+                opacity: 0.7;
             }
         `}
+
+        ${StyledLoader} {
+            height: 0.625rem;
+            width: 0.625rem;
+            border-width: 2px;
+        }
     `;
 });
 
@@ -214,7 +211,9 @@ const Button = forwardRef(
                 $progress={progress}
                 $variant={variant}
             >
-                {!progress && children}
+                <StyledButtonChildren>{children}</StyledButtonChildren>
+
+                {progress && <Loader />}
             </StyledButton>
         );
     },
