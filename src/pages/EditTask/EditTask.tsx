@@ -14,6 +14,7 @@ import { debounce } from 'src/shared/utils';
 import { useForm } from 'src/hooks/useForm';
 import { fieldRequiredValidator } from 'src/utils/validators';
 import { useModal } from 'src/components/Modal/ModalContext';
+import { PRIORITY_OPTIONS } from 'src/components/Task/Task';
 
 const StyledEditTaskContainer = styled.form(({ theme: { spacing } }) => {
     return css`
@@ -28,8 +29,6 @@ const StyledEditTaskContainer = styled.form(({ theme: { spacing } }) => {
     `;
 });
 
-
-
 const EditTask = () => {
     const { isDesktop } = useMedia();
     const { setActions } = useModal();
@@ -37,6 +36,7 @@ const EditTask = () => {
     const [tagInputValue, setTagInputValue] = useState('');
     const [tagSuggestions, setTagSuggestions] = useState<MenuItemProps[]>([]);
     const [tagsLoading, setTagsLoading] = useState(false);
+    const [actionProgress, setActionProgress] = useState(false);
 
     const {
         registerInput,
@@ -76,16 +76,30 @@ const EditTask = () => {
 
     const submitTaskData = useCallback(() => {
         if (!runAllValidators()) {
-            axios.post('/task', {
-                label: taskData.label,
-                description: taskData.description,
-                status: {
-                    completed: taskData.taskCompleted,
-                },
-                scheduleDate: taskData.scheduleDate,
-                dueDate: taskData.dueDate,
-                priority: taskData.
-            });
+            setActionProgress(true);
+            axios
+                .post('/task', {
+                    label: taskData.label,
+                    description: taskData.description,
+                    status: {
+                        completed: taskData.taskCompleted,
+                    },
+                    scheduleDate: taskData.scheduleDate,
+                    dueDate: taskData.dueDate,
+                    priority: taskData.taskPriority,
+                    tags: taskData.tags,
+                })
+                .then((res) => {
+                    if (res.status === 200) {
+                        console.log('Task Added');
+                    }
+                })
+                .catch((err) => {
+                    console.log('Failed to add task', err);
+                })
+                .finally(() => {
+                    setActionProgress(false);
+                });
         }
     }, [taskData, runAllValidators]);
 
@@ -95,9 +109,10 @@ const EditTask = () => {
                 label: 'Add Task',
                 onClick: submitTaskData,
                 variant: 'primary',
+                progress: actionProgress,
             },
         ]);
-    }, [setActions, submitTaskData]);
+    }, [setActions, submitTaskData, actionProgress]);
 
     useEffect(() => {
         console.log('taskData', taskData);
@@ -219,11 +234,11 @@ const EditTask = () => {
                 }
             />
             <Select
-                options={['Critical', 'High', 'Medium', 'Low']}
+                options={[...PRIORITY_OPTIONS]}
                 label="Priority"
                 name="taskPriority"
                 placeholder="Select priority"
-                value={taskData.taskPriority as string}
+                value={taskData.taskPriority as number}
                 onChange={(e) => {
                     resetFieldError('taskPriority');
                     setFieldValue('taskPriority', e.target.value);

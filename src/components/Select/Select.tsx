@@ -4,7 +4,6 @@ import {
     useRef,
     useEffect,
     KeyboardEvent,
-    ChangeEvent,
     FocusEvent,
 } from 'react';
 import styled, { css } from 'styled-components';
@@ -14,12 +13,17 @@ import {
     StyledInfo,
 } from '../Input/input';
 
-export interface SelectProps {
-    options: string[];
-    value?: string;
+export interface SelectOption<T = string> {
+    label: string;
+    value: T;
+}
+
+export interface SelectProps<T = string> {
+    options: string[] | SelectOption<T>[];
+    value?: T;
     name?: string;
     placeholder?: string;
-    onChange?: (event: ChangeEvent<HTMLSelectElement>) => void;
+    onChange?: (event: { target: { name?: string; value: T } }) => void;
     onBlur?: (event: FocusEvent<HTMLButtonElement>) => void;
     status?: 'error' | 'info' | 'warning';
     disabled?: boolean;
@@ -159,230 +163,238 @@ const Placeholder = styled.span`
     `}
 `;
 
-const Select = memo(
-    ({
-        options,
-        value,
-        name,
-        placeholder = 'Select an option',
-        onChange,
-        onBlur,
-        status,
-        disabled = false,
-        label,
-        info,
-    }: SelectProps) => {
-        const [isOpen, setIsOpen] = useState(false);
-        const [selectedValue, setSelectedValue] = useState(value || '');
-        const [highlightedIndex, setHighlightedIndex] = useState(-1);
-        const [openAbove, setOpenAbove] = useState(false);
-        const [id] = useState(
-            () => name || `select-${Math.random().toString(36).substr(2, 9)}`,
-        );
-        const wrapperRef = useRef<HTMLDivElement>(null);
-        const triggerRef = useRef<HTMLButtonElement>(null);
-        const dropdownHeight = 250; // max-height of dropdown
+const Select = <T extends string | number>({
+    options,
+    value,
+    name,
+    placeholder = 'Select an option',
+    onChange,
+    onBlur,
+    status,
+    disabled = false,
+    label,
+    info,
+}: SelectProps<T>) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedValue, setSelectedValue] = useState<T | undefined>(value);
+    const [highlightedIndex, setHighlightedIndex] = useState(-1);
+    const [openAbove, setOpenAbove] = useState(false);
+    const [id] = useState(
+        () => name || `select-${Math.random().toString(36).substr(2, 9)}`,
+    );
+    const wrapperRef = useRef<HTMLDivElement>(null);
+    const triggerRef = useRef<HTMLButtonElement>(null);
+    const dropdownHeight = 250; // max-height of dropdown
 
-        // Find the nearest scrollable ancestor container
-        const getScrollableParent = (
-            element: HTMLElement | null,
-        ): HTMLElement | null => {
-            if (!element) return null;
-            let parent = element.parentElement;
-            while (parent) {
-                const overflowY = window.getComputedStyle(parent).overflowY;
-                if (overflowY === 'auto' || overflowY === 'scroll') {
-                    return parent;
-                }
-                parent = parent.parentElement;
+    // Update selected value when value prop changes
+    useEffect(() => {
+        if (value !== undefined) {
+            setSelectedValue(value);
+        }
+    }, [value]);
+
+    // Find the nearest scrollable ancestor container
+    const getScrollableParent = (
+        element: HTMLElement | null,
+    ): HTMLElement | null => {
+        if (!element) return null;
+        let parent = element.parentElement;
+        while (parent) {
+            const overflowY = window.getComputedStyle(parent).overflowY;
+            if (overflowY === 'auto' || overflowY === 'scroll') {
+                return parent;
             }
-            return null; // No scrollable parent found, use viewport
+            parent = parent.parentElement;
+        }
+        return null; // No scrollable parent found, use viewport
+    };
+
+    const calculateDirection = () => {
+        if (!triggerRef.current) return false;
+        const triggerRect = triggerRef.current.getBoundingClientRect();
+
+        // Find the scrollable container (modal body)
+        const scrollableParent = getScrollableParent(triggerRef.current);
+
+        let spaceBelow: number;
+        let spaceAbove: number;
+
+        if (scrollableParent) {
+            // Calculate space relative to the scrollable container
+            const containerRect = scrollableParent.getBoundingClientRect();
+            spaceBelow = containerRect.bottom - triggerRect.bottom;
+            spaceAbove = triggerRect.top - containerRect.top;
+        } else {
+            // Fall back to viewport if no scrollable container
+            spaceBelow = window.innerHeight - triggerRect.bottom;
+            spaceAbove = triggerRect.top;
+        }
+
+        // Open above if not enough space below and more space above
+        return spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
+    };
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                wrapperRef.current &&
+                !wrapperRef.current.contains(event.target as Node)
+            ) {
+                setIsOpen(false);
+            }
         };
 
-        const calculateDirection = () => {
-            if (!triggerRef.current) return false;
-            const triggerRect = triggerRef.current.getBoundingClientRect();
+        document.addEventListener('mousedown', handleClickOutside);
+        return () =>
+            document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
-            // Find the scrollable container (modal body)
-            const scrollableParent = getScrollableParent(triggerRef.current);
+    const getOptionLabel = (option: string | SelectOption<T>) =>
+        typeof option === 'string' ? option : option.label;
 
-            let spaceBelow: number;
-            let spaceAbove: number;
+    const getOptionValue = (option: string | SelectOption<T>) =>
+        typeof option === 'string' ? (option as unknown as T) : option.value;
 
-            if (scrollableParent) {
-                // Calculate space relative to the scrollable container
-                const containerRect = scrollableParent.getBoundingClientRect();
-                spaceBelow = containerRect.bottom - triggerRect.bottom;
-                spaceAbove = triggerRect.top - containerRect.top;
-            } else {
-                // Fall back to viewport if no scrollable container
-                spaceBelow = window.innerHeight - triggerRect.bottom;
-                spaceAbove = triggerRect.top;
-            }
+    const handleSelect = (option: string | SelectOption<T>) => {
+        const optionValue = getOptionValue(option);
+        const oldValue = selectedValue;
+        setSelectedValue(optionValue);
 
-            // Open above if not enough space below and more space above
-            return spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
-        };
+        if (onChange && oldValue !== optionValue) {
+            onChange({
+                target: {
+                    name,
+                    value: optionValue,
+                },
+            });
+        }
+        setIsOpen(false);
+        triggerRef.current?.focus();
+    };
 
-        // Close dropdown when clicking outside
-        useEffect(() => {
-            const handleClickOutside = (event: MouseEvent) => {
-                if (
-                    wrapperRef.current &&
-                    !wrapperRef.current.contains(event.target as Node)
-                ) {
-                    setIsOpen(false);
-                }
-            };
+    const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
+        if (disabled) return;
 
-            document.addEventListener('mousedown', handleClickOutside);
-            return () =>
-                document.removeEventListener('mousedown', handleClickOutside);
-        }, []);
-
-        // Update selected value when value prop changes
-        useEffect(() => {
-            if (value !== undefined) {
-                setSelectedValue(value);
-            }
-        }, [value]);
-
-        const handleSelect = (option: string) => {
-            const oldValue = selectedValue;
-            setSelectedValue(option);
-            if (onChange && oldValue !== option) {
-                const event = {
-                    target: {
-                        name,
-                        value: option,
-                    },
-                    currentTarget: {
-                        name,
-                        value: option,
-                    },
-                } as unknown as ChangeEvent<HTMLSelectElement>;
-                onChange(event);
-            }
-            setIsOpen(false);
-            triggerRef.current?.focus();
-        };
-
-        const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
-            if (disabled) return;
-
-            switch (e.key) {
-                case 'Enter':
-                case ' ':
-                    e.preventDefault();
-                    if (isOpen && highlightedIndex >= 0) {
-                        handleSelect(options[highlightedIndex]);
-                    } else {
-                        if (!isOpen) {
-                            setOpenAbove(calculateDirection());
-                        }
-                        setIsOpen(!isOpen);
-                    }
-                    break;
-                case 'ArrowDown':
-                    e.preventDefault();
+        switch (e.key) {
+            case 'Enter':
+            case ' ':
+                e.preventDefault();
+                if (isOpen && highlightedIndex >= 0) {
+                    handleSelect(options[highlightedIndex]);
+                } else {
                     if (!isOpen) {
                         setOpenAbove(calculateDirection());
-                        setIsOpen(true);
-                    } else {
-                        setHighlightedIndex((prev) =>
-                            prev < options.length - 1 ? prev + 1 : 0,
-                        );
                     }
-                    break;
-                case 'ArrowUp':
-                    e.preventDefault();
-                    if (isOpen) {
-                        setHighlightedIndex((prev) =>
-                            prev > 0 ? prev - 1 : options.length - 1,
-                        );
-                    }
-                    break;
-                case 'Escape':
-                    setIsOpen(false);
-                    break;
-            }
-        };
+                    setIsOpen(!isOpen);
+                }
+                break;
+            case 'ArrowDown':
+                e.preventDefault();
+                if (!isOpen) {
+                    setOpenAbove(calculateDirection());
+                    setIsOpen(true);
+                } else {
+                    setHighlightedIndex((prev) =>
+                        prev < options.length - 1 ? prev + 1 : 0,
+                    );
+                }
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                if (isOpen) {
+                    setHighlightedIndex((prev) =>
+                        prev > 0 ? prev - 1 : options.length - 1,
+                    );
+                }
+                break;
+            case 'Escape':
+                setIsOpen(false);
+                break;
+        }
+    };
 
-        return (
-            <StyledInputWrapper>
-                {label && <StyledLabel htmlFor={id}>{label}</StyledLabel>}
-                <SelectContainer ref={wrapperRef}>
-                    <SelectTrigger
-                        id={id}
-                        ref={triggerRef}
-                        type="button"
-                        name={name}
-                        value={selectedValue}
-                        status={status}
-                        isOpen={isOpen}
-                        disabled={disabled}
-                        onBlur={onBlur}
-                        onClick={() => {
-                            if (!disabled) {
-                                if (!isOpen) {
-                                    setOpenAbove(calculateDirection());
-                                }
-                                setIsOpen(!isOpen);
+    const currentLabel = options.find(
+        (opt) => getOptionValue(opt) === selectedValue,
+    );
+
+    return (
+        <StyledInputWrapper>
+            {label && <StyledLabel htmlFor={id}>{label}</StyledLabel>}
+            <SelectContainer ref={wrapperRef}>
+                <SelectTrigger
+                    id={id}
+                    ref={triggerRef}
+                    type="button"
+                    name={name}
+                    status={status}
+                    isOpen={isOpen}
+                    disabled={disabled}
+                    onBlur={onBlur}
+                    onClick={() => {
+                        if (!disabled) {
+                            if (!isOpen) {
+                                setOpenAbove(calculateDirection());
                             }
-                        }}
-                        onKeyDown={handleKeyDown}
-                        aria-haspopup="listbox"
-                        aria-expanded={isOpen}
-                    >
-                        {selectedValue ? (
-                            selectedValue
-                        ) : (
-                            <Placeholder>{placeholder}</Placeholder>
-                        )}
-                        <Arrow isOpen={isOpen}>
-                            <svg viewBox="0 0 24 24">
-                                <polyline points="6 9 12 15 18 9" />
-                            </svg>
-                        </Arrow>
-                    </SelectTrigger>
+                            setIsOpen(!isOpen);
+                        }
+                    }}
+                    onKeyDown={handleKeyDown}
+                    aria-haspopup="listbox"
+                    aria-expanded={isOpen}
+                >
+                    {selectedValue !== undefined && currentLabel ? (
+                        getOptionLabel(currentLabel)
+                    ) : (
+                        <Placeholder>{placeholder}</Placeholder>
+                    )}
+                    <Arrow isOpen={isOpen}>
+                        <svg viewBox="0 0 24 24">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </Arrow>
+                </SelectTrigger>
 
-                    {isOpen && (
-                        <Dropdown
-                            isOpen={isOpen}
-                            openAbove={openAbove}
-                            role="listbox"
-                        >
-                            {options.map((option, index) => (
+                {isOpen && (
+                    <Dropdown
+                        isOpen={isOpen}
+                        openAbove={openAbove}
+                        role="listbox"
+                    >
+                        {options.map((option, index) => {
+                            const optValue = getOptionValue(option);
+                            const isSelected = optValue === selectedValue;
+                            return (
                                 <Option
                                     key={index}
                                     role="option"
-                                    isSelected={option === selectedValue}
+                                    isSelected={isSelected}
                                     isHighlighted={index === highlightedIndex}
-                                    aria-selected={option === selectedValue}
+                                    aria-selected={isSelected}
                                     onClick={() => handleSelect(option)}
                                     onMouseEnter={() =>
                                         setHighlightedIndex(index)
                                     }
                                 >
-                                    {option}
+                                    {getOptionLabel(option)}
                                 </Option>
-                            ))}
-                        </Dropdown>
-                    )}
-                </SelectContainer>
-                <StyledInfo>
-                    {info &&
-                        (Array.isArray(info) ? (
-                            info.map((message, index) => (
-                                <span key={index}>{message}</span>
-                            ))
-                        ) : (
-                            <span>{info}</span>
-                        ))}
-                </StyledInfo>
-            </StyledInputWrapper>
-        );
-    },
-);
+                            );
+                        })}
+                    </Dropdown>
+                )}
+            </SelectContainer>
+            <StyledInfo>
+                {info &&
+                    (Array.isArray(info) ? (
+                        info.map((message, index) => (
+                            <span key={index}>{message}</span>
+                        ))
+                    ) : (
+                        <span>{info}</span>
+                    ))}
+            </StyledInfo>
+        </StyledInputWrapper>
+    );
+};
 
-export default Select;
+export default memo(Select) as typeof Select;

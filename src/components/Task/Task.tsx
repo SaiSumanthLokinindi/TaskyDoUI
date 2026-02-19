@@ -2,8 +2,8 @@ import styled, { css, keyframes } from 'styled-components';
 import Card from '../Card/card';
 import Flex from '../Flex/flex';
 import Text from '../Text/Text';
-import Badge, { BadgeProps } from '../Badge/Badge';
-import { TaskPriority, TaskProps } from './Task.types';
+import Badge from '../Badge/Badge';
+import { TaskProps } from './Task.types';
 import { useMemo } from 'react';
 import Checkbox, { StyledCheckbox } from '../Checkbox/Checkbox';
 import { formatDueDate } from 'src/utils/dates';
@@ -74,15 +74,8 @@ const StyledTaskLabel = styled.span<Pick<TaskProps, 'completed'>>(
     },
 );
 
-const PRIORITY_CONFIG: Record<
-    Exclude<TaskPriority, 0>,
-    { label: string; type: BadgeProps['type'] }
-> = {
-    1: { label: 'low', type: 'success' },
-    2: { label: 'medium', type: 'warning' },
-    3: { label: 'high', type: 'high' },
-    4: { label: 'critical', type: 'error' },
-};
+import { PRIORITY_CONFIG } from './Task.constants';
+export * from './Task.constants';
 
 const Task = ({
     id,
