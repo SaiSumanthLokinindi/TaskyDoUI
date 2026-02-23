@@ -15,6 +15,10 @@ import { useForm } from 'src/hooks/useForm';
 import { fieldRequiredValidator } from 'src/utils/validators';
 import { useModal } from 'src/components/Modal/ModalContext';
 import { PRIORITY_OPTIONS } from 'src/components/Task/Task';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from 'src/store';
+import { addTask } from 'src/store/Task/TaskThunks';
+import { TaskInfo } from 'src/store/Task/Task.types';
 
 const StyledEditTaskContainer = styled.form(({ theme: { spacing } }) => {
     return css`
@@ -31,12 +35,14 @@ const StyledEditTaskContainer = styled.form(({ theme: { spacing } }) => {
 
 const EditTask = () => {
     const { isDesktop } = useMedia();
-    const { setActions } = useModal();
+    const { setActions, closeModal } = useModal();
+    const dispatch = useDispatch<AppDispatch>();
 
     const [tagInputValue, setTagInputValue] = useState('');
     const [tagSuggestions, setTagSuggestions] = useState<MenuItemProps[]>([]);
     const [tagsLoading, setTagsLoading] = useState(false);
     const [actionProgress, setActionProgress] = useState(false);
+    const [EditTaskError, setEditTaskError] = useState<string>();
 
     const {
         registerInput,
@@ -74,34 +80,33 @@ const EditTask = () => {
         };
     }, [registerInput, deregisterInput]);
 
-    const submitTaskData = useCallback(() => {
+    const submitTaskData = useCallback(async () => {
         if (!runAllValidators()) {
+            setEditTaskError(undefined);
             setActionProgress(true);
-            axios
-                .post('/task', {
-                    label: taskData.label,
-                    description: taskData.description,
-                    status: {
-                        completed: taskData.taskCompleted,
-                    },
-                    scheduleDate: taskData.scheduleDate,
-                    dueDate: taskData.dueDate,
-                    priority: taskData.taskPriority,
-                    tags: taskData.tags,
-                })
-                .then((res) => {
-                    if (res.status === 200) {
-                        console.log('Task Added');
-                    }
-                })
-                .catch((err) => {
-                    console.log('Failed to add task', err);
-                })
-                .finally(() => {
-                    setActionProgress(false);
-                });
+
+            const taskInfo = {
+                label: taskData.label,
+                description: taskData.description,
+                status: {
+                    completed: taskData.taskCompleted,
+                },
+                scheduleDate: taskData.scheduleDate,
+                dueDate: taskData.dueDate,
+                priority: taskData.taskPriority,
+                tags: taskData.tags,
+            } as Omit<TaskInfo, 'id'>;
+
+            try {
+                await dispatch(addTask(taskInfo)).unwrap();
+                closeModal();
+            } catch (err) {
+                setEditTaskError(err as string);
+            } finally {
+                setActionProgress(false);
+            }
         }
-    }, [taskData, runAllValidators]);
+    }, [taskData, runAllValidators, dispatch]);
 
     useEffect(() => {
         setActions([

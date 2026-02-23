@@ -10,7 +10,7 @@ import { formatDueDate } from 'src/utils/dates';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/store';
 import { markTaskCompleted } from 'src/store/Task/TaskSlice';
-import { updateTaskCompletion } from 'src/store/Task/utils';
+import { updateTaskCompletion } from 'src/store/Task/TaskThunks';
 
 const slideUpFadeIn = keyframes`
     from {

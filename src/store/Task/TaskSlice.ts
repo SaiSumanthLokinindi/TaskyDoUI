@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TaskInfo, TasksState } from './Task.types';
-import { fetchTasksThunk, updateTaskCompletion } from './utils';
+import { addTask, fetchTasksThunk, updateTaskCompletion } from './TaskThunks';
 
 const upsertTasksInState = (state: TasksState, tasks: TaskInfo[]) => {
     tasks.forEach((task) => {
@@ -137,6 +137,16 @@ const TaskSlice = createSlice({
                 if (task.status) {
                     task.status.completed = !action.payload.completed;
                 }
+            }
+        });
+
+        builder.addCase(addTask.fulfilled, (state, action) => {
+            if (action.payload) {
+                const task = action.payload;
+                if (!state.entities[task.id]) {
+                    state.ids.push(task.id);
+                }
+                state.entities[task.id] = task;
             }
         });
     },

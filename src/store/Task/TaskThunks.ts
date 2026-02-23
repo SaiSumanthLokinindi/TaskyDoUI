@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { TaskInfo } from './Task.types';
-import axios from 'src/axios-instance/axios-instance';
+import { TaskService } from 'src/services/TaskService';
 
 export const fetchTasksThunk = (
     identifier: string,
@@ -8,12 +8,7 @@ export const fetchTasksThunk = (
 ) => {
     return createAsyncThunk(identifier, async (_, thunkApi) => {
         try {
-            const res = await axios.get<TaskInfo[]>(`task/${taskType}`);
-            if (res.status === 200) {
-                return res.data;
-            } else {
-                throw new Error();
-            }
+            return await TaskService.getTasks(taskType);
         } catch (err) {
             return thunkApi.rejectWithValue(
                 `Failed to fetch ${taskType} tasks info`,
@@ -28,14 +23,7 @@ export const updateTaskCompletion = createAsyncThunk<
     { rejectValue: { id: string; completed: boolean; message: string } }
 >('task/update', async ({ id, completed }, { rejectWithValue }) => {
     try {
-        const res = await axios.patch<TaskInfo>(`task/${id}`, {
-            status: { completed },
-        });
-        if (res.status === 200) {
-            return res.data;
-        } else {
-            throw new Error();
-        }
+        return await TaskService.updateTask(id, { status: { completed } });
     } catch (err) {
         return rejectWithValue({
             id,
@@ -44,3 +32,14 @@ export const updateTaskCompletion = createAsyncThunk<
         });
     }
 });
+
+export const addTask = createAsyncThunk<TaskInfo, Omit<TaskInfo, 'id'>>(
+    'task/add',
+    async (taskInfo, { rejectWithValue }) => {
+        try {
+            return await TaskService.addTask(taskInfo);
+        } catch (err) {
+            return rejectWithValue(`Failed to add task`);
+        }
+    },
+);
