@@ -46,7 +46,7 @@ const StyledPlaceholderLabel = styled.span`
 `;
 
 const StyledDesktopDateInput = styled(Flex)<{
-    status?: DesktopDateInputProps['status'];
+    $status?: DesktopDateInputProps['status'];
 }>`
     ${sharedInputStyles}
     justify-content: space-between;
@@ -147,7 +147,7 @@ const DesktopDateInput = memo(
                     id={id}
                     tabIndex={0}
                     ref={containerRef}
-                    status={status}
+                    $status={status}
                     onClick={() => setIsDialogOpen(true)}
                     onBlur={onBlur}
                     onKeyDown={(e) => {

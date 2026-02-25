@@ -99,9 +99,9 @@ const Dialog = memo(
         return createPortal(
             <StyledDialogContainer
                 ref={dialogRef}
-                top={coords.top}
-                left={coords.left}
-                isVisible={isVisible}
+                $top={coords.top}
+                $left={coords.left}
+                $isVisible={isVisible}
                 className={className}
             >
                 {children}

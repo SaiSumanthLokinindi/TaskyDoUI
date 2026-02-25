@@ -93,7 +93,7 @@ const Modal = memo(({ body, title, actions, onDismiss }: ModalProps) => {
                 </StyledModalHeader>
                 <StyledModalBody>{body}</StyledModalBody>
 
-                {actions?.length && (
+                {!!actions?.length && (
                     <StyledModalFooter
                         justifyContent="flex-end"
                         columnGap="0.5rem"

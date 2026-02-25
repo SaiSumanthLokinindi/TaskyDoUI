@@ -9,8 +9,8 @@ import Flex from '../Flex/flex';
 
 type Route = 'home' | 'myday' | 'search' | 'calendar';
 
-export const StyledNavigation = styled(Flex)<{ activeRoute: Route }>(({
-    activeRoute,
+export const StyledNavigation = styled(Flex)<{ $activeRoute: Route }>(({
+    $activeRoute,
     theme: {
         baseColors: { tertiary, secondary, secondaryHover },
         spacing,
@@ -50,7 +50,7 @@ export const StyledNavigation = styled(Flex)<{ activeRoute: Route }>(({
 
                 &:nth-child(
                         ${['home', 'myday', 'search', 'calendar'].indexOf(
-                                activeRoute,
+                                $activeRoute,
                             ) + 1}
                     ) {
                     color: ${tertiary};
@@ -75,7 +75,7 @@ const Navigation: FC = memo(() => {
         <StyledNavigation
             forwardedAs="nav"
             alignItems="center"
-            activeRoute={activeRoute}
+            $activeRoute={activeRoute}
         >
             <ul>
                 <li>

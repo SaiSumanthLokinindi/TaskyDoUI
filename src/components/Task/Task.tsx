@@ -53,8 +53,8 @@ const StyledTaskCard = styled(Card)<{ $animationDelay?: number }>(({
     `;
 });
 
-const StyledTaskLabel = styled.span<Pick<TaskProps, 'completed'>>(
-    ({ completed }) => {
+const StyledTaskLabel = styled.span<{ $completed?: boolean }>(
+    ({ $completed }) => {
         return css`
             font-size: 0.85rem;
             line-height: 1.5;
@@ -65,7 +65,7 @@ const StyledTaskLabel = styled.span<Pick<TaskProps, 'completed'>>(
             text-overflow: ellipsis;
             word-break: break-word;
 
-            ${completed &&
+            ${$completed &&
             css`
                 text-decoration: line-through;
                 color: rgba(255, 255, 255, 0.6);
@@ -126,7 +126,7 @@ const Task = ({
                 grow={1}
                 rowGap={priorityConfig || dueDateInfo ? '4px' : '0'}
             >
-                <StyledTaskLabel completed={completed || false}>
+                <StyledTaskLabel $completed={completed || false}>
                     {label}
                 </StyledTaskLabel>
 

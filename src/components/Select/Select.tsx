@@ -47,8 +47,8 @@ const SelectContainer = styled.div`
 `;
 
 const SelectTrigger = styled.button<{
-    status?: SelectProps['status'];
-    isOpen: boolean;
+    $status?: SelectProps['status'];
+    $isOpen: boolean;
 }>`
     ${sharedInputStyles}
     height: 48px;
@@ -58,8 +58,8 @@ const SelectTrigger = styled.button<{
     justify-content: space-between;
     text-align: left;
 
-    ${({ isOpen, theme }) =>
-        isOpen &&
+    ${({ $isOpen, theme }) =>
+        $isOpen &&
         css`
             outline: 2.5px solid ${theme.baseColors.tertiary};
             box-shadow: 0 0 8px 4px rgba(30, 169, 65, 0.2);
@@ -70,10 +70,11 @@ const SelectTrigger = styled.button<{
     }
 `;
 
-const Arrow = styled.span<{ isOpen: boolean }>`
+const Arrow = styled.span<{ $isOpen: boolean }>`
     display: inline-flex;
     transition: transform 0.2s ease;
-    transform: ${({ isOpen }) => (isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
+    transform: ${({ $isOpen }) =>
+        $isOpen ? 'rotate(180deg)' : 'rotate(0deg)'};
 
     svg {
         width: 16px;
@@ -85,10 +86,10 @@ const Arrow = styled.span<{ isOpen: boolean }>`
     }
 `;
 
-const Dropdown = styled.ul<{ isOpen: boolean; openAbove: boolean }>`
-    ${({ isOpen, openAbove }) => css`
+const Dropdown = styled.ul<{ $isOpen: boolean; $openAbove: boolean }>`
+    ${({ $isOpen, $openAbove }) => css`
         position: absolute;
-        ${openAbove
+        ${$openAbove
             ? css`
                   bottom: calc(100% + 8px);
                   top: auto;
@@ -112,22 +113,22 @@ const Dropdown = styled.ul<{ isOpen: boolean; openAbove: boolean }>`
         z-index: 1200;
         max-height: 250px;
         overflow-y: auto;
-        opacity: ${isOpen ? 1 : 0};
-        visibility: ${isOpen ? 'visible' : 'hidden'};
-        transform: ${isOpen
+        opacity: ${$isOpen ? 1 : 0};
+        visibility: ${$isOpen ? 'visible' : 'hidden'};
+        transform: ${$isOpen
             ? 'translateY(0)'
-            : openAbove
+            : $openAbove
             ? 'translateY(12px)'
             : 'translateY(-12px)'};
         transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        box-shadow: ${openAbove
+        box-shadow: ${$openAbove
             ? '0 -10px 30px rgba(0, 0, 0, 0.5)'
             : '0 10px 30px rgba(0, 0, 0, 0.5)'};
     `}
 `;
 
-const Option = styled.li<{ isSelected: boolean; isHighlighted: boolean }>`
-    ${({ theme, isSelected, isHighlighted }) => css`
+const Option = styled.li<{ $isSelected: boolean; $isHighlighted: boolean }>`
+    ${({ theme, $isSelected, $isHighlighted }) => css`
         padding: ${theme.spacing};
         min-height: 20px;
         display: flex;
@@ -138,13 +139,13 @@ const Option = styled.li<{ isSelected: boolean; isHighlighted: boolean }>`
         background-color: transparent;
         transition: background-color 0.15s ease;
 
-        ${isSelected &&
+        ${$isSelected &&
         css`
             background-color: ${theme.baseColors.tertiary};
             color: white;
         `}
 
-        ${isHighlighted &&
+        ${$isHighlighted &&
         css`
             background-color: ${theme.baseColors.secondaryHover};
             color: white;
@@ -314,7 +315,7 @@ const Select = <T extends string | number>({
         }
     };
 
-    const currentLabel = options.find(
+    const currentLabel = (options as Array<string | SelectOption<T>>).find(
         (opt) => getOptionValue(opt) === selectedValue,
     );
 
@@ -327,8 +328,8 @@ const Select = <T extends string | number>({
                     ref={triggerRef}
                     type="button"
                     name={name}
-                    status={status}
-                    isOpen={isOpen}
+                    $status={status}
+                    $isOpen={isOpen}
                     disabled={disabled}
                     onBlur={onBlur}
                     onClick={() => {
@@ -348,7 +349,7 @@ const Select = <T extends string | number>({
                     ) : (
                         <Placeholder>{placeholder}</Placeholder>
                     )}
-                    <Arrow isOpen={isOpen}>
+                    <Arrow $isOpen={isOpen}>
                         <svg viewBox="0 0 24 24">
                             <polyline points="6 9 12 15 18 9" />
                         </svg>
@@ -357,8 +358,8 @@ const Select = <T extends string | number>({
 
                 {isOpen && (
                     <Dropdown
-                        isOpen={isOpen}
-                        openAbove={openAbove}
+                        $isOpen={isOpen}
+                        $openAbove={openAbove}
                         role="listbox"
                     >
                         {options.map((option, index) => {
@@ -368,8 +369,8 @@ const Select = <T extends string | number>({
                                 <Option
                                     key={index}
                                     role="option"
-                                    isSelected={isSelected}
-                                    isHighlighted={index === highlightedIndex}
+                                    $isSelected={isSelected}
+                                    $isHighlighted={index === highlightedIndex}
                                     aria-selected={isSelected}
                                     onClick={() => handleSelect(option)}
                                     onMouseEnter={() =>

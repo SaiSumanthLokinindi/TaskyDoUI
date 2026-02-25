@@ -1,58 +1,72 @@
 import { HTMLAttributes, ReactNode, forwardRef } from 'react';
 import styled, { css } from 'styled-components';
 
-export const StyledFlex = styled.div<FlexProps>(
+export const StyledFlex = styled.div<{
+    $inline?: boolean;
+    $direction?: FlexProps['direction'];
+    $alignItems?: FlexProps['alignItems'];
+    $justifyContent?: FlexProps['justifyContent'];
+    $flexWrap?: FlexProps['flexWrap'];
+    $alignContent?: FlexProps['alignContent'];
+    $gap?: string;
+    $rowGap?: string;
+    $columnGap?: string;
+    $height?: string;
+    $width?: string;
+    $grow?: number;
+    $shrink?: number;
+}>(
     ({
-        inline,
-        direction,
-        alignItems,
-        justifyContent,
-        flexWrap,
-        alignContent,
-        gap,
-        rowGap,
-        columnGap,
-        height,
-        width,
-        grow,
-        shrink,
+        $inline,
+        $direction,
+        $alignItems,
+        $justifyContent,
+        $flexWrap,
+        $alignContent,
+        $gap,
+        $rowGap,
+        $columnGap,
+        $height,
+        $width,
+        $grow,
+        $shrink,
     }) => {
         return css`
-            display: ${inline ? 'inline-flex' : 'flex'};
-            flex-direction: ${direction ?? 'row'};
-            align-items: ${alignItems ?? 'stretch'};
-            justify-content: ${justifyContent ?? 'flex-start'};
-            flex-wrap: ${flexWrap ?? 'nowrap'};
-            align-content: ${alignContent ?? 'normal'};
-            ${gap !== undefined &&
+            display: ${$inline ? 'inline-flex' : 'flex'};
+            flex-direction: ${$direction ?? 'row'};
+            align-items: ${$alignItems ?? 'stretch'};
+            justify-content: ${$justifyContent ?? 'flex-start'};
+            flex-wrap: ${$flexWrap ?? 'nowrap'};
+            align-content: ${$alignContent ?? 'normal'};
+            ${$gap !== undefined &&
             css`
-                gap: ${gap};
+                gap: ${$gap};
             `}
 
-            ${rowGap !== undefined &&
+            ${$rowGap !== undefined &&
             css`
-                row-gap: ${rowGap};
+                row-gap: ${$rowGap};
             `}
 
-            ${columnGap !== undefined &&
+            ${$columnGap !== undefined &&
             css`
-                column-gap: ${columnGap};
+                column-gap: ${$columnGap};
             `}
-            ${height &&
+            ${$height &&
             css`
-                height: ${height};
+                height: ${$height};
             `}
-            ${width &&
+            ${$width &&
             css`
-                width: ${width};
+                width: ${$width};
             `}
-            ${grow !== undefined &&
+            ${$grow !== undefined &&
             css`
-                flex-grow: ${grow};
+                flex-grow: ${$grow};
             `}
-            ${shrink !== undefined &&
+            ${$shrink !== undefined &&
             css`
-                flex-shrink: ${shrink};
+                flex-shrink: ${$shrink};
             `}
         `;
     },
@@ -93,9 +107,44 @@ export interface FlexProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const Flex = forwardRef<HTMLDivElement, FlexProps>(
-    ({ children, ...restProps }, ref) => {
+    (
+        {
+            inline,
+            direction,
+            alignItems,
+            justifyContent,
+            flexWrap,
+            alignContent,
+            gap,
+            rowGap,
+            columnGap,
+            height,
+            width,
+            grow,
+            shrink,
+            children,
+            ...restProps
+        },
+        ref,
+    ) => {
         return (
-            <StyledFlex ref={ref} {...restProps}>
+            <StyledFlex
+                ref={ref}
+                $inline={inline}
+                $direction={direction}
+                $alignItems={alignItems}
+                $justifyContent={justifyContent}
+                $flexWrap={flexWrap}
+                $alignContent={alignContent}
+                $gap={gap}
+                $rowGap={rowGap}
+                $columnGap={columnGap}
+                $height={height}
+                $width={width}
+                $grow={grow}
+                $shrink={shrink}
+                {...restProps}
+            >
                 {children}
             </StyledFlex>
         );

@@ -1,10 +1,12 @@
 import styled from 'styled-components';
 import Flex from 'src/components/Flex/flex';
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import Task from '../Task/Task';
 import Text from 'src/components/Text/Text';
 import { type TaskInfo } from 'src/store/Task/Task.types';
 import Loader, { StyledLoader } from '../Loader/Loader';
+import { useModal } from '../Modal/ModalContext';
+import TaskDetails from 'src/pages/TaskDetails/TaskDetails';
 
 const StyledListWrapper = styled(Flex)`
     min-height: 0;
@@ -29,6 +31,22 @@ export interface TaskListProps {
 }
 
 const TaskList = memo(({ label, tasks, loading }: TaskListProps) => {
+    const { openModal, closeModal } = useModal();
+
+    const taskClickHandler = useCallback(() => {
+        openModal({
+            title: 'Task Details',
+            body: <TaskDetails />,
+            actions: [
+                {
+                    label: 'Mark Complete',
+                    type: 'button',
+                    variant: 'primary',
+                },
+            ],
+        });
+    }, []);
+
     return (
         <StyledListWrapper direction="column">
             {label && <Text variant="h4">{label}</Text>}
@@ -53,6 +71,7 @@ const TaskList = memo(({ label, tasks, loading }: TaskListProps) => {
                                 dueDate={task.dueDate}
                                 priority={task.priority}
                                 animationDelay={index * 0.5}
+                                onClick={taskClickHandler}
                             />
                         );
                     })}

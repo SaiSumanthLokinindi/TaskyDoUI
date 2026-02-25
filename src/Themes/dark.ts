@@ -41,7 +41,7 @@ const dark = {
         text: {
             size: {
                 xs: '0.694rem',
-                sm: '0.833',
+                sm: '0.833rem',
                 rg: '1rem',
                 md: '1.2rem',
                 lg: '1.44rem',

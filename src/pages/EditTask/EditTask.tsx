@@ -117,11 +117,11 @@ const EditTask = () => {
                 progress: actionProgress,
             },
         ]);
-    }, [setActions, submitTaskData, actionProgress]);
 
-    useEffect(() => {
-        console.log('taskData', taskData);
-    }, [taskData]);
+        return () => {
+            setActions([]);
+        };
+    }, [setActions, submitTaskData, actionProgress]);
 
     const fetchTagSuggestions = useCallback(
         debounce((event: ChangeEvent<HTMLInputElement>) => {

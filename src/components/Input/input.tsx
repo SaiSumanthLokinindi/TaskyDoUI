@@ -49,8 +49,8 @@ const StyledLabel = styled.label`
 `;
 
 // Shared styles for input, textarea, and select
-export const sharedInputStyles = css<{ status?: InputProps['status'] }>`
-    ${({ status, theme }) => css`
+export const sharedInputStyles = css<{ $status?: InputProps['status'] }>`
+    ${({ $status, theme }) => css`
         background-color: rgba(42, 42, 42, 0.7);
         color: ${theme.text.primary};
         appearance: none;
@@ -93,7 +93,7 @@ export const sharedInputStyles = css<{ status?: InputProps['status'] }>`
             }
         }
 
-        ${status === 'error' &&
+        ${$status === 'error' &&
         css`
             &:not(:focus) {
                 border: 1px solid ${theme.baseColors.danger};
@@ -103,14 +103,14 @@ export const sharedInputStyles = css<{ status?: InputProps['status'] }>`
 `;
 
 export const StyledInput = styled.input<{
-    status: InputProps['status'];
+    $status?: InputProps['status'];
 }>`
     ${sharedInputStyles}
     height: 48px; /* Standardize height */
 `;
 
 export const StyledTextarea = styled.textarea<{
-    status: InputProps['status'];
+    $status?: InputProps['status'];
 }>`
     ${sharedInputStyles}
     display: block;
@@ -196,7 +196,7 @@ const Input = forwardRef<InputElement, InputProps>(
                         <StyledTextarea
                             {...(restProps as any)}
                             id={id}
-                            status={status}
+                            $status={status}
                             ref={ref as Ref<HTMLTextAreaElement>}
                             value={value}
                             onChange={handleChange}
@@ -213,7 +213,7 @@ const Input = forwardRef<InputElement, InputProps>(
                         <StyledInput
                             {...restProps}
                             id={id}
-                            status={status}
+                            $status={status}
                             ref={ref as Ref<HTMLInputElement>}
                             value={value}
                             type={type}
