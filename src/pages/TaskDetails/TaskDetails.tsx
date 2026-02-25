@@ -22,8 +22,7 @@ const TaskDetails = () => {
                 Test Decision Panel reconnect and refresh scenarios in mobile
                 platforms
             </Text>
-            <Text size="sm">
-                {' '}
+            <Text size="sm" expandable>
                 is simply dummy text of the printing and typesetting industry.
                 Lorem Ipsum has been the industry's standard dummy text ever
                 since the 1500s, when an unknown printer took a galley of type
