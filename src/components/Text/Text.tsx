@@ -1,4 +1,13 @@
-import { FC, memo, PropsWithChildren, useState } from 'react';
+import {
+    FC,
+    memo,
+    PropsWithChildren,
+    useCallback,
+    useLayoutEffect,
+    useRef,
+    useState,
+    CSSProperties,
+} from 'react';
 import { BaseUIProps } from 'src/types/base.types';
 import styled, { css, useTheme } from 'styled-components';
 import Flex from '../Flex/flex';
@@ -79,13 +88,13 @@ export const StyledText = styled.span<{
                 display: -webkit-box;
                 -webkit-box-orient: vertical;
                 overflow: hidden;
-                transition: max-height 1000ms ease;
+                transition: max-height 330ms ease;
                 line-height: 1.5;
 
                 ${$isExpanded
                     ? css`
                           -webkit-line-clamp: unset;
-                          max-height: 1000px;
+                          max-height: calc(var(--text-height) + 10px);
                       `
                     : css`
                           -webkit-line-clamp: ${$isTransitioning
@@ -122,14 +131,68 @@ const Text: FC<PropsWithChildren<TextProps>> = memo(
         linesToShow = 3,
         ...restProps
     }) => {
+        // Tracks whether the text is currently in its full-height state
         const [isExpanded, setIsExpanded] = useState(false);
+        // Tracks if the content actually exceeds the allowed lines (to show/hide button)
+        const [isTextOverflowing, setIsTextOverflowing] = useState(false);
+        // Used to temporarily disable line-clamping during the height transition
         const [isTransitioning, setIsTransitioning] = useState(false);
+        // Stores the measured full height of the text for CSS variable injection
+        const [textHeight, setTextHeight] = useState(0);
+
+        const textRef = useRef<HTMLSpanElement>(null);
         const theme = useTheme();
+
+        /**
+         * Calculates the total height of the text and determines if it
+         * overflows the threshold set by 'linesToShow'.
+         */
+        const updateTextHeight = useCallback(() => {
+            if (!textRef.current) return;
+
+            const el = textRef.current;
+            const elementStyles = getComputedStyle(el);
+            const fontsize = parseFloat(elementStyles.fontSize);
+            const lineHeight = parseFloat(elementStyles.lineHeight);
+
+            // Calculate the exact pixel height of the 'crate' (allowed lines)
+            const clampedTextHeightThreshold = isNaN(lineHeight)
+                ? fontsize * 1.5 * linesToShow
+                : lineHeight * linesToShow;
+
+            setTextHeight(el.scrollHeight);
+
+            // Only show expansion UI if text is truly taller than the threshold (+ adaptive buffer)
+            setIsTextOverflowing(
+                el.scrollHeight > clampedTextHeightThreshold + 2,
+            );
+        }, [linesToShow]);
+
+        // Sync height measurement whenever the element resizes (window resize, layout shifts)
+        useLayoutEffect(() => {
+            if (!textRef.current) return;
+
+            const observer = new ResizeObserver(() => {
+                updateTextHeight();
+            });
+
+            observer.observe(textRef.current);
+
+            return () => {
+                observer.disconnect();
+            };
+        }, [updateTextHeight]);
+
+        // Re-measure height if children change or expansion state toggles
+        useLayoutEffect(() => {
+            updateTextHeight();
+        }, [isExpanded, children, updateTextHeight]);
 
         return (
             <Flex direction="column" rowGap={`calc(0.5 * ${theme.spacing})`}>
                 <StyledText
                     {...restProps}
+                    ref={textRef}
                     as={
                         variant && variantSet.has(variant) ? variant : undefined
                     }
@@ -139,16 +202,29 @@ const Text: FC<PropsWithChildren<TextProps>> = memo(
                     $isExpanded={isExpanded}
                     $isTransitioning={isTransitioning}
                     $linesToShow={linesToShow}
+                    style={
+                        { '--text-height': `${textHeight}px` } as CSSProperties
+                    }
                     onTransitionEnd={() => setIsTransitioning(false)}
+                    aria-expanded={expandable ? isExpanded : undefined}
                 >
                     {children}
                 </StyledText>
-                {expandable && (
+                {expandable && isTextOverflowing && (
                     <StyledShowMoreButton
+                        role="button"
+                        tabIndex={0}
                         onClick={(e) => {
                             e.stopPropagation();
                             setIsTransitioning(true);
                             setIsExpanded((prev) => !prev);
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                setIsTransitioning(true);
+                                setIsExpanded((prev) => !prev);
+                            }
                         }}
                     >
                         {isExpanded ? 'Show Less' : 'View More'}
