@@ -4,13 +4,14 @@ import { debounce } from 'src/shared/utils';
 const windowIsAvailable = typeof window !== 'undefined';
 
 const breakpointsMap = {
+    xs: '375px',
     sm: '480px',
     md: '759px',
     lg: '1280px',
     xl: '1980px',
 };
 
-const useBreakpoint = (breakpoint: 'sm' | 'md' | 'lg' | 'xl') => {
+const useBreakpoint = (breakpoint: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => {
     const [matches, setMatches] = useState(
         windowIsAvailable
             ? window.matchMedia(`(min-width:${breakpointsMap[breakpoint]})`)

@@ -14,9 +14,20 @@ import Flex from '../Flex/flex';
 
 export interface TextProps extends BaseUIProps {
     variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'helper' | 'p';
-    size?: 'xs' | 'sm' | 'rg' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl' | 'title';
+    size?:
+        | 'xxs'
+        | 'xs'
+        | 'sm'
+        | 'rg'
+        | 'md'
+        | 'lg'
+        | 'xl'
+        | 'xxl'
+        | 'xxxl'
+        | 'title';
     expandable?: boolean;
     linesToShow?: number;
+    lineHeight?: number;
 }
 
 const variantSet = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p']);
@@ -60,6 +71,7 @@ export const StyledText = styled.span<{
     $isExpanded?: boolean;
     $isTransitioning?: boolean;
     $linesToShow?: number;
+    $lineHeight?: number;
 }>(
     ({
         $variant,
@@ -68,12 +80,14 @@ export const StyledText = styled.span<{
         $isExpanded,
         $isTransitioning,
         $linesToShow = 3,
+        $lineHeight = 1.5,
         theme,
     }) => {
         return css`
             font-size: ${theme.components.text.size[textSize]};
             margin: unset;
             color: ${theme.text.primary};
+            line-height: ${$lineHeight};
 
             ${$variant &&
             variantSet.has($variant) &&
@@ -89,7 +103,7 @@ export const StyledText = styled.span<{
                 -webkit-box-orient: vertical;
                 overflow: hidden;
                 transition: max-height 330ms ease;
-                line-height: 1.5;
+                line-height: ${$lineHeight};
 
                 ${$isExpanded
                     ? css`
@@ -100,7 +114,9 @@ export const StyledText = styled.span<{
                           -webkit-line-clamp: ${$isTransitioning
                               ? 'unset'
                               : $linesToShow};
-                          max-height: calc(${$linesToShow} * 1.5em);
+                          max-height: calc(
+                              ${$linesToShow} * ${$lineHeight} * 1em
+                          );
                       `}
             `}
         `;
@@ -109,12 +125,11 @@ export const StyledText = styled.span<{
 
 export const StyledShowMoreButton = styled.span(({ theme }) => {
     return css`
-        color: ${theme.text.helperText.color};
+        color: ${theme.baseColors.tertiary};
         cursor: pointer;
-        font-size: 0.725rem;
+        font-size: ${theme.components.text.size.xxs};
         font-weight: 600;
         margin-top: 4px;
-        display: block;
 
         &:hover {
             text-decoration: underline;
@@ -129,6 +144,8 @@ const Text: FC<PropsWithChildren<TextProps>> = memo(
         size = 'rg',
         expandable = false,
         linesToShow = 3,
+        lineHeight = 1.5,
+        style,
         ...restProps
     }) => {
         // Tracks whether the text is currently in its full-height state
@@ -152,13 +169,15 @@ const Text: FC<PropsWithChildren<TextProps>> = memo(
 
             const el = textRef.current;
             const elementStyles = getComputedStyle(el);
+            const elLineHeight = parseFloat(elementStyles.lineHeight);
             const fontsize = parseFloat(elementStyles.fontSize);
-            const lineHeight = parseFloat(elementStyles.lineHeight);
 
-            // Calculate the exact pixel height of the 'crate' (allowed lines)
-            const clampedTextHeightThreshold = isNaN(lineHeight)
-                ? fontsize * 1.5 * linesToShow
-                : lineHeight * linesToShow;
+            // Use calculated pixel height of one line
+            const actualLineHeight = isNaN(elLineHeight)
+                ? fontsize * (lineHeight || 1.2)
+                : elLineHeight;
+
+            const clampedTextHeightThreshold = actualLineHeight * linesToShow;
 
             setTextHeight(el.scrollHeight);
 
@@ -166,7 +185,7 @@ const Text: FC<PropsWithChildren<TextProps>> = memo(
             setIsTextOverflowing(
                 el.scrollHeight > clampedTextHeightThreshold + 2,
             );
-        }, [linesToShow]);
+        }, [linesToShow, lineHeight]);
 
         // Sync height measurement whenever the element resizes (window resize, layout shifts)
         useLayoutEffect(() => {
@@ -189,7 +208,11 @@ const Text: FC<PropsWithChildren<TextProps>> = memo(
         }, [isExpanded, children, updateTextHeight]);
 
         return (
-            <Flex direction="column" rowGap={`calc(0.5 * ${theme.spacing})`}>
+            <Flex
+                direction="column"
+                rowGap={`calc(0.5 * ${theme.spacing})`}
+                alignItems="flex-start"
+            >
                 <StyledText
                     {...restProps}
                     ref={textRef}
@@ -202,8 +225,12 @@ const Text: FC<PropsWithChildren<TextProps>> = memo(
                     $isExpanded={isExpanded}
                     $isTransitioning={isTransitioning}
                     $linesToShow={linesToShow}
+                    $lineHeight={lineHeight}
                     style={
-                        { '--text-height': `${textHeight}px` } as CSSProperties
+                        {
+                            '--text-height': `${textHeight}px`,
+                            ...style,
+                        } as CSSProperties
                     }
                     onTransitionEnd={() => setIsTransitioning(false)}
                     aria-expanded={expandable ? isExpanded : undefined}

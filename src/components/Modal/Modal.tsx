@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import Flex from '../Flex/flex';
 import Button, { StyledButton } from '../Button/button';
 import { GrClose } from 'react-icons/gr';
-import Text from '../Text/Text';
+import Text, { StyledText } from '../Text/Text';
 import Actions, { Action } from '../Actions/Actions';
 
 const StyledBackdrop = styled.div`
@@ -49,8 +49,13 @@ const StyledModal = styled(Card)(({ theme: { spacing } }) => {
 export const StyledModalHeader = styled(Flex)(({ theme }) => {
     return css`
         flex-shrink: 0;
+
+        ${StyledText} {
+            font-weight: 700;
+        }
+
         ${StyledButton} {
-            font-size: 0.825rem;
+            font-size: 0.625rem;
             padding: ${theme.spacing} ${theme.spacing};
             display: flex;
             align-items: center;
@@ -85,8 +90,11 @@ const Modal = memo(({ body, title, actions, onDismiss }: ModalProps) => {
         <>
             <StyledBackdrop />
             <StyledModal>
-                <StyledModalHeader justifyContent="space-between">
-                    <Text variant="h5">{title}</Text>
+                <StyledModalHeader
+                    justifyContent="space-between"
+                    alignItems="center"
+                >
+                    <Text size="sm">{title}</Text>
                     <Button onClick={onDismiss} variant="basic">
                         <GrClose />
                     </Button>

@@ -25,3 +25,12 @@ export type BaseUIProps<
     T = HTMLElement,
     A = HTMLAttributes<T>,
 > = BaseCustomProps & A;
+
+export type Intent =
+    | 'success'
+    | 'warning'
+    | 'danger'
+    | 'error'
+    | 'info'
+    | 'neutral'
+    | 'default';

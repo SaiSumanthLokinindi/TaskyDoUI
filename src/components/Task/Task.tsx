@@ -11,15 +11,16 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/store';
 import { markTaskCompleted } from 'src/store/Task/TaskSlice';
 import { updateTaskCompletion } from 'src/store/Task/TaskThunks';
+import { PRIORITY_MAP, PRIORITY_STATE_MAP } from '../Priority/constants';
 
 const slideUpFadeIn = keyframes`
     from {
         opacity: 0;
-        transform: translateY(12px);
+        translate: 0 12px;
     }
     to {
         opacity: 1;
-        transform: translateY(0);
+        translate: 0 0;
     }
 `;
 
@@ -34,11 +35,13 @@ const StyledTaskCard = styled(Card)<{ $animationDelay?: number }>(({
         border: 1.5px solid #393939;
         box-sizing: border-box;
         cursor: pointer;
+        user-select: none;
         align-items: flex-start;
         opacity: 0;
         transition:
-            border-color 330ms ease,
-            background-color 330ms ease;
+            border-color 150ms ease,
+            background-color 150ms ease,
+            scale 150ms ease;
         animation: ${slideUpFadeIn} 0.33s ease-out forwards;
         animation-delay: ${$animationDelay}ms;
 
@@ -49,6 +52,10 @@ const StyledTaskCard = styled(Card)<{ $animationDelay?: number }>(({
 
         ${StyledCheckbox} {
             margin-top: 3px;
+        }
+
+        &:active:not(:has(${StyledCheckbox}:active)) {
+            scale: 0.98;
         }
     `;
 });
@@ -73,9 +80,6 @@ const StyledTaskLabel = styled.span<{ $completed?: boolean }>(
         `;
     },
 );
-
-import { PRIORITY_CONFIG } from './Task.constants';
-export * from './Task.constants';
 
 const Task = ({
     id,
@@ -106,8 +110,8 @@ const Task = ({
         );
     };
 
-    const priorityConfig = useMemo(
-        () => (priority ? PRIORITY_CONFIG[priority] : null),
+    const priorityMeta = useMemo(
+        () => (priority ? PRIORITY_MAP[priority] : null),
         [priority],
     );
 
@@ -115,6 +119,7 @@ const Task = ({
         <StyledTaskCard
             $animationDelay={animationDelay || 0}
             onClick={(e) => onClick?.(id, e)}
+            tabIndex={0}
         >
             <Checkbox
                 checked={completed || false}
@@ -124,7 +129,7 @@ const Task = ({
             <Flex
                 direction="column"
                 grow={1}
-                rowGap={priorityConfig || dueDateInfo ? '4px' : '0'}
+                rowGap={priorityMeta || dueDateInfo ? '4px' : '0'}
             >
                 <StyledTaskLabel $completed={completed || false}>
                     {label}
@@ -132,19 +137,19 @@ const Task = ({
 
                 <Flex
                     justifyContent={
-                        priorityConfig && dueDateInfo
+                        priorityMeta && dueDateInfo
                             ? 'space-between'
-                            : priorityConfig
+                            : priorityMeta
                             ? 'flex-end'
                             : 'flex-start'
                     }
                     alignItems="center"
                 >
                     {dueDateInfo && <Text variant="helper">{dueDateInfo}</Text>}
-                    {priorityConfig && (
+                    {priorityMeta && priority && (
                         <Badge
-                            type={priorityConfig.type}
-                            label={priorityConfig.label}
+                            type={PRIORITY_STATE_MAP[priority]}
+                            label={priorityMeta.label}
                         />
                     )}
                 </Flex>

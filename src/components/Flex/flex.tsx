@@ -1,4 +1,5 @@
 import { HTMLAttributes, ReactNode, forwardRef } from 'react';
+import { BaseUIProps } from 'src/types/base.types';
 import styled, { css } from 'styled-components';
 
 export const StyledFlex = styled.div<{

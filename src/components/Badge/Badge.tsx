@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import { Intent } from 'src/types/base.types';
 import styled, { css } from 'styled-components';
 
 export const StyledBadge = styled.span<{ $type?: BadgeProps['type'] }>(
@@ -6,14 +7,25 @@ export const StyledBadge = styled.span<{ $type?: BadgeProps['type'] }>(
         return css`
             padding: calc(0.25 * ${theme.spacing}) ${theme.spacing};
             border-radius: calc(2 * ${theme.spacing});
-            color: ${theme.text.heading};
+            color:;
+            ${theme.baseColors.default};
             background-color: ${theme.components.badge.colors.info};
             font-weight: 500;
             font-size: 0.675rem;
 
+            ${$type === 'neutral' &&
+            css`
+                color: ${theme.baseColors.primary};
+                background-color: ${theme.baseColors.neutral};
+            `};
+            ${$type === 'default' &&
+            css`
+                color: ${theme.baseColors.primary};
+                background-color: ${theme.baseColors.default};
+            `};
             ${$type === 'info' &&
             css`
-                color: black;
+                background-color: ${theme.baseColors.info};
             `}
             ${$type === 'success' &&
             css`
@@ -23,13 +35,13 @@ export const StyledBadge = styled.span<{ $type?: BadgeProps['type'] }>(
             css`
                 background-color: ${theme.baseColors.warning};
             `}
-            ${$type === 'error' &&
+            ${$type === 'danger' &&
             css`
                 background-color: ${theme.baseColors.danger};
             `}
-            ${$type === 'high' &&
+            ${$type === 'error' &&
             css`
-                background-color: ${theme.components.badge.colors.high};
+                background-color: ${theme.baseColors.error};
             `};
         `;
     },
@@ -39,11 +51,11 @@ export interface BadgeProps {
     /**
      * @default 'info'
      */
-    type?: 'info' | 'success' | 'warning' | 'error' | 'high';
+    type?: Intent;
     label: string;
 }
 
-const Badge = memo(({ type = 'info', label }: BadgeProps) => {
+const Badge = memo(({ type = 'neutral', label }: BadgeProps) => {
     return <StyledBadge $type={type}>{label}</StyledBadge>;
 });
 

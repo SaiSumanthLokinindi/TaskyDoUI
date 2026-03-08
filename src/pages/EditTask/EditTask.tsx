@@ -14,11 +14,11 @@ import { debounce } from 'src/shared/utils';
 import { useForm } from 'src/hooks/useForm';
 import { fieldRequiredValidator } from 'src/utils/validators';
 import { useModal } from 'src/components/Modal/ModalContext';
-import { PRIORITY_OPTIONS } from 'src/components/Task/Task';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/store';
 import { addTask } from 'src/store/Task/TaskThunks';
 import { TaskInfo } from 'src/store/Task/Task.types';
+import { PRIORITY_LABELS } from 'src/components/Priority/constants';
 
 const StyledEditTaskContainer = styled.form(({ theme: { spacing } }) => {
     return css`
@@ -239,7 +239,7 @@ const EditTask = () => {
                 }
             />
             <Select
-                options={[...PRIORITY_OPTIONS]}
+                options={[...PRIORITY_LABELS.slice(1)]}
                 label="Priority"
                 name="taskPriority"
                 placeholder="Select priority"
