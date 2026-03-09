@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import DueCard from './DueCard';
 import Flex from 'src/components/Flex/flex';
 

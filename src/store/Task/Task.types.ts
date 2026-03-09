@@ -1,4 +1,4 @@
-import { TaskPriority } from 'src/components/Task/Task.types';
+import { PriorityValue } from 'src/components/Priority/constants';
 
 export type TasksState = {
     entities: Record<TaskInfo['id'], TaskInfo>;
@@ -26,6 +26,6 @@ export type TaskInfo = {
     scheduleDate?: string;
     dueDate?: string;
     tags?: string[];
-    priority?: TaskPriority;
+    priority?: PriorityValue;
     status?: { completed?: boolean; completedOn?: string };
 };

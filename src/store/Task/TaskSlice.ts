@@ -127,7 +127,7 @@ const TaskSlice = createSlice({
                 return;
             }
 
-            state.entities[action.payload.id] = action.payload as TaskInfo;
+            state.entities[action.payload.id] = action.payload ;
             delete state.taskCompletionRequests[id];
         });
 

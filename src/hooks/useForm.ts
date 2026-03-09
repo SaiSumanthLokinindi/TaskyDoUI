@@ -80,16 +80,16 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
                 ...state,
                 data: {
                     ...state.data,
-                    [action.payload.name as string]: action.payload.value,
+                    [action.payload.name ]: action.payload.value,
                 },
                 validators: {
                     ...state.validators,
-                    [action.payload.name as string]: (action.payload
-                        .validators || []) as Validator[],
+                    [action.payload.name ]: (action.payload
+                        .validators || []),
                 },
                 errors: {
                     ...state.errors,
-                    [action.payload.name as string]: [],
+                    [action.payload.name ]: [],
                 },
             };
         case 'setData':
@@ -97,8 +97,8 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
                 ...state,
                 data: {
                     ...state.data,
-                    [action.payload.name as string]: action.payload
-                        .value as FieldValue,
+                    [action.payload.name ]: action.payload
+                        .value ,
                 },
             };
         case 'setFieldError':
@@ -106,21 +106,21 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
                 ...state,
                 errors: {
                     ...state.errors,
-                    [action.payload.name as string]: action.payload
-                        .value as string[],
+                    [action.payload.name ]: action.payload
+                        .value ,
                 },
             };
         case 'setErrors':
             return {
                 ...state,
-                errors: action.payload as Record<string, string[]>,
+                errors: action.payload ,
             };
         case 'resetFieldError':
             return {
                 ...state,
                 errors: {
                     ...state.errors,
-                    [action.payload.name as string]: [],
+                    [action.payload.name ]: [],
                 },
             };
         case 'resetErrors': {

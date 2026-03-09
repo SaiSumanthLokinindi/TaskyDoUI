@@ -47,7 +47,7 @@ const Tag = memo(
                 style={{
                     paddingInlineEnd:
                         !readOnly && onRemove
-                            ? `calc(0.5 * ${theme.spacing})`
+                            ? theme.spacing
                             : `calc(2 * ${theme.spacing})`,
                 }}
             >

@@ -212,6 +212,7 @@ const Text: FC<PropsWithChildren<TextProps>> = memo(
                 direction="column"
                 rowGap={`calc(0.5 * ${theme.spacing})`}
                 alignItems="flex-start"
+                alignContent="center"
             >
                 <StyledText
                     {...restProps}

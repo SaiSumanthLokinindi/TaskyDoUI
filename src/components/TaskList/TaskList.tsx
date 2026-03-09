@@ -31,21 +31,17 @@ export interface TaskListProps {
 }
 
 const TaskList = memo(({ label, tasks, loading }: TaskListProps) => {
-    const { openModal, closeModal } = useModal();
+    const { openModal } = useModal();
 
-    const taskClickHandler = useCallback(() => {
-        openModal({
-            title: 'Task Details',
-            body: <TaskDetails />,
-            actions: [
-                {
-                    label: 'Mark Complete',
-                    type: 'button',
-                    variant: 'primary',
-                },
-            ],
-        });
-    }, []);
+    const taskClickHandler = useCallback(
+        (id: TaskInfo['id']) => {
+            openModal({
+                title: 'Task Details',
+                body: <TaskDetails id={id} />,
+            });
+        },
+        [tasks],
+    );
 
     return (
         <StyledListWrapper direction="column">

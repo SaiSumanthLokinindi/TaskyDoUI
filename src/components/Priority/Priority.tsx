@@ -1,13 +1,12 @@
 import { memo } from 'react';
 import Text from '../Text/Text';
-import { TaskPriority } from '../Task/Task.types';
 import { BaseUIProps } from 'src/types/base.types';
-import { PRIORITY_MAP } from './constants';
+import { PRIORITY_MAP, PriorityValue } from './constants';
 import styled, { css } from 'styled-components';
 import Flex from '../Flex/flex';
 
 export interface PriorityProps extends BaseUIProps {
-    priority: Exclude<TaskPriority, 0>;
+    priority: PriorityValue;
 }
 
 const StyledPriority = styled(Flex)<{
@@ -38,7 +37,7 @@ const Priority = ({ priority }: PriorityProps) => {
             alignItems="center"
             $colorType={PRIORITY_MAP[priority].colorCode}
         >
-            <Text>{PRIORITY_MAP[priority].label}</Text>
+            <Text lineHeight={1}>{PRIORITY_MAP[priority].label}</Text>
         </StyledPriority>
     );
 };

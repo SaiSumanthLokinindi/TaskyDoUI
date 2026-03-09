@@ -16,6 +16,13 @@ const selectTasks = createSelector(
     },
 );
 
+export const SelectTaskById = createSelector(
+    [selectEntities, (_, id) => id],
+    (entities, id) => {
+        return entities[id];
+    },
+);
+
 export const selectMyDayTasks = createSelector(
     [selectTasks, selectToday],
     (tasks, today) => {
