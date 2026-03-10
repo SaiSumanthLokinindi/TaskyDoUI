@@ -54,3 +54,14 @@ export const formatDueDate = (dueDate: Date | string): string => {
     const years = Math.floor(diffDays / 365);
     return years === 1 ? 'Due in 1 year' : `Due in ${years} years`;
 };
+
+export const isToday = (date: Date | string): boolean => {
+    return new Date(date).toDateString() === new Date().toDateString();
+};
+
+export const isSameDate = (
+    date1: Date | string,
+    date2: Date | string,
+): boolean => {
+    return new Date(date1).toDateString() === new Date(date2).toDateString();
+};

@@ -18,7 +18,10 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/store';
 import { addTask } from 'src/store/Task/TaskThunks';
 import { TaskInfo } from 'src/store/Task/Task.types';
-import { PRIORITY_LABELS } from 'src/components/Priority/constants';
+import {
+    PRIORITY_LABEL_MAP,
+    PRIORITY_LABELS,
+} from 'src/components/Priority/constants';
 
 const StyledEditTaskContainer = styled.form(({ theme: { spacing } }) => {
     return css`
@@ -85,15 +88,17 @@ const EditTask = () => {
             setEditTaskError(undefined);
             setActionProgress(true);
 
+            console.log(taskData);
+
             const taskInfo = {
                 label: taskData.label,
-                description: taskData.description,
+                description: taskData.taskDescription,
                 status: {
                     completed: taskData.taskCompleted,
                 },
                 scheduleDate: taskData.scheduleDate,
                 dueDate: taskData.dueDate,
-                priority: taskData.taskPriority,
+                priority: PRIORITY_LABEL_MAP[taskData.taskPriority as string],
                 tags: taskData.tags,
             } as Omit<TaskInfo, 'id'>;
 
@@ -108,6 +113,7 @@ const EditTask = () => {
         }
     }, [taskData, runAllValidators, dispatch]);
 
+    // Setting actions for Edit Task form modal
     useEffect(() => {
         setActions([
             {

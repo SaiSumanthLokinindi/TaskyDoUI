@@ -52,7 +52,8 @@ export const selectUpcomingTasks = createSelector(
     [selectTasks, selectToday],
     (tasks, today) => {
         return tasks.filter((task) => {
-            if (task.scheduleDate && task.scheduleDate > today) return true;
+            const scheduleDate = task.scheduleDate?.slice(0, 10);
+            if (scheduleDate && scheduleDate > today) return true;
             else return false;
         });
     },

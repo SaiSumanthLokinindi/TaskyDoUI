@@ -1,6 +1,7 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 import DueCard from './DueCard';
 import Flex from 'src/components/Flex/flex';
+import { isToday } from 'src/utils/dates';
 
 import Text from 'src/components/Text/Text';
 import Progress from 'src/components/Progress/Progress';
@@ -60,13 +61,23 @@ const Home = memo(() => {
         useSelector((state: RootState) => state.tasks.upcomingState);
     const upcomingTasks = useSelector(selectUpcomingTasks);
 
+    const dueTodayCount = useMemo(() => {
+        let count = 0;
+        myDayTasks.forEach((task) => {
+            if (task.dueDate && isToday(task.dueDate)) {
+                count++;
+            }
+        });
+        return count;
+    }, [myDayTasks]);
+
     return (
         <StyledHomeContainer>
             <StyledQuickStats direction="column" rowGap="16px">
                 <Flex columnGap="16px">
                     <DueCard
                         label="Due Today"
-                        count={8}
+                        count={dueTodayCount}
                         helperText="Tasks due today"
                     />
                     <DueCard

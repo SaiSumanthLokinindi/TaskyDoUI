@@ -20,6 +20,8 @@ import { markTaskCompleted } from 'src/store/Task/TaskSlice';
 
 const StyledTaskDetailsContainer = styled(Flex)(({ theme }) => {
     return css`
+        width: 100%;
+
         ${StyledInfoItem} ${StyledInfoContent} ${StyledText} {
             font-size: 0.9rem;
         }
@@ -104,7 +106,7 @@ const TaskDetails = ({ id }: TaskDetailsProps) => {
                 </Text>
             )}
             <StyleInfoGrid>
-                {taskPriority && (
+                {taskPriority !== undefined && (
                     <InfoItem
                         label="Priority"
                         info={<Priority priority={taskPriority} />}
@@ -145,18 +147,18 @@ const TaskDetails = ({ id }: TaskDetailsProps) => {
                     />
                 )}
             </StyleInfoGrid>
-            {tags && tags.length && (
+            {tags && tags.length ? (
                 <InfoItem
                     label="Tags"
                     info={
                         <Flex gap={theme.spacing} flexWrap="wrap">
                             {tags.map((tag) => (
-                                <Tag id={tag} label={tag} readOnly />
+                                <Tag id={tag} key={tag} label={tag} readOnly />
                             ))}
                         </Flex>
                     }
                 />
-            )}
+            ) : null}
         </StyledTaskDetailsContainer>
     );
 };

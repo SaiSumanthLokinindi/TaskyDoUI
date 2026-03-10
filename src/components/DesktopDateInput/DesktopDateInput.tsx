@@ -100,6 +100,7 @@ const DesktopDateInput = memo(
         }, [defaultDate]);
 
         const handleDateSelect = (selectedDate: Date | undefined) => {
+            console.log(selectedDate);
             if (selectedDate) {
                 const monthNames = [
                     'Jan',
@@ -121,17 +122,23 @@ const DesktopDateInput = memo(
                 const year = selectedDate.getFullYear();
 
                 const formattedDate = `${day} ${month} ${year}`;
+                const d = new Date(selectedDate);
+                const offsetMs = d.getTimezoneOffset() * 60 * 1000;
 
                 setDate(formattedDate);
                 if (onChange) {
                     const event = {
                         target: {
                             name,
-                            value: selectedDate.toISOString(),
+                            value: new Date(
+                                d.getTime() - offsetMs,
+                            ).toISOString(),
                         },
                         currentTarget: {
                             name,
-                            value: selectedDate.toISOString(),
+                            value: new Date(
+                                d.getTime() - offsetMs,
+                            ).toISOString(),
                         },
                     } as unknown as ChangeEvent<HTMLInputElement>;
                     onChange(event);
