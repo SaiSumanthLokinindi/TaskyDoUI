@@ -1,5 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '..';
+import { isAfter, isSameDate } from 'src/utils/dates';
 
 const TODAY = new Date().toISOString().slice(0, 10);
 
@@ -31,8 +32,8 @@ export const selectMyDayTasks = createSelector(
             const dueDate = task.dueDate?.slice(0, 10);
 
             if (!scheduleDate) return true;
-            else if (scheduleDate === today) return true;
-            else if (dueDate && dueDate === today) return true;
+            else if (isSameDate(scheduleDate, today)) return true;
+            else if (dueDate && isSameDate(dueDate, today)) return true;
             else return false;
         });
     },
@@ -42,7 +43,7 @@ export const selectOverdueTasks = createSelector(
     [selectTasks, selectToday],
     (tasks, today) => {
         return tasks.filter((task) => {
-            if (task.dueDate && task.dueDate < today) return true;
+            if (task.dueDate && isAfter(today, task.dueDate)) return true;
             else return false;
         });
     },
@@ -53,7 +54,8 @@ export const selectUpcomingTasks = createSelector(
     (tasks, today) => {
         return tasks.filter((task) => {
             const scheduleDate = task.scheduleDate?.slice(0, 10);
-            if (scheduleDate && scheduleDate > today) return true;
+
+            if (scheduleDate && isAfter(scheduleDate, today)) return true;
             else return false;
         });
     },

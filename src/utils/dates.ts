@@ -63,5 +63,40 @@ export const isSameDate = (
     date1: Date | string,
     date2: Date | string,
 ): boolean => {
-    return new Date(date1).toDateString() === new Date(date2).toDateString();
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+
+    if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return false;
+
+    d1.setHours(0, 0, 0, 0);
+    d2.setHours(0, 0, 0, 0);
+
+    return d1.getTime() === d2.getTime();
+};
+
+export const isAfter = (date1: Date | string, date2: Date | string) => {
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+
+    if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return false;
+
+    d1.setHours(0, 0, 0, 0);
+    d2.setHours(0, 0, 0, 0);
+    return d1.getTime() > d2.getTime();
+};
+
+export const formatDateLocale = (date: Date | string) => {
+    const d = new Date(date);
+
+    if (isNaN(d.getTime())) return '';
+
+    const day = d.getDate();
+
+    const month = d.toLocaleDateString(undefined, {
+        month: 'short',
+    });
+
+    const year = d.getFullYear();
+
+    return `${day} ${month} ${year}`;
 };

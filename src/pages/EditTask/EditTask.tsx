@@ -11,7 +11,7 @@ import styled, { css } from 'styled-components';
 import axios from 'src/axios-instance/axios-instance';
 import { MenuItemProps } from 'src/components/Menu/MenuItem';
 import { debounce } from 'src/shared/utils';
-import { useForm } from 'src/hooks/useForm';
+import { FieldValue, useForm } from 'src/hooks/useForm';
 import { fieldRequiredValidator } from 'src/utils/validators';
 import { useModal } from 'src/components/Modal/ModalContext';
 import { useDispatch } from 'react-redux';
@@ -22,6 +22,7 @@ import {
     PRIORITY_LABEL_MAP,
     PRIORITY_LABELS,
 } from 'src/components/Priority/constants';
+import { isAfter } from 'src/utils/dates';
 
 const StyledEditTaskContainer = styled.form(({ theme: { spacing } }) => {
     return css`
@@ -66,8 +67,44 @@ const EditTask = () => {
         });
         registerInput({ name: 'taskDescription', validators: [] });
         registerInput({ name: 'taskPriority', validators: [] });
-        registerInput({ name: 'scheduleDate', validators: [] });
-        registerInput({ name: 'dueDate', validators: [] });
+        registerInput({
+            name: 'scheduleDate',
+            validators: [
+                (data: Record<string, FieldValue>) => {
+                    const hasBothDates = !!(data.scheduleDate && data.dueDate);
+
+                    if (
+                        hasBothDates &&
+                        isAfter(
+                            data.scheduleDate as string,
+                            data.dueDate as string,
+                        )
+                    ) {
+                        return 'Schedule date cannot be after the due date';
+                    }
+                    return '';
+                },
+            ],
+        });
+        registerInput({
+            name: 'dueDate',
+            validators: [
+                (data: Record<string, FieldValue>) => {
+                    const hasBothDates = !!(data.scheduleDate && data.dueDate);
+
+                    if (
+                        hasBothDates &&
+                        isAfter(
+                            data.scheduleDate as string,
+                            data.dueDate as string,
+                        )
+                    ) {
+                        return 'Due date cannot be before schedule date';
+                    }
+                    return '';
+                },
+            ],
+        });
         registerInput({ name: 'tags', defaultValue: [], validators: [] });
 
         return () => {
@@ -278,9 +315,6 @@ const EditTask = () => {
                                 resetFieldError('scheduleDate');
                                 setFieldValue('scheduleDate', e.target.value);
                             }}
-                            onBlur={() => {
-                                runFieldValidators('scheduleDate');
-                            }}
                             info={
                                 taskErrors.scheduleDate?.length > 0
                                     ? taskErrors.scheduleDate
@@ -299,9 +333,6 @@ const EditTask = () => {
                             onChange={(e) => {
                                 resetFieldError('dueDate');
                                 setFieldValue('dueDate', e.target.value);
-                            }}
-                            onBlur={() => {
-                                runFieldValidators('dueDate');
                             }}
                             info={
                                 taskErrors.dueDate?.length > 0
@@ -334,7 +365,7 @@ const EditTask = () => {
                             label="Due Date"
                             value={taskData.dueDate as string}
                             onChange={(e) => {
-                                setFieldValue('scheduleDate', e.target.value);
+                                setFieldValue('dueDate', e.target.value);
                             }}
                         />
                     </>

@@ -17,6 +17,7 @@ import { AppDispatch } from 'src/store';
 import { SelectTaskById } from 'src/store/Task/TaskSelectors';
 import { updateTaskCompletion } from 'src/store/Task/TaskThunks';
 import { markTaskCompleted } from 'src/store/Task/TaskSlice';
+import { formatDateLocale } from 'src/utils/dates';
 
 const StyledTaskDetailsContainer = styled(Flex)(({ theme }) => {
     return css`
@@ -124,7 +125,9 @@ const TaskDetails = ({ id }: TaskDetailsProps) => {
                                 <GoCalendar
                                     style={{ marginBlockStart: '-2px' }}
                                 />
-                                <Text lineHeight={1}>26 Nov 2026</Text>
+                                <Text lineHeight={1}>
+                                    {formatDateLocale(scheduleDate)}
+                                </Text>
                             </Flex>
                         }
                     />
@@ -141,7 +144,9 @@ const TaskDetails = ({ id }: TaskDetailsProps) => {
                                 <GoCalendar
                                     style={{ marginBlockStart: '-2px' }}
                                 />
-                                <Text lineHeight={1}>30 Nov 2026</Text>
+                                <Text lineHeight={1}>
+                                    {formatDateLocale(dueDate)}
+                                </Text>
                             </Flex>
                         }
                     />
