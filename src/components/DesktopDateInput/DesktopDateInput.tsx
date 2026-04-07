@@ -100,7 +100,6 @@ const DesktopDateInput = memo(
         }, [defaultDate]);
 
         const handleDateSelect = (selectedDate: Date | undefined) => {
-            console.log(selectedDate);
             if (selectedDate) {
                 const monthNames = [
                     'Jan',

@@ -14,15 +14,17 @@ import { debounce } from 'src/shared/utils';
 import { FieldValue, useForm } from 'src/hooks/useForm';
 import { fieldRequiredValidator } from 'src/utils/validators';
 import { useModal } from 'src/components/Modal/ModalContext';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from 'src/store';
 import { addTask } from 'src/store/Task/TaskThunks';
 import { TaskInfo } from 'src/store/Task/Task.types';
 import {
     PRIORITY_LABEL_MAP,
     PRIORITY_LABELS,
+    PRIORITY_MAP,
 } from 'src/components/Priority/constants';
-import { isAfter } from 'src/utils/dates';
+import { formatDateLocale, isAfter } from 'src/utils/dates';
+import { SelectTaskById } from 'src/store/Task/TaskSelectors';
 
 const StyledEditTaskContainer = styled.form(({ theme: { spacing } }) => {
     return css`
@@ -37,7 +39,13 @@ const StyledEditTaskContainer = styled.form(({ theme: { spacing } }) => {
     `;
 });
 
-const EditTask = () => {
+export interface EditTaskProps {
+    id?: TaskInfo['id'];
+}
+
+const EditTask = ({ id }: EditTaskProps) => {
+    const defaultTaskData = useSelector((state) => SelectTaskById(state, id));
+    console.log(defaultTaskData);
     const { isDesktop } = useMedia();
     const { setActions, closeModal } = useModal();
     const dispatch = useDispatch<AppDispatch>();
@@ -60,15 +68,32 @@ const EditTask = () => {
     } = useForm();
 
     useEffect(() => {
-        registerInput({ name: 'taskCompleted', validators: [] });
+        registerInput({
+            name: 'taskCompleted',
+            defaultValue: defaultTaskData?.status?.completed,
+            validators: [],
+        });
         registerInput({
             name: 'label',
+            defaultValue: defaultTaskData?.label,
             validators: [fieldRequiredValidator('label')],
         });
-        registerInput({ name: 'taskDescription', validators: [] });
-        registerInput({ name: 'taskPriority', validators: [] });
+        registerInput({
+            name: 'taskDescription',
+            defaultValue: defaultTaskData?.description,
+            validators: [],
+        });
+        registerInput({
+            name: 'taskPriority',
+            defaultValue:
+                defaultTaskData?.priority !== undefined
+                    ? PRIORITY_MAP[defaultTaskData.priority].label
+                    : undefined,
+            validators: [],
+        });
         registerInput({
             name: 'scheduleDate',
+            defaultValue: defaultTaskData?.scheduleDate,
             validators: [
                 (data: Record<string, FieldValue>) => {
                     const hasBothDates = !!(data.scheduleDate && data.dueDate);
@@ -88,6 +113,7 @@ const EditTask = () => {
         });
         registerInput({
             name: 'dueDate',
+            defaultValue: defaultTaskData?.dueDate,
             validators: [
                 (data: Record<string, FieldValue>) => {
                     const hasBothDates = !!(data.scheduleDate && data.dueDate);
@@ -105,7 +131,11 @@ const EditTask = () => {
                 },
             ],
         });
-        registerInput({ name: 'tags', defaultValue: [], validators: [] });
+        registerInput({
+            name: 'tags',
+            defaultValue: defaultTaskData?.tags,
+            validators: [],
+        });
 
         return () => {
             deregisterInput(
@@ -118,14 +148,16 @@ const EditTask = () => {
                 'tags',
             );
         };
-    }, [registerInput, deregisterInput]);
+    }, [registerInput, deregisterInput, defaultTaskData]);
+
+    useEffect(() => {
+        console.log(taskData);
+    }, [taskData]);
 
     const submitTaskData = useCallback(async () => {
         if (!runAllValidators()) {
             setEditTaskError(undefined);
             setActionProgress(true);
-
-            console.log(taskData);
 
             const taskInfo = {
                 label: taskData.label,
@@ -311,6 +343,9 @@ const EditTask = () => {
                             placeholder="DD-MMM-YYYY"
                             label="Schedule Date"
                             name="scheduleDate"
+                            defaultDate={formatDateLocale(
+                                taskData.scheduleDate as string,
+                            )}
                             onChange={(e) => {
                                 resetFieldError('scheduleDate');
                                 setFieldValue('scheduleDate', e.target.value);
@@ -330,6 +365,9 @@ const EditTask = () => {
                             placeholder="DD-MMM-YYYY"
                             label="Due Date"
                             name="dueDate"
+                            defaultDate={formatDateLocale(
+                                taskData.dueDate as string,
+                            )}
                             onChange={(e) => {
                                 resetFieldError('dueDate');
                                 setFieldValue('dueDate', e.target.value);
@@ -409,5 +447,7 @@ const EditTask = () => {
         </StyledEditTaskContainer>
     );
 };
+
+EditTask.displayName = 'EditTask';
 
 export default memo(EditTask);

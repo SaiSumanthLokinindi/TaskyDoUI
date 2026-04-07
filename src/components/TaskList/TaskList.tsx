@@ -7,6 +7,7 @@ import { type TaskInfo } from 'src/store/Task/Task.types';
 import Loader, { StyledLoader } from '../Loader/Loader';
 import { useModal } from '../Modal/ModalContext';
 import TaskDetails from 'src/pages/TaskDetails/TaskDetails';
+import EditTask from 'src/pages/EditTask/EditTask';
 
 const StyledListWrapper = styled(Flex)`
     min-height: 0;
@@ -38,9 +39,21 @@ const TaskList = memo(({ label, tasks, loading }: TaskListProps) => {
             openModal({
                 title: 'Task Details',
                 body: <TaskDetails id={id} />,
+                actions: [
+                    {
+                        label: 'Edit Task',
+                        onClick: () => {
+                            openModal({
+                                title: 'Edit Task',
+                                body: <EditTask id={id} />,
+                            });
+                        },
+                        variant: 'simple',
+                    },
+                ],
             });
         },
-        [tasks],
+        [openModal],
     );
 
     return (

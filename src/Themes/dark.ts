@@ -1,6 +1,6 @@
 const palette = {
     green500: '#1EA941',
-    brandAccent: '#2BEE6C',
+    brandAccent: '#21A354', // Darkened for better contrast with white text (derived from Stitch theme preferences)
     orange400: '#D27D1B',
     red400: '#D14F4F',
     red600: '#ca3535ff',

@@ -51,7 +51,7 @@ export const StyledButton = styled.button<{
         white-space: nowrap;
         outline: none;
         padding: 10px calc(3 * ${theme.spacing});
-        transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         display: flex;
         column-gap: ${theme.spacing};
@@ -135,6 +135,7 @@ export const StyledButton = styled.button<{
 
             &:hover {
                 background: ${theme.baseColors.secondaryHover};
+                box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.15);
             }
 
             &:disabled {

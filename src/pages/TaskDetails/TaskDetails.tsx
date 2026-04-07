@@ -66,10 +66,18 @@ const TaskDetails = ({ id }: TaskDetailsProps) => {
                     type: 'button',
                     variant: 'primary',
                     onClick: () => {
+                        // 1. Store optimistic update
                         dispatch(markTaskCompleted({ id, completed: false }));
-                        dispatch(
-                            updateTaskCompletion({ id, completed: false }),
-                        );
+
+                        // 2. Perform actual API call
+                        dispatch(updateTaskCompletion({ id, completed: false }))
+                            .unwrap()
+                            .catch(() => {
+                                // 3. Rollback the optimistic update on failure!
+                                dispatch(
+                                    markTaskCompleted({ id, completed: true }),
+                                );
+                            });
                     },
                 },
             ]);
@@ -80,13 +88,23 @@ const TaskDetails = ({ id }: TaskDetailsProps) => {
                     type: 'button',
                     variant: 'primary',
                     onClick: () => {
+                        // 1. Store optimistic update
                         dispatch(markTaskCompleted({ id, completed: true }));
-                        dispatch(updateTaskCompletion({ id, completed: true }));
+
+                        // 2. Perform actual API call
+                        dispatch(updateTaskCompletion({ id, completed: true }))
+                            .unwrap()
+                            .catch(() => {
+                                // 3. Rollback the optimistic update on failure!
+                                dispatch(
+                                    markTaskCompleted({ id, completed: false }),
+                                );
+                            });
                     },
                 },
             ]);
         }
-    }, [status]);
+    }, [status, id, dispatch, setActions]);
 
     return (
         <StyledTaskDetailsContainer
