@@ -45,7 +45,6 @@ export interface EditTaskProps {
 
 const EditTask = ({ id }: EditTaskProps) => {
     const defaultTaskData = useSelector((state) => SelectTaskById(state, id));
-    console.log(defaultTaskData);
     const { isDesktop } = useMedia();
     const { setActions, closeModal } = useModal();
     const dispatch = useDispatch<AppDispatch>();
@@ -150,10 +149,6 @@ const EditTask = ({ id }: EditTaskProps) => {
         };
     }, [registerInput, deregisterInput, defaultTaskData]);
 
-    useEffect(() => {
-        console.log(taskData);
-    }, [taskData]);
-
     const submitTaskData = useCallback(async () => {
         if (!runAllValidators()) {
             setEditTaskError(undefined);
@@ -187,7 +182,13 @@ const EditTask = ({ id }: EditTaskProps) => {
         setActions([
             {
                 label: 'Add Task',
-                onClick: submitTaskData,
+                onClick: () => {
+                    if (id) {
+                        console.log('something');
+                    } else {
+                        void submitTaskData();
+                    }
+                },
                 variant: 'primary',
                 progress: actionProgress,
             },
@@ -196,7 +197,7 @@ const EditTask = ({ id }: EditTaskProps) => {
         return () => {
             setActions([]);
         };
-    }, [setActions, submitTaskData, actionProgress]);
+    }, [setActions, submitTaskData, actionProgress, id]);
 
     const fetchTagSuggestions = useCallback(
         debounce((event: ChangeEvent<HTMLInputElement>) => {
@@ -206,29 +207,29 @@ const EditTask = ({ id }: EditTaskProps) => {
             }
             setTagsLoading(true);
             axios
-                .get('/tags/suggest', {
+                .get<{ id: string; label: string }[]>('/tags/suggest', {
                     params: {
                         q: event.target.value,
                     },
                 })
                 .then((res) => {
                     if (res.status === 200) {
-                        const tags = res.data.map(
-                            (tag: { label: string; id: string }) => {
-                                return {
-                                    id: tag.id,
-                                    label: tag.label,
-                                    selected: false,
-                                    onSelect: (selectedTag: MenuItemProps) => {
-                                        setTagInputValue(selectedTag.label);
-                                    },
-                                };
-                            },
-                        );
+                        const tags: MenuItemProps[] = res.data.map((tag) => {
+                            return {
+                                id: tag.id,
+                                label: tag.label,
+                                selected: false,
+                                onSelect: (selectedTag: MenuItemProps) => {
+                                    setTagInputValue(selectedTag.label);
+                                },
+                            };
+                        });
                         setTagSuggestions(tags);
                     }
                 })
-                .catch((err) => {})
+                .catch((err) => {
+                    console.log(err);
+                })
                 .finally(() => {
                     setTagsLoading(false);
                 });
