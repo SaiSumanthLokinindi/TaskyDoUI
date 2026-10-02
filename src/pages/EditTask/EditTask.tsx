@@ -16,15 +16,16 @@ import { fieldRequiredValidator } from 'src/utils/validators';
 import { useModal } from 'src/components/Modal/ModalContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from 'src/store';
-import { addTask } from 'src/store/Task/TaskThunks';
+import { addTask, updateTask } from 'src/store/Task/TaskThunks';
 import { TaskInfo } from 'src/store/Task/Task.types';
 import {
     PRIORITY_LABEL_MAP,
     PRIORITY_LABELS,
     PRIORITY_MAP,
 } from 'src/components/Priority/constants';
-import { formatDateLocale, isAfter } from 'src/utils/dates';
+import { formatDateLocale, isAfter, toInputDate } from 'src/utils/dates';
 import { SelectTaskById } from 'src/store/Task/TaskSelectors';
+import { StyledError } from '../Authentication/authentication.styles';
 
 const StyledEditTaskContainer = styled.form(({ theme: { spacing } }) => {
     return css`
@@ -36,14 +37,41 @@ const StyledEditTaskContainer = styled.form(({ theme: { spacing } }) => {
         display: flex;
         flex-direction: column;
         row-gap: calc(3 * ${spacing});
+
+        ${StyledError} {
+            margin: unset;
+        }
     `;
 });
+
+enum FormType {
+    Add = 'ADD',
+    Edit = 'EDIT',
+}
 
 export interface EditTaskProps {
     id?: TaskInfo['id'];
 }
 
-const EditTask = ({ id }: EditTaskProps) => {
+type TaskFormData = Omit<TaskInfo, 'id'>;
+
+const generateTaskInfo = (
+    taskData: Record<string, FieldValue>,
+): TaskFormData => {
+    return {
+        label: taskData.label,
+        description: taskData.taskDescription,
+        status: {
+            completed: taskData.taskCompleted,
+        },
+        scheduleDate: taskData.scheduleDate,
+        dueDate: taskData.dueDate,
+        priority: PRIORITY_LABEL_MAP[taskData.taskPriority as string],
+        tags: taskData.tags,
+    } as TaskFormData;
+};
+
+const EditTask = memo(({ id }: EditTaskProps) => {
     const defaultTaskData = useSelector((state) => SelectTaskById(state, id));
     const { isDesktop } = useMedia();
     const { setActions, closeModal } = useModal();
@@ -53,7 +81,7 @@ const EditTask = ({ id }: EditTaskProps) => {
     const [tagSuggestions, setTagSuggestions] = useState<MenuItemProps[]>([]);
     const [tagsLoading, setTagsLoading] = useState(false);
     const [actionProgress, setActionProgress] = useState(false);
-    const [EditTaskError, setEditTaskError] = useState<string>();
+    const [taskFormError, setTaskFormError] = useState<string>();
 
     const {
         registerInput,
@@ -132,7 +160,7 @@ const EditTask = ({ id }: EditTaskProps) => {
         });
         registerInput({
             name: 'tags',
-            defaultValue: defaultTaskData?.tags,
+            defaultValue: defaultTaskData?.tags || [],
             validators: [],
         });
 
@@ -149,44 +177,43 @@ const EditTask = ({ id }: EditTaskProps) => {
         };
     }, [registerInput, deregisterInput, defaultTaskData]);
 
-    const submitTaskData = useCallback(async () => {
-        if (!runAllValidators()) {
-            setEditTaskError(undefined);
-            setActionProgress(true);
+    // handles submit of task data for adding or editing a task, determines types based on the availability of id
+    const handleSubmitTaskData = useCallback(
+        async (type: FormType) => {
+            if (!runAllValidators()) {
+                setTaskFormError(undefined);
+                setActionProgress(true);
 
-            const taskInfo = {
-                label: taskData.label,
-                description: taskData.taskDescription,
-                status: {
-                    completed: taskData.taskCompleted,
-                },
-                scheduleDate: taskData.scheduleDate,
-                dueDate: taskData.dueDate,
-                priority: PRIORITY_LABEL_MAP[taskData.taskPriority as string],
-                tags: taskData.tags,
-            } as Omit<TaskInfo, 'id'>;
+                const taskInfo = generateTaskInfo(taskData);
 
-            try {
-                await dispatch(addTask(taskInfo)).unwrap();
-                closeModal();
-            } catch (err) {
-                setEditTaskError(err as string);
-            } finally {
-                setActionProgress(false);
+                try {
+                    if (type === FormType.Add)
+                        await dispatch(addTask(taskInfo)).unwrap();
+                    else if (id && type === FormType.Edit)
+                        await dispatch(
+                            updateTask({ id, ...taskInfo }),
+                        ).unwrap();
+                    closeModal();
+                } catch (err) {
+                    setTaskFormError(err as string);
+                } finally {
+                    setActionProgress(false);
+                }
             }
-        }
-    }, [taskData, runAllValidators, dispatch]);
+        },
+        [taskData, runAllValidators, dispatch, closeModal, id],
+    );
 
     // Setting actions for Edit Task form modal
     useEffect(() => {
         setActions([
             {
-                label: 'Add Task',
+                label: 'Edit Task',
                 onClick: () => {
                     if (id) {
-                        console.log('something');
+                        void handleSubmitTaskData(FormType.Edit);
                     } else {
-                        void submitTaskData();
+                        void handleSubmitTaskData(FormType.Add);
                     }
                 },
                 variant: 'primary',
@@ -197,10 +224,10 @@ const EditTask = ({ id }: EditTaskProps) => {
         return () => {
             setActions([]);
         };
-    }, [setActions, submitTaskData, actionProgress, id]);
+    }, [setActions, handleSubmitTaskData, actionProgress, id]);
 
-    const fetchTagSuggestions = useCallback(
-        debounce((event: ChangeEvent<HTMLInputElement>) => {
+    const fetchTagSuggestions = debounce(
+        (event: ChangeEvent<HTMLInputElement>) => {
             if (!event.target.value) {
                 setTagSuggestions([]);
                 return;
@@ -228,13 +255,13 @@ const EditTask = ({ id }: EditTaskProps) => {
                     }
                 })
                 .catch((err) => {
-                    console.log(err);
+                    console.error(err);
                 })
                 .finally(() => {
                     setTagsLoading(false);
                 });
-        }, 500),
-        [],
+        },
+        300,
     );
 
     const addTagHandler = useCallback(() => {
@@ -266,6 +293,7 @@ const EditTask = ({ id }: EditTaskProps) => {
                 e.preventDefault();
             }}
         >
+            {taskFormError && <StyledError>{taskFormError}</StyledError>}
             <Toggle
                 label="Mark task as completed"
                 id="task-completed"
@@ -392,7 +420,9 @@ const EditTask = ({ id }: EditTaskProps) => {
                             placeholder="Schedule Date"
                             name="task-schedule-date"
                             label="Schedule Date"
-                            value={taskData.scheduleDate as string}
+                            value={toInputDate(
+                                (taskData.scheduleDate as string) || '',
+                            )}
                             onChange={(e) => {
                                 setFieldValue('scheduleDate', e.target.value);
                             }}
@@ -402,7 +432,9 @@ const EditTask = ({ id }: EditTaskProps) => {
                             placeholder="Due Date"
                             name="task-due-date"
                             label="Due Date"
-                            value={taskData.dueDate as string}
+                            value={toInputDate(
+                                (taskData.dueDate as string) || '',
+                            )}
                             onChange={(e) => {
                                 setFieldValue('dueDate', e.target.value);
                             }}
@@ -447,8 +479,8 @@ const EditTask = ({ id }: EditTaskProps) => {
             </Flex>
         </StyledEditTaskContainer>
     );
-};
+});
 
 EditTask.displayName = 'EditTask';
 
-export default memo(EditTask);
+export default EditTask;

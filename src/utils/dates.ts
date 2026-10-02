@@ -100,3 +100,11 @@ export const formatDateLocale = (date: Date | string) => {
 
     return `${day} ${month} ${year}`;
 };
+
+export const toInputDate = (date: Date | string) => {
+    const d = new Date(date);
+
+    if (isNaN(d.getTime())) return '';
+
+    return d.toLocaleDateString('en-CA');
+};

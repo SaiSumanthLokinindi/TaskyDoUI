@@ -21,7 +21,7 @@ export const updateTaskCompletion = createAsyncThunk<
     TaskInfo,
     { id: string; completed: boolean },
     { rejectValue: { id: string; completed: boolean; message: string } }
->('task/update', async ({ id, completed }, { rejectWithValue }) => {
+>('task/updateCompletion', async ({ id, completed }, { rejectWithValue }) => {
     try {
         return await TaskService.updateTask(id, { status: { completed } });
     } catch (err) {
@@ -40,6 +40,18 @@ export const addTask = createAsyncThunk<TaskInfo, Omit<TaskInfo, 'id'>>(
             return await TaskService.addTask(taskInfo);
         } catch (err) {
             return rejectWithValue(`Failed to add task`);
+        }
+    },
+);
+
+export const updateTask = createAsyncThunk<TaskInfo, TaskInfo>(
+    'task/update',
+    async (taskInfo, { rejectWithValue }) => {
+        try {
+            const { id, ...taskUpdates } = taskInfo;
+            return await TaskService.updateTask(id, taskUpdates);
+        } catch (err) {
+            return rejectWithValue('Failed to update task');
         }
     },
 );

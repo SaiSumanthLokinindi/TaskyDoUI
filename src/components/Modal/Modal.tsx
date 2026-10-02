@@ -89,7 +89,7 @@ const Modal = memo(({ body, title, actions, onDismiss }: ModalProps) => {
     return createPortal(
         <>
             <StyledBackdrop />
-            <StyledModal>
+            <StyledModal size="lg">
                 <StyledModalHeader
                     justifyContent="space-between"
                     alignItems="center"

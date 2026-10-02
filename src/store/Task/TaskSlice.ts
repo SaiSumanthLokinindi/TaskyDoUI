@@ -1,6 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TaskInfo, TasksState } from './Task.types';
-import { addTask, fetchTasksThunk, updateTaskCompletion } from './TaskThunks';
+import {
+    addTask,
+    fetchTasksThunk,
+    updateTask,
+    updateTaskCompletion,
+} from './TaskThunks';
 
 const upsertTasksInState = (state: TasksState, tasks: TaskInfo[]) => {
     tasks.forEach((task) => {
@@ -127,7 +132,7 @@ const TaskSlice = createSlice({
                 return;
             }
 
-            state.entities[action.payload.id] = action.payload ;
+            state.entities[action.payload.id] = action.payload;
             delete state.taskCompletionRequests[id];
         });
 
@@ -147,6 +152,19 @@ const TaskSlice = createSlice({
                     state.ids.push(task.id);
                 }
                 state.entities[task.id] = task;
+            }
+        });
+
+        builder.addCase(updateTask.fulfilled, (state, action) => {
+            if (action.payload) {
+                const task = action.payload;
+
+                if (state.entities[task.id]) {
+                    state.entities[task.id] = task;
+                } else {
+                    state.ids.push(task.id);
+                    state.entities[task.id] = task;
+                }
             }
         });
     },
