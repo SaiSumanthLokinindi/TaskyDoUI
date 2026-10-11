@@ -3,7 +3,7 @@ import Flex from './components/Flex/flex';
 import AuthProvider from './contexts/AuthContext/AuthContext';
 import styled, { css } from 'styled-components';
 import { BrowserRouter as Router } from 'react-router-dom';
-import AppRoutes from './routing/AppRoutes';
+import AppRoutes from './routes/AppRoutes';
 import { Provider } from 'react-redux';
 import store from './store/index';
 import ModalProvider from './components/Modal/ModalProvider';

@@ -1,11 +1,10 @@
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useMemo } from 'react';
 import DueCard from './DueCard';
 import Flex from 'src/components/Flex/flex';
 import { isToday } from 'src/utils/dates';
 
 import Text from 'src/components/Text/Text';
 import Progress from 'src/components/Progress/Progress';
-import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/style.css';
 import TaskList from 'src/components/TaskList/TaskList';
 import { useSelector } from 'react-redux';
@@ -23,16 +22,20 @@ import {
     StyledMyDayTasksList,
     StyledOverdueTasksList,
     StyledUpcomingTasksList,
-    StyledCalender,
+    StyledRecentlyCompletedTasksList,
 } from './Home.styles';
 import {
     selectMyDayTasks,
     selectOverdueTasks,
     selectUpcomingTasks,
 } from 'src/store/Task/TaskSelectors';
+import { useTheme } from 'styled-components';
+import useBreakpoint from 'src/hooks/useBreakpoint';
 
 const Home = memo(() => {
-    const [selected, setSelected] = useState<Date>(new Date());
+    const theme = useTheme();
+    const isMediumScreen = useBreakpoint('md');
+    const isLargeScreen = useBreakpoint('lg');
     useFetchTasksOnLoad(fetchMyDay);
     useFetchTasksOnLoad(fetchUpcomingTasks);
     useFetchTasksOnLoad(fetchOverdueTasks);
@@ -73,8 +76,11 @@ const Home = memo(() => {
 
     return (
         <StyledHomeContainer>
-            <StyledQuickStats direction="column" rowGap="16px">
-                <Flex columnGap="16px">
+            <StyledQuickStats
+                direction={isMediumScreen && !isLargeScreen ? 'row' : 'column'}
+                gap={`calc(2 * ${theme.spacing})`}
+            >
+                <Flex gap={`calc(2 * ${theme.spacing})`}>
                     <DueCard
                         label="Due Today"
                         count={dueTodayCount}
@@ -138,15 +144,13 @@ const Home = memo(() => {
                     loading={upcomingTasksLoading}
                 />
             </StyledUpcomingTasksList>
-            <StyledCalender>
-                <DayPicker
-                    required={false}
-                    animate
-                    mode="single"
-                    selected={selected}
-                    onSelect={(Date) => setSelected(Date!)}
+            <StyledRecentlyCompletedTasksList>
+                <TaskList
+                    label="Recently Completed Tasks"
+                    tasks={myDayTasks}
+                    loading={myDayTasksLoading}
                 />
-            </StyledCalender>
+            </StyledRecentlyCompletedTasksList>
         </StyledHomeContainer>
     );
 });

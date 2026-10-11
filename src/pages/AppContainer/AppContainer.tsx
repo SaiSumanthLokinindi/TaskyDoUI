@@ -61,6 +61,7 @@ const StyledNavigationWrapper = styled(Flex)(({
             ${StyledButton}:last-child {
                 border-radius: 100%;
                 width: 40px;
+                height: 40px;
                 justify-content: center;
             }
         }

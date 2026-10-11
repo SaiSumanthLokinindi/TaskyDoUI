@@ -1,20 +1,15 @@
 import { useLayoutEffect, useState } from 'react';
 import { debounce } from 'src/shared/utils';
+import {breakpoints, type Breakpoint} from 'src/styles/breakpoints'
 
 const windowIsAvailable = typeof window !== 'undefined';
 
-const breakpointsMap = {
-    xs: '375px',
-    sm: '480px',
-    md: '759px',
-    lg: '1280px',
-    xl: '1980px',
-};
 
-const useBreakpoint = (breakpoint: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => {
+
+const useBreakpoint = (breakpoint: Breakpoint) => {
     const [matches, setMatches] = useState(
         windowIsAvailable
-            ? window.matchMedia(`(min-width:${breakpointsMap[breakpoint]})`)
+            ? window.matchMedia(`(min-width:${breakpoints[breakpoint]})`)
                   .matches
             : false,
     );
@@ -26,14 +21,14 @@ const useBreakpoint = (breakpoint: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => {
     const resizeHandler = debounce(() => {
         setMatches(
             window.innerWidth >=
-                parseInt(breakpointsMap[breakpoint].split('p')[0]),
+                parseInt(breakpoints[breakpoint].split('p')[0]),
         );
     });
 
     useLayoutEffect(() => {
         if (windowIsAvailable) {
             const mediaMatch = window.matchMedia(
-                `(min-width:${breakpointsMap[breakpoint]})`,
+                `(min-width:${breakpoints[breakpoint]})`,
             );
             const mediaMatchAvailable = 'addEventListener' in mediaMatch;
 

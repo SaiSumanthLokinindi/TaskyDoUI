@@ -1,3 +1,5 @@
+import { breakpoints } from "src/styles/breakpoints";
+
 const palette = {
     green500: '#1EA941',
     brandAccent: '#21A354', // Darkened for better contrast with white text (derived from Stitch theme preferences)
@@ -90,13 +92,7 @@ const dark = {
             },
         },
     },
-    breakpoints: {
-        sm: '480px',
-        md: '759px',
-        lg: '1280px',
-        xl: '1536px',
-        xxl: '1980px',
-    },
+    breakpoints,
 };
 
 export default dark;

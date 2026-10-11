@@ -36,32 +36,47 @@ export const StyledUpcomingTasksList = styled(Card)(({ theme }) => {
     `;
 });
 
-export const StyledCalender = styled(Card)(({ theme: { spacing } }) => {
+export const StyledRecentlyCompletedTasksList = styled(Card)(({ theme }) => {
     return css`
-        padding: calc(1.5 * ${spacing});
-        grid-area: calender;
+        padding: calc(1.5 * ${theme.spacing});
+        grid-area: recentlycompleted;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
     `;
 });
 
-export const StyledHomeContainer = styled.div(({ theme: { spacing } }) => {
+export const StyledHomeContainer = styled.div(({ theme: { spacing, breakpoints } }) => {
     return css`
         width: 100%;
         display: grid;
         box-sizing: border-box;
         margin-block-start: calc(2 * ${spacing});
 
-        grid-template-columns: 20% 1fr 1fr;
-        grid-template-rows: repeat(6, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-rows: repeat(6, minmax(0, 1fr));
 
         grid-template-areas:
             'quickinfo myday overdue'
             'quickinfo myday overdue'
-            'calender  myday overdue'
-            'calender  myday upcoming'
-            'calender  myday upcoming'
-            'calender  myday upcoming';
+            'recentlycompleted  myday overdue'
+            'recentlycompleted  myday upcoming'
+            'recentlycompleted  myday upcoming'
+            'recentlycompleted  myday upcoming';
 
         gap: calc(2 * ${spacing});
+
+        /** Tablet 2 columns */
+        @media (min-width: ${breakpoints.md}) and (max-width : calc(${breakpoints.lg} - 1px)){
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-rows: auto repeat(2, minmax(0, 1fr));
+
+            grid-template-areas:
+                'quickinfo quickinfo'
+                'myday overdue'
+                'recentlycompleted upcoming';
+                
+        }
     `;
 });
 
