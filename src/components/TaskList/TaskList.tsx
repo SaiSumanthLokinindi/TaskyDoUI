@@ -10,8 +10,10 @@ import TaskDetails from 'src/pages/TaskDetails/TaskDetails';
 import EditTask from 'src/pages/EditTask/EditTask';
 
 const StyledListWrapper = styled(Flex)`
+    flex: 1;
     min-height: 0;
-    height: 100%;
+    min-width: 0;
+
     ${StyledLoader} {
         height: 2rem;
         width: 2rem;
@@ -21,7 +23,9 @@ const StyledListWrapper = styled(Flex)`
 const StyledTaskList = styled(Flex)`
     flex: 1;
     overflow-y: auto;
+    min-width: 0;
     min-height: 0;
+    overscroll-behavior: contain;
     margin-block-start: calc(1.5 * ${({ theme }) => theme.spacing});
 `;
 
@@ -61,7 +65,7 @@ const TaskList = memo(({ label, tasks, loading }: TaskListProps) => {
             {label && <Text variant="h4">{label}</Text>}
             {loading ? (
                 <Flex
-                    style={{ height: '100%', width: '100%' }}
+                    style={{ minHeight: 0, flex: 1 }}
                     alignItems="center"
                     justifyContent="center"
                     grow={1}

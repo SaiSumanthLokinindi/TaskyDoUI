@@ -12,7 +12,8 @@ const StyledDueToday = styled(Card)(({
         padding: calc(1.5 * ${spacing});
         height: 100%;
         width: 100%;
-        min-width: 200px;
+        min-width: 150px;
+        max-width: 250px;
         display: flex;
         flex-grow: 1;
         flex-direction: column;

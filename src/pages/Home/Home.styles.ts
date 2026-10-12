@@ -77,6 +77,18 @@ export const StyledHomeContainer = styled.div(({ theme: { spacing, breakpoints }
                 'recentlycompleted upcoming';
                 
         }
+
+        /** Single row column layout for mobile devices */
+        @media (max-width: calc(${breakpoints.md} - 1px)){
+            grid-template-columns: minmax(0, 1fr);
+            grid-template-rows: auto;
+
+            grid-template-areas:
+                'quickinfo';
+
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
     `;
 });
 

@@ -23,9 +23,9 @@ const StyledFlex = styled(Flex)(({ theme: { spacing, breakpoints } }) => {
         box-sizing: border-box;
         min-height: 0;
 
-        @media (max-width: ${breakpoints.sm}) {
+        @media (max-width: calc(${breakpoints.md} - 1px)) {
             padding: calc(1.5 * ${spacing});
-            position: relative;
+            padding-block-start: calc(2 * ${spacing});
 
             ${StyledNavigation} {
                 position: fixed;
@@ -57,19 +57,16 @@ const StyledNavigationWrapper = styled(Flex)(({
             flex-shrink: 0;
         }
 
-        @media (max-width: ${breakpoints.md}) {
-            ${StyledButton}:last-child {
-                border-radius: 100%;
-                width: 40px;
-                height: 40px;
-                justify-content: center;
-            }
+        & > ${StyledButton}:last-child svg {
+            height: 2em;
+            width: 2em;
         }
 
-        @media (max-width: ${breakpoints.sm}) {
+        @media (max-width: calc(${breakpoints.md} - 1px)) {
             ${StyledButton} {
                 padding: ${spacing};
                 width: 40px;
+                height: 40px;
                 border-radius: 100%;
                 justify-content: center;
             }

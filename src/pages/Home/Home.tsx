@@ -123,34 +123,38 @@ const Home = memo(() => {
                     </Flex>
                 </StyledMyDayProgress>
             </StyledQuickStats>
-            <StyledMyDayTasksList>
-                <TaskList
-                    label="My Day"
-                    tasks={myDayTasks}
-                    loading={myDayTasksLoading}
-                />
-            </StyledMyDayTasksList>
-            <StyledOverdueTasksList>
-                <TaskList
-                    label="Overdue Tasks"
-                    tasks={overdueTasks}
-                    loading={overdueTasksLoading}
-                />
-            </StyledOverdueTasksList>
-            <StyledUpcomingTasksList>
-                <TaskList
-                    label="Upcoming Tasks"
-                    tasks={upcomingTasks}
-                    loading={upcomingTasksLoading}
-                />
-            </StyledUpcomingTasksList>
-            <StyledRecentlyCompletedTasksList>
-                <TaskList
-                    label="Recently Completed Tasks"
-                    tasks={myDayTasks}
-                    loading={myDayTasksLoading}
-                />
-            </StyledRecentlyCompletedTasksList>
+            {isMediumScreen && (
+                <>
+                    <StyledMyDayTasksList>
+                        <TaskList
+                            label="My Day"
+                            tasks={myDayTasks}
+                            loading={myDayTasksLoading}
+                        />
+                    </StyledMyDayTasksList>
+                    <StyledOverdueTasksList>
+                        <TaskList
+                            label="Overdue Tasks"
+                            tasks={overdueTasks}
+                            loading={overdueTasksLoading}
+                        />
+                    </StyledOverdueTasksList>
+                    <StyledUpcomingTasksList>
+                        <TaskList
+                            label="Upcoming Tasks"
+                            tasks={upcomingTasks}
+                            loading={upcomingTasksLoading}
+                        />
+                    </StyledUpcomingTasksList>
+                    <StyledRecentlyCompletedTasksList>
+                        <TaskList
+                            label="Recently Completed Tasks"
+                            tasks={myDayTasks}
+                            loading={myDayTasksLoading}
+                        />
+                    </StyledRecentlyCompletedTasksList>
+                </>
+            )}
         </StyledHomeContainer>
     );
 });
