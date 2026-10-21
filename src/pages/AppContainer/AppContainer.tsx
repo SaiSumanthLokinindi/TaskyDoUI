@@ -57,9 +57,16 @@ const StyledNavigationWrapper = styled(Flex)(({
             flex-shrink: 0;
         }
 
-        & > ${StyledButton}:last-child svg {
-            height: 2em;
-            width: 2em;
+        & > ${StyledButton}:last-child {
+            div {
+                align-items: center;
+                justify-content: center;
+                column-gap: calc(0.5 * ${spacing});
+            }
+            svg {
+                height: 2em;
+                width: 2em;
+            }
         }
 
         @media (max-width: calc(${breakpoints.md} - 1px)) {
@@ -119,7 +126,7 @@ const AppContainer = memo(() => {
                     loading={userLoading}
                 />
                 <StyledNavigationWrapper columnGap="0.5rem" alignItems="center">
-                    <Navigation />
+                    {!isMediumScreenOrAbove && <Navigation />}
                     <Button onClick={openAddTaskModal}>
                         <IoAdd />{' '}
                         {isMediumScreenOrAbove && <span> Add Task</span>}

@@ -1,16 +1,11 @@
-import { FC, memo, useState } from 'react';
+import { FC, memo } from 'react';
 import { NavLink } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import { IoHomeOutline } from 'react-icons/io5';
-import { FiSearch } from 'react-icons/fi';
-import { GoCalendar } from 'react-icons/go';
-import { LuListTodo } from 'react-icons/lu';
+
 import Flex from '../Flex/flex';
+import { navigationItems, type NavigationItem } from './navigationItems';
 
-type Route = 'home' | 'myday' | 'search' | 'calendar';
-
-export const StyledNavigation = styled(Flex)<{ $activeRoute: Route }>(({
-    $activeRoute,
+export const StyledNavigation = styled(Flex)(({
     theme: {
         baseColors: { tertiary, secondary, secondaryHover },
         spacing,
@@ -46,21 +41,10 @@ export const StyledNavigation = styled(Flex)<{ $activeRoute: Route }>(({
                     &:hover {
                         background-color: ${secondaryHover};
                     }
-                }
 
-                &:nth-child(
-                        ${['home', 'myday', 'search', 'calendar'].indexOf(
-                                $activeRoute,
-                            ) + 1}
-                    ) {
-                    color: ${tertiary};
-
-                    a {
+                    &[aria-current='page'] {
+                        color: ${tertiary};
                         background-color: ${secondaryHover};
-                    }
-
-                    a:hover {
-                        cursor: default;
                     }
                 }
             }
@@ -69,47 +53,22 @@ export const StyledNavigation = styled(Flex)<{ $activeRoute: Route }>(({
 });
 
 const Navigation: FC = memo(() => {
-    const [activeRoute, setActiveRoute] = useState<Route>('home');
-
     return (
-        <StyledNavigation
-            forwardedAs="nav"
-            alignItems="center"
-            $activeRoute={activeRoute}
-        >
+        <StyledNavigation forwardedAs="nav" alignItems="center">
             <ul>
-                <li>
-                    <NavLink to="/">
-                        {({ isActive }) => {
-                            if (isActive) setActiveRoute('home');
-                            return <IoHomeOutline />;
-                        }}
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink to="/myday">
-                        {({ isActive }) => {
-                            if (isActive) setActiveRoute('myday');
-                            return <LuListTodo />;
-                        }}
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink to="/search">
-                        {({ isActive }) => {
-                            if (isActive) setActiveRoute('search');
-                            return <FiSearch />;
-                        }}
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink to="/calendar">
-                        {({ isActive }) => {
-                            if (isActive) setActiveRoute('calendar');
-                            return <GoCalendar />;
-                        }}
-                    </NavLink>
-                </li>
+                {navigationItems.map(({ to, label, icon }: NavigationItem) => {
+                    return (
+                        <li>
+                            <NavLink
+                                to={to}
+                                end={to === '/'}
+                                aria-label={label}
+                            >
+                                {icon}
+                            </NavLink>
+                        </li>
+                    );
+                })}
             </ul>
         </StyledNavigation>
     );

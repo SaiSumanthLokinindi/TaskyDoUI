@@ -4,9 +4,10 @@ import MyDay from 'src/pages/MyDay/MyDay';
 import NotFoundPage from 'src/pages/NotFoundPage';
 import AppContainer from 'src/pages/AppContainer/AppContainer';
 import ProtectedRoute from './ProtectedRoute';
-import Search from 'src/pages/Search/Search';
-import Calendar from 'src/pages/Calendar/Calendar';
 import Home from 'src/pages/Home/Home';
+import UpcomingTasks from 'src/pages/UpcomingTasks/UpcomingTasks';
+import OverdueTasks from 'src/pages/Overdue Tasks/OverdueTasks';
+import RecentlyClosedTasks from 'src/pages/Rencetly Closed Tasks/RecentlyClosedTasks';
 
 const AppRoutes = () => {
     return useRoutes([
@@ -27,12 +28,16 @@ const AppRoutes = () => {
                     element: <MyDay />,
                 },
                 {
-                    path: 'search',
-                    element: <Search />,
+                    path: 'upcoming',
+                    element: <UpcomingTasks />,
                 },
                 {
-                    path: 'calendar',
-                    element: <Calendar />,
+                    path: 'overdue',
+                    element: <OverdueTasks />,
+                },
+                {
+                    path: 'recents',
+                    element: <RecentlyClosedTasks />,
                 },
             ],
         },
