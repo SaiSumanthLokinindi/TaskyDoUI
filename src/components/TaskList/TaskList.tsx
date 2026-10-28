@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Flex from 'src/components/Flex/flex';
 import { memo, useCallback } from 'react';
 import Task from '../Task/Task';
@@ -9,16 +9,24 @@ import { useModal } from '../Modal/ModalContext';
 import TaskDetails from 'src/pages/TaskDetails/TaskDetails';
 import EditTask from 'src/pages/EditTask/EditTask';
 
-const StyledListWrapper = styled(Flex)`
-    flex: 1;
-    min-height: 0;
-    min-width: 0;
+const StyledListWrapper = styled(Flex)(({
+    theme: { spacing, breakpoints },
+}) => {
+    return css`
+        flex: 1;
+        min-height: 0;
+        min-width: 0;
 
-    ${StyledLoader} {
-        height: 2rem;
-        width: 2rem;
-    }
-`;
+        ${StyledLoader} {
+            height: 2rem;
+            width: 2rem;
+        }
+
+        @media (max-width: calc(${breakpoints.md} - 1px)) {
+            padding-block-start: calc(2 * ${spacing});
+        }
+    `;
+});
 
 const StyledTaskList = styled(Flex)`
     flex: 1;

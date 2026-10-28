@@ -100,11 +100,9 @@ const Login = memo(
                         name="email"
                         label="Email"
                         placeholder="name@company.com"
-                        onChange={() => {
+                        onChange={(e) => {
                             setFormError('');
                             resetFieldError('email');
-                        }}
-                        onBlur={(e) => {
                             setFieldValue('email', e.target.value);
                         }}
                         info={
@@ -121,11 +119,9 @@ const Login = memo(
                         name="password"
                         label="Password"
                         placeholder="********"
-                        onChange={() => {
+                        onChange={(e) => {
                             setFormError('');
                             resetFieldError('password');
-                        }}
-                        onBlur={(e) => {
                             setFieldValue('password', e.target.value);
                         }}
                         info={

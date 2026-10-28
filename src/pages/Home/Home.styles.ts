@@ -16,20 +16,12 @@ export const StyledMyDayTasksList = styled(Card)(({ theme }) => {
     `;
 });
 
-export const StyledOverdueTasksList = styled(Card)(({ theme }) => {
+export const StyledTaskList = styled(Card)<{gridArea: string}>(({ gridArea, theme:{spacing, breakpoints} }) => {
     return css`
-        padding: calc(1.5 * ${theme.spacing});
-        grid-area: overdue;
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-    `;
-});
-
-export const StyledUpcomingTasksList = styled(Card)(({ theme }) => {
-    return css`
-        padding: calc(1.5 * ${theme.spacing});
-        grid-area: upcoming;
+        padding: calc(1.5 * ${spacing});
+        ${gridArea && css`
+            grid-area: ${gridArea};
+        `}
         display: flex;
         flex-direction: column;
         min-height: 0;

@@ -21,16 +21,17 @@ import {
     StyledProgressContainer,
     StyledMyDayTasksList,
     StyledOverdueTasksList,
-    StyledUpcomingTasksList,
     StyledRecentlyCompletedTasksList,
+    StyledTaskList,
 } from './Home.styles';
 import {
     selectMyDayTasks,
     selectOverdueTasks,
-    selectUpcomingTasks,
 } from 'src/store/Task/TaskSelectors';
 import { useTheme } from 'styled-components';
 import useBreakpoint from 'src/hooks/useBreakpoint';
+import UpcomingTasks from '../UpcomingTasks/UpcomingTasks';
+import OverdueTasks from '../Overdue Tasks/OverdueTasks';
 
 const Home = memo(() => {
     const theme = useTheme();
@@ -56,14 +57,6 @@ const Home = memo(() => {
             return [completedCount, Math.ceil(completionPercentage)];
         }, [myDayTasks]);
 
-    const { loading: overdueTasksLoading, error: overdueTasksError } =
-        useSelector((state: RootState) => state.tasks.overdueState);
-    const overdueTasks = useSelector(selectOverdueTasks);
-
-    const { loading: upcomingTasksLoading, error: upcomingTasksError } =
-        useSelector((state: RootState) => state.tasks.upcomingState);
-    const upcomingTasks = useSelector(selectUpcomingTasks);
-
     const dueTodayCount = useMemo(() => {
         let count = 0;
         myDayTasks.forEach((task) => {
@@ -88,7 +81,8 @@ const Home = memo(() => {
                     />
                     <DueCard
                         label="Overdue"
-                        count={overdueTasks.length}
+                        // ToDo: replace this count with actual value
+                        count={0}
                         helperText="Tasks overdue"
                     />
                 </Flex>
@@ -132,20 +126,12 @@ const Home = memo(() => {
                             loading={myDayTasksLoading}
                         />
                     </StyledMyDayTasksList>
-                    <StyledOverdueTasksList>
-                        <TaskList
-                            label="Overdue Tasks"
-                            tasks={overdueTasks}
-                            loading={overdueTasksLoading}
-                        />
-                    </StyledOverdueTasksList>
-                    <StyledUpcomingTasksList>
-                        <TaskList
-                            label="Upcoming Tasks"
-                            tasks={upcomingTasks}
-                            loading={upcomingTasksLoading}
-                        />
-                    </StyledUpcomingTasksList>
+                    <StyledTaskList gridArea="overdue">
+                        <OverdueTasks />
+                    </StyledTaskList>
+                    <StyledTaskList gridArea="upcoming">
+                        <UpcomingTasks />
+                    </StyledTaskList>
                     <StyledRecentlyCompletedTasksList>
                         <TaskList
                             label="Recently Completed Tasks"
