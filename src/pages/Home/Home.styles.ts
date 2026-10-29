@@ -1,20 +1,5 @@
 import styled, { css } from 'styled-components';
 import Card from 'src/components/Card/card';
-import Flex from 'src/components/Flex/flex';
-
-export const StyledQuickStats = styled(Flex)`
-    grid-area: quickinfo;
-`;
-
-export const StyledMyDayTasksList = styled(Card)(({ theme }) => {
-    return css`
-        padding: calc(1.5 * ${theme.spacing});
-        grid-area: myday;
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-    `;
-});
 
 export const StyledTaskList = styled(Card)<{gridArea: string}>(({ gridArea, theme:{spacing, breakpoints} }) => {
     return css`
@@ -22,16 +7,6 @@ export const StyledTaskList = styled(Card)<{gridArea: string}>(({ gridArea, them
         ${gridArea && css`
             grid-area: ${gridArea};
         `}
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-    `;
-});
-
-export const StyledRecentlyCompletedTasksList = styled(Card)(({ theme }) => {
-    return css`
-        padding: calc(1.5 * ${theme.spacing});
-        grid-area: recentlycompleted;
         display: flex;
         flex-direction: column;
         min-height: 0;
@@ -49,8 +24,8 @@ export const StyledHomeContainer = styled.div(({ theme: { spacing, breakpoints }
         grid-template-rows: repeat(6, minmax(0, 1fr));
 
         grid-template-areas:
-            'quickinfo myday overdue'
-            'quickinfo myday overdue'
+            'insights myday overdue'
+            'insights myday overdue'
             'recentlycompleted  myday overdue'
             'recentlycompleted  myday upcoming'
             'recentlycompleted  myday upcoming'
@@ -64,7 +39,7 @@ export const StyledHomeContainer = styled.div(({ theme: { spacing, breakpoints }
             grid-template-rows: auto repeat(2, minmax(0, 1fr));
 
             grid-template-areas:
-                'quickinfo quickinfo'
+                'insights insights'
                 'myday overdue'
                 'recentlycompleted upcoming';
                 
@@ -76,7 +51,7 @@ export const StyledHomeContainer = styled.div(({ theme: { spacing, breakpoints }
             grid-template-rows: auto;
 
             grid-template-areas:
-                'quickinfo';
+                'insights';
 
             overflow-y: auto;
             overflow-x: hidden;
@@ -84,16 +59,6 @@ export const StyledHomeContainer = styled.div(({ theme: { spacing, breakpoints }
     `;
 });
 
-export const StyledHeader = styled(Flex)`
-    font-size: 0.875rem;
-`;
 
-export const StyledProgressContainer = styled(Flex)`
-    font-size: 0.725rem;
-`;
 
-export const StyledMyDayProgress = styled(Card)(({ theme }) => {
-    return css`
-        padding: calc(1.5 * ${theme.spacing});
-    `;
-});
+

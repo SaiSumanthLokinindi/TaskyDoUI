@@ -135,11 +135,9 @@ const SignUp = memo(
                         label="Full Name"
                         placeholder="eg: John Doe"
                         name="name"
-                        onChange={() => {
+                        onChange={(e) => {
                             setFormError('');
                             resetFieldError('name');
-                        }}
-                        onBlur={(e) => {
                             setFieldValue('name', e.target.value);
                         }}
                         info={
@@ -156,11 +154,9 @@ const SignUp = memo(
                         type="email"
                         name="email"
                         placeholder="eg: jondoe@company.com"
-                        onChange={() => {
+                        onChange={(e) => {
                             setFormError('');
                             resetFieldError('email');
-                        }}
-                        onBlur={(e) => {
                             setFieldValue('email', e.target.value);
                         }}
                         info={
@@ -177,18 +173,16 @@ const SignUp = memo(
                         type="password"
                         name="password"
                         placeholder="*******"
-                        onChange={() => {
+                        onChange={(e) => {
                             setFormError('');
                             resetFieldError('password');
+                            setFieldValue('password', e.target.value);
+                            setSignUpPasswordInfo(undefined);
                         }}
                         onFocus={() => {
                             setSignUpPasswordInfo(
                                 'password should be at least 8 characters long, it should contain a lowercase, uppercase, number and a special character',
                             );
-                        }}
-                        onBlur={(e) => {
-                            setFieldValue('password', e.target.value);
-                            setSignUpPasswordInfo(undefined);
                         }}
                         info={
                             formErrors.password?.length > 0

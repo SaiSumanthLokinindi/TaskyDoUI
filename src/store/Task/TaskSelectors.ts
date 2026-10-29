@@ -49,6 +49,10 @@ export const selectOverdueTasks = createSelector(
     },
 );
 
+export const selectOverDueTasksCount = createSelector([selectOverdueTasks], (tasks)=>{
+    return tasks.length;
+})
+
 export const selectUpcomingTasks = createSelector(
     [selectTasks, selectToday],
     (tasks, today) => {

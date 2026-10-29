@@ -14,6 +14,12 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import { useModal } from 'src/components/Modal/ModalContext';
 import EditTask from '../EditTask/EditTask';
+import { useFetchTasksOnLoad } from 'src/store/hooks/useFetchTasksOnLoad';
+import {
+    fetchMyDay,
+    fetchOverdueTasks,
+    fetchUpcomingTasks,
+} from 'src/store/Task/TaskSlice';
 
 const StyledFlex = styled(Flex)(({ theme: { spacing, breakpoints } }) => {
     return css`
@@ -84,6 +90,10 @@ const StyledNavigationWrapper = styled(Flex)(({
 });
 
 const AppContainer = memo(() => {
+    useFetchTasksOnLoad(fetchMyDay);
+    useFetchTasksOnLoad(fetchOverdueTasks);
+    useFetchTasksOnLoad(fetchUpcomingTasks);
+
     const isMediumScreenOrAbove = useBreakpoint('md');
     const { name, loading: userLoading } = useSelector((state: RootState) => ({
         name: state.user.profile.name,

@@ -1,6 +1,6 @@
 import { useRoutes } from 'react-router-dom';
 import Authentication from 'src/pages/Authentication/Authentication';
-import MyDay from 'src/pages/MyDay/MyDay';
+import MyDay from 'src/pages/MyDay/MyDayTasks';
 import NotFoundPage from 'src/pages/NotFoundPage';
 import AppContainer from 'src/pages/AppContainer/AppContainer';
 import ProtectedRoute from './ProtectedRoute';
