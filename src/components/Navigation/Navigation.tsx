@@ -7,12 +7,12 @@ import { navigationItems, type NavigationItem } from './navigationItems';
 
 export const StyledNavigation = styled(Flex)(({
     theme: {
-        baseColors: { tertiary, secondary, secondaryHover },
+        baseColors: { tertiary, secondaryLight, secondaryHover },
         spacing,
     },
 }) => {
     return css`
-        background-color: ${secondary};
+        background-color: ${secondaryLight};
         border-radius: 50px;
 
         ul {

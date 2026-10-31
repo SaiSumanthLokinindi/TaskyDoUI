@@ -23,7 +23,8 @@ const dark = {
     spacing: '0.5rem',
     baseColors: {
         primary: '#0D0D0D',
-        secondary: '#1C1C1C',
+        secondary: palette.gray800,
+        secondaryLight: palette.gray700,
         tertiary: palette.brandAccent,
         clicked: '#1C943A',
         secondaryHover: 'rgba(171,171,171,0.25)',
