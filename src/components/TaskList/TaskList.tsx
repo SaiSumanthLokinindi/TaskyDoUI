@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled, { css, useTheme } from 'styled-components';
 import Flex from 'src/components/Flex/flex';
 import { memo, useCallback } from 'react';
 import Task from '../Task/Task';
@@ -29,10 +29,7 @@ const StyledListWrapper = styled(Flex)(({
     `;
 });
 
-const StyledTaskList = styled(Flex)<{ $isMobile: boolean }>(({
-    theme: { spacing },
-    $isMobile,
-}) => {
+const StyledTaskList = styled(Flex)(({ theme: { spacing, breakpoints } }) => {
     return css`
         flex: 1;
         overflow-y: auto;
@@ -40,10 +37,10 @@ const StyledTaskList = styled(Flex)<{ $isMobile: boolean }>(({
         min-height: 0;
         overscroll-behavior: contain;
         margin-block-start: calc(1.5 * ${spacing});
-        ${$isMobile &&
-        css`
+
+        @media (max-width: calc(${breakpoints.md} - 1px)) {
             padding-block-end: calc(8 * ${spacing});
-        `}
+        }
     `;
 });
 
@@ -55,7 +52,7 @@ export interface TaskListProps {
 
 const TaskList = memo(({ label, tasks, loading }: TaskListProps) => {
     const { openModal } = useModal();
-    const isMobile = !useBreakpoint('md');
+    const theme = useTheme();
 
     const taskClickHandler = useCallback(
         (id: TaskInfo['id']) => {
@@ -92,11 +89,7 @@ const TaskList = memo(({ label, tasks, loading }: TaskListProps) => {
                     <Loader />
                 </Flex>
             ) : (
-                <StyledTaskList
-                    direction="column"
-                    rowGap="8px"
-                    $isMobile={isMobile}
-                >
+                <StyledTaskList direction="column" rowGap={theme.spacing}>
                     {tasks.map((task: TaskInfo, index) => {
                         return (
                             <Task
