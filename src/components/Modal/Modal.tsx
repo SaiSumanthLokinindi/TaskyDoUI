@@ -1,4 +1,4 @@
-import { ElementType, memo, ReactNode, useState } from 'react';
+import { ElementType, memo, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import Button from '../Button/button';
 import { GrClose } from 'react-icons/gr';
@@ -21,59 +21,63 @@ export interface ModalProps {
     onDismiss?: () => void;
 }
 
-const Modal = memo(({ body, title, actions, onDismiss }: ModalProps) => {
-    const isMobile = !useBreakpoint('md');
-    const [isClosing, setIsClosing] = useState(false);
+export interface ModalViewProps extends ModalProps {
+    isClosing: boolean;
+    onRequestClose: () => void;
+    onExitComplete: () => void;
+}
 
-    const ModalComponent: ElementType = isMobile
-        ? StyledModalMobile
-        : StyledModalDesktop;
+const Modal = memo(
+    ({
+        body,
+        title,
+        actions,
+        isClosing,
+        onRequestClose,
+        onExitComplete,
+    }: ModalViewProps) => {
+        const isMobile = !useBreakpoint('md');
 
-    const handleDismiss = () => {
-        if (isClosing) return;
-        setIsClosing(true);
-    };
+        const ModalComponent: ElementType = isMobile
+            ? StyledModalMobile
+            : StyledModalDesktop;
 
-    const handleAnimationEnd = (e: AnimationEvent) => {
-        if (
-            e.animationName === 'mobileExit' ||
-            e.animationName === 'desktopExit'
-        ) {
-            setIsClosing(false);
-            onDismiss?.();
-        }
-    };
+        const handleAnimationEnd = (e: AnimationEvent) => {
+            if (e.currentTarget !== e.target || !isClosing) return;
+            onExitComplete();
+        };
 
-    return createPortal(
-        <>
-            {!isMobile && <StyledBackdrop />}
-            <ModalComponent
-                onAnimationEnd={handleAnimationEnd}
-                $closing={isClosing}
-            >
-                <StyledModalHeader
-                    justifyContent="space-between"
-                    alignItems="center"
+        return createPortal(
+            <>
+                {!isMobile && <StyledBackdrop />}
+                <ModalComponent
+                    onAnimationEnd={handleAnimationEnd}
+                    $closing={isClosing}
                 >
-                    <Text size="sm">{title}</Text>
-                    <Button onClick={handleDismiss} variant="basic">
-                        <GrClose />
-                    </Button>
-                </StyledModalHeader>
-                <StyledModalBody>{body}</StyledModalBody>
-
-                {!!actions?.length && (
-                    <StyledModalFooter
-                        justifyContent="flex-end"
-                        columnGap="0.5rem"
+                    <StyledModalHeader
+                        justifyContent="space-between"
+                        alignItems="center"
                     >
-                        <Actions actions={actions} />
-                    </StyledModalFooter>
-                )}
-            </ModalComponent>
-        </>,
-        document.getElementById('modal-root')!,
-    );
-});
+                        <Text size="sm">{title}</Text>
+                        <Button onClick={onRequestClose} variant="basic">
+                            <GrClose />
+                        </Button>
+                    </StyledModalHeader>
+                    <StyledModalBody>{body}</StyledModalBody>
+
+                    {!!actions?.length && (
+                        <StyledModalFooter
+                            justifyContent="flex-end"
+                            columnGap="0.5rem"
+                        >
+                            <Actions actions={actions} />
+                        </StyledModalFooter>
+                    )}
+                </ModalComponent>
+            </>,
+            document.getElementById('modal-root')!,
+        );
+    },
+);
 
 export default Modal;

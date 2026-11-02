@@ -6,15 +6,23 @@ import { Action } from '../Actions/Actions';
 export const ModalProvider = ({ children }: { children: ReactNode }) => {
     const [modalConfig, setModalConfig] = useState<ModalProps | null>(null);
     const [dynamicActions, setDynamicActions] = useState<Action[]>([]);
+    const [isClosing, setIsClosing] = useState(false);
 
     const openModal = useCallback((modalConfig: ModalProps) => {
         setModalConfig(modalConfig);
     }, []);
 
     const closeModal = useCallback(() => {
+        if (isClosing) return;
+        setIsClosing(true);
+    }, [isClosing]);
+
+    const onModalClose = useCallback(() => {
+        if (!isClosing) return;
         setModalConfig(null);
         modalConfig?.onDismiss?.();
-    }, []);
+        setIsClosing(false);
+    }, [isClosing, modalConfig]);
 
     return (
         <ModalContext.Provider
@@ -29,7 +37,9 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
                             ? [...modalConfig.actions, ...dynamicActions]
                             : dynamicActions
                     }
-                    onDismiss={closeModal}
+                    isClosing={isClosing}
+                    onRequestClose={closeModal}
+                    onExitComplete={onModalClose}
                 />
             )}
         </ModalContext.Provider>

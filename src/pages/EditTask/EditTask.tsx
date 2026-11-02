@@ -26,6 +26,7 @@ import {
 import { formatDateLocale, isAfter, toInputDate } from 'src/utils/dates';
 import { SelectTaskById } from 'src/store/Task/TaskSelectors';
 import { StyledError } from '../Authentication/authentication.styles';
+import { useTheme } from 'styled-components';
 
 const StyledEditTaskContainer = styled.form(({ theme: { spacing } }) => {
     return css`
@@ -72,6 +73,7 @@ const generateTaskInfo = (
 };
 
 const EditTask = memo(({ id }: EditTaskProps) => {
+    const theme = useTheme();
     const defaultTaskData = useSelector((state) => SelectTaskById(state, id));
     const { isDesktop } = useMedia();
     const { setActions, closeModal } = useModal();
@@ -442,7 +444,10 @@ const EditTask = memo(({ id }: EditTaskProps) => {
                     </>
                 )}
             </Flex>
-            <Flex alignItems="flex-end" columnGap="1rem">
+            <Flex
+                alignItems="flex-end"
+                columnGap={`calc(2 * ${theme.spacing})`}
+            >
                 <FilterableListInput
                     type="text"
                     placeholder="Add tags"
@@ -467,7 +472,7 @@ const EditTask = memo(({ id }: EditTaskProps) => {
                     ]}
                 />
             </Flex>
-            <Flex columnGap="0.5rem">
+            <Flex gap={theme.spacing} flexWrap="wrap">
                 {(taskData?.tags as string[])?.map((tag) => (
                     <Tag
                         id={tag}
