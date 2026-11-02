@@ -12,6 +12,15 @@ const GlobalStyles = createGlobalStyle(({ theme }) => {
             font-size: 16px;
             height: 100%;
             margin: 0;
+
+            --mobile-nav-height: 48px;
+            --mobile-nav-bottom-offset: 12px;
+            --mobile-nav-gap: 12px;
+
+            --mobile-nav-clearance: calc(
+                var(--mobile-nav-height) + var(--mobile-nav-bottom-offset) +
+                    var(--mobile-nav-gap) + env(safe-area-inset-bottom, 0px)
+            );
         }
 
         * {

@@ -35,7 +35,11 @@ const StyledFlex = styled(Flex)(({ theme: { spacing, breakpoints } }) => {
 
             ${StyledNavigation} {
                 position: fixed;
-                inset-block-end: calc(2 * ${spacing});
+                inset-block-end: calc(
+                    var(--mobile-nav-bottom-offset) +
+                        env(safe-area-inset-bottom, 0px)
+                );
+
                 inset-inline-start: 50%;
                 transform: translateX(-50%);
                 z-index: 10;

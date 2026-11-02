@@ -36,10 +36,12 @@ const StyledTaskList = styled(Flex)(({ theme: { spacing, breakpoints } }) => {
         min-width: 0;
         min-height: 0;
         overscroll-behavior: contain;
-        margin-block-start: calc(1.5 * ${spacing});
+        margin-block-start: calc(1 * ${spacing});
+        padding-block-start: calc(2 * ${spacing});
 
         @media (max-width: calc(${breakpoints.md} - 1px)) {
-            padding-block-end: calc(8 * ${spacing});
+            padding-block-end: var(--mobile-nav-clearance);
+            box-sizing: border-box;
         }
     `;
 });
