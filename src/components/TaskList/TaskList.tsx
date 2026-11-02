@@ -8,6 +8,7 @@ import Loader, { StyledLoader } from '../Loader/Loader';
 import { useModal } from '../Modal/ModalContext';
 import TaskDetails from 'src/pages/TaskDetails/TaskDetails';
 import EditTask from 'src/pages/EditTask/EditTask';
+import useBreakpoint from 'src/hooks/useBreakpoint';
 
 const StyledListWrapper = styled(Flex)(({
     theme: { spacing, breakpoints },
@@ -28,14 +29,23 @@ const StyledListWrapper = styled(Flex)(({
     `;
 });
 
-const StyledTaskList = styled(Flex)`
-    flex: 1;
-    overflow-y: auto;
-    min-width: 0;
-    min-height: 0;
-    overscroll-behavior: contain;
-    margin-block-start: calc(1.5 * ${({ theme }) => theme.spacing});
-`;
+const StyledTaskList = styled(Flex)<{ $isMobile: boolean }>(({
+    theme: { spacing },
+    $isMobile,
+}) => {
+    return css`
+        flex: 1;
+        overflow-y: auto;
+        min-width: 0;
+        min-height: 0;
+        overscroll-behavior: contain;
+        margin-block-start: calc(1.5 * ${spacing});
+        ${$isMobile &&
+        css`
+            padding-block-end: calc(8 * ${spacing});
+        `}
+    `;
+});
 
 export interface TaskListProps {
     label?: string;
@@ -45,6 +55,7 @@ export interface TaskListProps {
 
 const TaskList = memo(({ label, tasks, loading }: TaskListProps) => {
     const { openModal } = useModal();
+    const isMobile = !useBreakpoint('md');
 
     const taskClickHandler = useCallback(
         (id: TaskInfo['id']) => {
@@ -81,7 +92,11 @@ const TaskList = memo(({ label, tasks, loading }: TaskListProps) => {
                     <Loader />
                 </Flex>
             ) : (
-                <StyledTaskList direction="column" rowGap="8px">
+                <StyledTaskList
+                    direction="column"
+                    rowGap="8px"
+                    $isMobile={isMobile}
+                >
                     {tasks.map((task: TaskInfo, index) => {
                         return (
                             <Task

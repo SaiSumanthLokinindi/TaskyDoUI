@@ -210,7 +210,7 @@ const EditTask = memo(({ id }: EditTaskProps) => {
     useEffect(() => {
         setActions([
             {
-                label: 'Edit Task',
+                label: id ? 'Edit Task' : 'Add Task',
                 onClick: () => {
                     if (id) {
                         void handleSubmitTaskData(FormType.Edit);
