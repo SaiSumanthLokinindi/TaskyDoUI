@@ -8,7 +8,6 @@ import Loader, { StyledLoader } from '../Loader/Loader';
 import { useModal } from '../Modal/ModalContext';
 import TaskDetails from 'src/pages/TaskDetails/TaskDetails';
 import EditTask from 'src/pages/EditTask/EditTask';
-import useBreakpoint from 'src/hooks/useBreakpoint';
 
 const StyledListWrapper = styled(Flex)(({
     theme: { spacing, breakpoints },

@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useRef, useEffect } from 'react';
 import { IoAdd } from 'react-icons/io5';
 import UserInfo from 'src/components/UserInfo/UserInfo';
 import Image from '../../components/Image/Image';
@@ -6,7 +6,7 @@ import Navigation, {
     StyledNavigation,
 } from 'src/components/Navigation/Navigation';
 import Flex from 'src/components/Flex/flex';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import Button, { StyledButton } from 'src/components/Button/button';
 import useBreakpoint from 'src/hooks/useBreakpoint';
@@ -93,12 +93,39 @@ const StyledNavigationWrapper = styled(Flex)(({
     `;
 });
 
+export const MOBILE_ONLY_ROUTES = new Set([
+    '/myday',
+    '/upcoming',
+    '/overdue',
+    '/recents',
+]);
+
 const AppContainer = memo(() => {
     useFetchTasksOnLoad(fetchMyDay);
     useFetchTasksOnLoad(fetchOverdueTasks);
     useFetchTasksOnLoad(fetchUpcomingTasks);
 
+    const navigate = useNavigate();
+
     const isMediumScreenOrAbove = useBreakpoint('md');
+    const prevBreakpoint = useRef(isMediumScreenOrAbove);
+
+    useEffect(() => {
+        const breakpointChanged =
+            prevBreakpoint.current !== isMediumScreenOrAbove;
+
+        prevBreakpoint.current = isMediumScreenOrAbove;
+
+        if (!breakpointChanged) return;
+
+        if (
+            isMediumScreenOrAbove &&
+            MOBILE_ONLY_ROUTES.has(location.pathname)
+        ) {
+            navigate('/', { replace: true });
+        }
+    }, [isMediumScreenOrAbove, navigate]);
+
     const { name, loading: userLoading } = useSelector((state: RootState) => ({
         name: state.user.profile.name,
         loading: state.user.loading,
