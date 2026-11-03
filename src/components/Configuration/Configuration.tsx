@@ -32,6 +32,7 @@ const GlobalStyles = createGlobalStyle(({ theme }) => {
             background-color: ${theme.baseColors.primary};
             color: ${theme.text.primary};
             margin: 0;
+            height: 100%;
             box-sizing: border-box;
         }
 

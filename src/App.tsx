@@ -10,7 +10,8 @@ import ModalProvider from './components/Modal/ModalProvider';
 
 const StyledBody = styled(Flex)(() => {
     return css`
-        height: 100vh;
+        height: 100vh; /*fallback */
+        height: 100dvh;
         width: 100%;
         overflow: hidden;
     `;
