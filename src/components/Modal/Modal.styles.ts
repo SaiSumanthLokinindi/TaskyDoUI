@@ -119,5 +119,12 @@ export const StyledModalFooter = styled(Flex)(({ theme }) => {
             font-size: 0.8rem;
             padding: calc(1 * ${theme.spacing}) calc(3 * ${theme.spacing});
         }
+
+        @media (max-width : calc(${theme.breakpoints.md} - 1px)){
+            ${StyledButton}{
+                flex-grow: 1;
+                text-align: center;
+            }
+        }
     `;
 });

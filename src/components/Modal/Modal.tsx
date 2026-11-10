@@ -67,7 +67,7 @@ const Modal = memo(
 
                     {!!actions?.length && (
                         <StyledModalFooter
-                            justifyContent="flex-end"
+                            justifyContent={isMobile ? undefined : 'flex-end'}
                             columnGap="0.5rem"
                         >
                             <Actions actions={actions} />

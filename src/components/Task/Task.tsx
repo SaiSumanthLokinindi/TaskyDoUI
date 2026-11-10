@@ -1,10 +1,10 @@
-import styled, { css, keyframes } from 'styled-components';
+import styled, { css, keyframes, useTheme } from 'styled-components';
 import Card from '../Card/card';
-import Flex from '../Flex/flex';
+import Flex, { StyledFlex } from '../Flex/flex';
 import Text from '../Text/Text';
 import Badge from '../Badge/Badge';
 import { TaskProps } from './Task.types';
-import { useMemo } from 'react';
+import { useCallback, useMemo, MouseEvent, useState } from 'react';
 import Checkbox, { StyledCheckbox } from '../Checkbox/Checkbox';
 import { formatDueDate } from 'src/utils/dates';
 import { useDispatch } from 'react-redux';
@@ -12,6 +12,9 @@ import { AppDispatch } from 'src/store';
 import { markTaskCompleted } from 'src/store/Task/TaskSlice';
 import { updateTaskCompletion } from 'src/store/Task/TaskThunks';
 import { PRIORITY_MAP, PRIORITY_STATE_MAP } from '../Priority/constants';
+import Button, { StyledButton } from '../Button/button';
+import { AiOutlineDelete } from 'react-icons/ai';
+import { ImCancelCircle } from 'react-icons/im';
 
 const slideUpFadeIn = keyframes`
     from {
@@ -24,19 +27,19 @@ const slideUpFadeIn = keyframes`
     }
 `;
 
-const StyledTaskCard = styled(Card)<{ $animationDelay?: number }>(({
-    $animationDelay = 0,
-    theme,
-}) => {
+const StyledTaskCard = styled(Card)<{
+    $animationDelay?: number;
+    $expanded: boolean;
+}>(({ $animationDelay = 0, theme, $expanded = false }) => {
     return css`
         display: flex;
-        column-gap: calc(1.5 * ${theme.spacing});
+        flex-direction: column;
         padding: ${theme.spacing};
         border: 1.5px solid #393939;
         box-sizing: border-box;
+        background: ${theme.baseColors.secondary};
         cursor: pointer;
         user-select: none;
-        align-items: flex-start;
         opacity: 0;
         transition:
             border-color 150ms ease,
@@ -54,8 +57,29 @@ const StyledTaskCard = styled(Card)<{ $animationDelay?: number }>(({
             margin-top: 3px;
         }
 
-        &:active:not(:has(${StyledCheckbox}:active)) {
+        &:active:not(:has(${StyledCheckbox}:active, ${StyledButton}:active)) {
             scale: 0.98;
+        }
+
+        & > ${StyledFlex}:first-child > ${StyledButton} {
+            align-self: center;
+            font-size: 1.125rem;
+            padding: ${theme.spacing};
+
+            ${!$expanded &&
+            css`
+                &:hover {
+                    color: ${theme.baseColors.danger};
+                }
+            `}
+        }
+
+        @media (max-width: calc(${theme.breakpoints.md} - 1px)) {
+            & > ${StyledFlex}:first-child > ${StyledButton} {
+                height: 48px;
+                width: 48px;
+                flex-shrink: 0;
+            }
         }
     `;
 });
@@ -81,6 +105,71 @@ const StyledTaskLabel = styled.span<{ $completed?: boolean }>(
     },
 );
 
+const StyledDeleteControls = styled.div<{ $expanded: boolean }>(
+    ({ theme, $expanded = false }) => {
+        return css`
+            width: 100%;
+            /* ${$expanded
+                ? css`
+                      padding: ${theme.spacing};
+                      padding-block: calc(1.5 * ${theme.spacing})
+                          calc(0.5 * ${theme.spacing});
+                  `
+                : ''} */
+
+            box-sizing: border-box;
+            display: grid;
+            grid-template-rows: ${$expanded ? '1fr' : '0fr'};
+            transition: grid-template-rows 330ms ease;
+
+            & > ${StyledButton} {
+                font-size: 0.8rem;
+                background: ${theme.baseColors.danger};
+                box-shadow: none;
+                border: none;
+                flex-grow: 1;
+            }
+
+            & > div {
+                overflow: hidden;
+            }
+        `;
+    },
+);
+
+const StyledDeleteContent = styled(Flex)<{ $expanded: boolean }>(({
+    theme,
+    $expanded = false,
+}) => {
+    return css`
+        opacity: ${$expanded ? 1 : 0};
+        transform: translateY(${$expanded ? '0' : '-8px'});
+
+        transition:
+            opacity 200ms ease,
+            transform 200ms ease;
+        transition-delay: ${$expanded ? '100ms' : '0ms'};
+
+        & > ${StyledButton} {
+            font-size: 0.8rem;
+            background: ${theme.baseColors.danger};
+            box-shadow: none;
+            border: none;
+            flex-grow: 1;
+
+            div {
+                display: flex;
+                align-items: center;
+                column-gap: calc(0.5 * ${theme.spacing});
+
+                svg {
+                    font-size: 1.125rem;
+                }
+            }
+        }
+    `;
+});
+
 const Task = ({
     id,
     label,
@@ -91,7 +180,10 @@ const Task = ({
     onClick,
     onTaskCompletionChange,
 }: TaskProps) => {
+    const theme = useTheme();
     const dispatch = useDispatch<AppDispatch>();
+    const [showDeleteControls, setShowDeleteControls] = useState(false);
+
     const dueDateInfo = useMemo(() => {
         if (!dueDate) return null;
         return formatDueDate(dueDate);
@@ -115,45 +207,71 @@ const Task = ({
         [priority],
     );
 
+    const handleDelete = useCallback((e: MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        setShowDeleteControls((prev) => !prev);
+    }, []);
+
     return (
         <StyledTaskCard
             $animationDelay={animationDelay || 0}
             onClick={(e) => onClick?.(id, e)}
             tabIndex={0}
+            $expanded={showDeleteControls}
         >
-            <Checkbox
-                checked={completed || false}
-                onChange={handleTaskCompletionChange}
-                onClick={(e) => e.stopPropagation()}
-            />
             <Flex
-                direction="column"
-                grow={1}
-                rowGap={priorityMeta || dueDateInfo ? '4px' : '0'}
+                columnGap={`calc(1.5 * ${theme.spacing})`}
+                style={{
+                    width: '100%',
+                }}
             >
-                <StyledTaskLabel $completed={completed || false}>
-                    {label}
-                </StyledTaskLabel>
-
+                <Checkbox
+                    checked={completed || false}
+                    onChange={handleTaskCompletionChange}
+                    onClick={(e) => e.stopPropagation()}
+                />
                 <Flex
-                    justifyContent={
-                        priorityMeta && dueDateInfo
-                            ? 'space-between'
-                            : priorityMeta
-                            ? 'flex-end'
-                            : 'flex-start'
-                    }
-                    alignItems="center"
+                    direction="column"
+                    grow={1}
+                    rowGap={priorityMeta || dueDateInfo ? '4px' : '0'}
                 >
-                    {dueDateInfo && <Text variant="helper">{dueDateInfo}</Text>}
-                    {priorityMeta && priority && (
-                        <Badge
-                            type={PRIORITY_STATE_MAP[priority]}
-                            label={priorityMeta.label}
-                        />
-                    )}
+                    <StyledTaskLabel $completed={completed || false}>
+                        {label}
+                    </StyledTaskLabel>
+
+                    <Flex alignItems="center" columnGap={theme.spacing}>
+                        {priorityMeta && priority && (
+                            <Badge
+                                type={PRIORITY_STATE_MAP[priority]}
+                                label={priorityMeta.label}
+                            />
+                        )}
+                        {dueDateInfo && (
+                            <Text variant="helper">{dueDateInfo}</Text>
+                        )}
+                    </Flex>
                 </Flex>
+                <Button variant="simple" onClick={handleDelete}>
+                    {showDeleteControls ? (
+                        <ImCancelCircle />
+                    ) : (
+                        <AiOutlineDelete />
+                    )}
+                </Button>
             </Flex>
+            <StyledDeleteControls $expanded={showDeleteControls}>
+                <div>
+                    <StyledDeleteContent
+                        columnGap={theme.spacing}
+                        $expanded={showDeleteControls}
+                    >
+                        <Button variant="primary">
+                            <AiOutlineDelete />
+                            <span>Delete</span>
+                        </Button>
+                    </StyledDeleteContent>
+                </div>
+            </StyledDeleteControls>
         </StyledTaskCard>
     );
 };

@@ -56,6 +56,7 @@ export const StyledButton = styled.button<{
         display: flex;
         column-gap: ${theme.spacing};
         align-items: center;
+        justify-content: center;
 
         &:hover {
             filter: brightness(1.1);
@@ -169,7 +170,7 @@ export const StyledButton = styled.button<{
 
         ${$variant === 'secondary' &&
         css`
-            background: rgba(30, 169, 65, 0.05);
+            /* background: rgba(30, 169, 65, 0.05); */
             border: 1.75px solid ${theme.baseColors.tertiary};
             color: ${theme.baseColors.tertiary};
 

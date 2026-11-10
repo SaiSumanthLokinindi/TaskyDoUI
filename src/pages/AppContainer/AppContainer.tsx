@@ -141,7 +141,7 @@ const AppContainer = memo(() => {
                 {
                     label: 'Cancel',
                     onClick: () => closeModal(),
-                    variant: 'simple',
+                    variant: 'basic',
                 },
             ],
         });
