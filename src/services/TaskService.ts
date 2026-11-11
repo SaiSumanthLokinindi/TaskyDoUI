@@ -17,4 +17,6 @@ export const TaskService = {
 
     addTask: (body: Omit<TaskInfo, 'id'>): Promise<TaskInfo> =>
         axios.post<TaskInfo>('task', body).then((res) => res.data),
+
+    deleteTask: (id: TaskInfo['id']): Promise<TaskInfo> => axios.delete<TaskInfo>(`task/${id}`).then(res=>res.data),
 };

@@ -55,3 +55,11 @@ export const updateTask = createAsyncThunk<TaskInfo, TaskInfo>(
         }
     },
 );
+
+export const deleteTask = createAsyncThunk<TaskInfo, TaskInfo['id']>('task/delete', async (id, {rejectWithValue})=>{
+    try{
+        return await TaskService.deleteTask(id);
+    }catch(err){
+        return rejectWithValue('Failed to delete task');
+    }
+})

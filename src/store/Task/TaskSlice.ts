@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TaskInfo, TasksState } from './Task.types';
 import {
     addTask,
+    deleteTask,
     fetchTasksThunk,
     updateTask,
     updateTaskCompletion,
@@ -32,6 +33,7 @@ export const tasksInitialState: TasksState = {
         loading: false,
         error: undefined,
     },
+    taskDeleteState:{}
 };
 
 export const fetchMyDay = fetchTasksThunk('myDay/fetch', 'myday');
@@ -167,6 +169,29 @@ const TaskSlice = createSlice({
                 }
             }
         });
+
+        builder.addCase(deleteTask.pending , (state, action)=>{
+            const id = action.meta.arg;
+            state.taskDeleteState[id] = {
+                loading: true,
+                task: structuredClone(state.entities[id])
+            }
+
+            delete state.entities[id];
+            state.ids = state.ids.filter(taskId=> taskId !== id);
+        })
+
+        builder.addCase(deleteTask.fulfilled, (state, action)=>{
+            delete state.taskDeleteState[action.meta.arg];
+        })
+
+        builder.addCase(deleteTask.rejected, (state,action)=>{
+            const id = action.meta.arg;
+            state.ids.push(id);
+            if(state.taskDeleteState[id].task)
+                state.entities[action.meta.arg] = state.taskDeleteState[id].task;
+            delete state.taskDeleteState[id];
+        })
     },
 });
 

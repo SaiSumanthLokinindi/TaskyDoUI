@@ -10,7 +10,7 @@ import { formatDueDate } from 'src/utils/dates';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/store';
 import { markTaskCompleted } from 'src/store/Task/TaskSlice';
-import { updateTaskCompletion } from 'src/store/Task/TaskThunks';
+import { deleteTask, updateTaskCompletion } from 'src/store/Task/TaskThunks';
 import { PRIORITY_MAP, PRIORITY_STATE_MAP } from '../Priority/constants';
 import Button, { StyledButton } from '../Button/button';
 import { AiOutlineDelete } from 'react-icons/ai';
@@ -34,7 +34,7 @@ const StyledTaskCard = styled(Card)<{
     return css`
         display: flex;
         flex-direction: column;
-        padding: ${theme.spacing};
+        padding: calc(1.5 * ${theme.spacing});
         border: 1.5px solid #393939;
         box-sizing: border-box;
         background: ${theme.baseColors.secondary};
@@ -54,7 +54,8 @@ const StyledTaskCard = styled(Card)<{
         }
 
         ${StyledCheckbox} {
-            margin-top: 3px;
+            margin-block-start: 3px;
+            margin-inline-start: 0;
         }
 
         &:active:not(:has(${StyledCheckbox}:active, ${StyledButton}:active)) {
@@ -106,29 +107,13 @@ const StyledTaskLabel = styled.span<{ $completed?: boolean }>(
 );
 
 const StyledDeleteControls = styled.div<{ $expanded: boolean }>(
-    ({ theme, $expanded = false }) => {
+    ({ $expanded = false }) => {
         return css`
             width: 100%;
-            /* ${$expanded
-                ? css`
-                      padding: ${theme.spacing};
-                      padding-block: calc(1.5 * ${theme.spacing})
-                          calc(0.5 * ${theme.spacing});
-                  `
-                : ''} */
-
             box-sizing: border-box;
             display: grid;
             grid-template-rows: ${$expanded ? '1fr' : '0fr'};
             transition: grid-template-rows 330ms ease;
-
-            & > ${StyledButton} {
-                font-size: 0.8rem;
-                background: ${theme.baseColors.danger};
-                box-shadow: none;
-                border: none;
-                flex-grow: 1;
-            }
 
             & > div {
                 overflow: hidden;
@@ -144,6 +129,7 @@ const StyledDeleteContent = styled(Flex)<{ $expanded: boolean }>(({
     return css`
         opacity: ${$expanded ? 1 : 0};
         transform: translateY(${$expanded ? '0' : '-8px'});
+        margin-block-start: calc(1.5 * ${theme.spacing});
 
         transition:
             opacity 200ms ease,
@@ -152,9 +138,6 @@ const StyledDeleteContent = styled(Flex)<{ $expanded: boolean }>(({
 
         & > ${StyledButton} {
             font-size: 0.8rem;
-            background: ${theme.baseColors.danger};
-            box-shadow: none;
-            border: none;
             flex-grow: 1;
 
             div {
@@ -207,10 +190,25 @@ const Task = ({
         [priority],
     );
 
-    const handleDelete = useCallback((e: MouseEvent<HTMLButtonElement>) => {
-        e.stopPropagation();
-        setShowDeleteControls((prev) => !prev);
-    }, []);
+    const toggleDeleteControls = useCallback(
+        (e: MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
+            setShowDeleteControls((prev) => !prev);
+        },
+        [],
+    );
+
+    const handleTaskDelete = useCallback(
+        async (e: MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
+            try {
+                await dispatch(deleteTask(id)).unwrap();
+            } catch (error) {
+                console.error('Failed to delete task:', error);
+            }
+        },
+        [dispatch, id],
+    );
 
     return (
         <StyledTaskCard
@@ -233,7 +231,11 @@ const Task = ({
                 <Flex
                     direction="column"
                     grow={1}
-                    rowGap={priorityMeta || dueDateInfo ? '4px' : '0'}
+                    rowGap={
+                        priorityMeta || dueDateInfo
+                            ? `calc(0.75 * ${theme.spacing})`
+                            : '0'
+                    }
                 >
                     <StyledTaskLabel $completed={completed || false}>
                         {label}
@@ -251,7 +253,7 @@ const Task = ({
                         )}
                     </Flex>
                 </Flex>
-                <Button variant="simple" onClick={handleDelete}>
+                <Button variant="simple" onClick={toggleDeleteControls}>
                     {showDeleteControls ? (
                         <ImCancelCircle />
                     ) : (
@@ -265,7 +267,12 @@ const Task = ({
                         columnGap={theme.spacing}
                         $expanded={showDeleteControls}
                     >
-                        <Button variant="primary">
+                        <Button
+                            variant="primary"
+                            onClick={(e) => {
+                                void handleTaskDelete(e);
+                            }}
+                        >
                             <AiOutlineDelete />
                             <span>Delete</span>
                         </Button>
