@@ -33,12 +33,17 @@ export const tasksInitialState: TasksState = {
         loading: false,
         error: undefined,
     },
+    recentlyCompletedState:{
+        loading:false,
+        error:undefined
+    },
     taskDeleteState:{}
 };
 
 export const fetchMyDay = fetchTasksThunk('myDay/fetch', 'myday');
 export const fetchOverdueTasks = fetchTasksThunk('overdue/fetch', 'overdue');
 export const fetchUpcomingTasks = fetchTasksThunk('upcoming/fetch', 'upcoming');
+export const fetchRecentlyCompletedTasks = fetchTasksThunk('recentlyCompleted/fetch', 'recentlyCompleted');
 
 const TaskSlice = createSlice({
     name: 'tasks',
@@ -122,8 +127,27 @@ const TaskSlice = createSlice({
             state.upcomingState.error = action.payload as string;
         });
 
+        builder.addCase(fetchRecentlyCompletedTasks.pending, (state) => {
+            state.recentlyCompletedState.loading = true;
+            state.recentlyCompletedState.error = undefined;
+        });
+        builder.addCase(fetchRecentlyCompletedTasks.fulfilled, (state, action) => {
+            upsertTasksInState(state, action.payload);
+            state.recentlyCompletedState.loading = false;
+            state.recentlyCompletedState.error = undefined;
+        });
+
+        builder.addCase(fetchRecentlyCompletedTasks.rejected, (state, action) => {
+            state.recentlyCompletedState.loading = false;
+            state.recentlyCompletedState.error = action.payload as string;
+        });
+
         builder.addCase(updateTaskCompletion.pending, (state, action) => {
-            const { id } = action.meta.arg;
+            const { id, completed } = action.meta.arg;
+            if(state.entities[id].status){
+                state.entities[id].status.completed = completed;
+                state.entities[id].status.completedOn = new Date().toISOString();
+            }
             state.taskCompletionRequests[id] = action.meta.requestId;
         });
 
@@ -139,12 +163,14 @@ const TaskSlice = createSlice({
         });
 
         builder.addCase(updateTaskCompletion.rejected, (state, action) => {
+            const {id} = action.meta.arg;
             if (action.payload) {
                 const task = state.entities[action.payload.id];
                 if (task.status) {
                     task.status.completed = !action.payload.completed;
                 }
             }
+            delete state.taskCompletionRequests[id];
         });
 
         builder.addCase(addTask.fulfilled, (state, action) => {

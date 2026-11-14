@@ -6,6 +6,7 @@ import UpcomingTasks from '../UpcomingTasks/UpcomingTasks';
 import OverdueTasks from '../Overdue Tasks/OverdueTasks';
 import MyDayTasks from '../MyDay/MyDayTasks';
 import Insights from '../Insights/Insights';
+import RecentlyCompletedTasks from '../Rencetly Completed Tasks/RecentlyCompletedTasks';
 
 const Home = memo(() => {
     const isMediumScreen = useBreakpoint('md');
@@ -25,8 +26,7 @@ const Home = memo(() => {
                         <UpcomingTasks />
                     </StyledTaskList>
                     <StyledTaskList gridArea="recentlycompleted">
-                        {/* ToDo: Change this to Recently completed tasks */}
-                        <MyDayTasks />
+                        <RecentlyCompletedTasks />
                     </StyledTaskList>
                 </>
             )}

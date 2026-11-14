@@ -17,6 +17,10 @@ export type TasksState = {
         loading: boolean;
         error?: string;
     };
+    recentlyCompletedState:{
+        loading: boolean;
+        error?: string;
+    }
     taskDeleteState: Record<TaskInfo['id'], {loading: boolean;task?: TaskInfo}>
 };
 

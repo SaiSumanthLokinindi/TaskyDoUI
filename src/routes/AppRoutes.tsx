@@ -7,7 +7,7 @@ import ProtectedRoute from './ProtectedRoute';
 import Home from 'src/pages/Home/Home';
 import UpcomingTasks from 'src/pages/UpcomingTasks/UpcomingTasks';
 import OverdueTasks from 'src/pages/Overdue Tasks/OverdueTasks';
-import RecentlyClosedTasks from 'src/pages/Rencetly Closed Tasks/RecentlyClosedTasks';
+import RecentlyCompletedTasks from 'src/pages/Rencetly Completed Tasks/RecentlyCompletedTasks';
 
 const AppRoutes = () => {
     return useRoutes([
@@ -37,7 +37,7 @@ const AppRoutes = () => {
                 },
                 {
                     path: 'recents',
-                    element: <RecentlyClosedTasks />,
+                    element: <RecentlyCompletedTasks />,
                 },
             ],
         },

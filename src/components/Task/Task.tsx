@@ -9,7 +9,6 @@ import Checkbox, { StyledCheckbox } from '../Checkbox/Checkbox';
 import { formatDueDate } from 'src/utils/dates';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/store';
-import { markTaskCompleted } from 'src/store/Task/TaskSlice';
 import { deleteTask, updateTaskCompletion } from 'src/store/Task/TaskThunks';
 import { PRIORITY_MAP, PRIORITY_STATE_MAP } from '../Priority/constants';
 import Button, { StyledButton } from '../Button/button';
@@ -172,15 +171,12 @@ const Task = ({
         return formatDueDate(dueDate);
     }, [dueDate]);
 
-    const handleTaskCompletionChange = (
+    const handleTaskCompletionChange = async (
         e?: React.ChangeEvent<HTMLInputElement>,
     ) => {
         onTaskCompletionChange?.(id, e);
-        dispatch(
-            markTaskCompleted({ id, completed: e?.target.checked || false }),
-        );
 
-        dispatch(
+        await dispatch(
             updateTaskCompletion({ id, completed: e?.target.checked || false }),
         );
     };
@@ -225,7 +221,9 @@ const Task = ({
             >
                 <Checkbox
                     checked={completed || false}
-                    onChange={handleTaskCompletionChange}
+                    onChange={(e) => {
+                        void handleTaskCompletionChange(e);
+                    }}
                     onClick={(e) => e.stopPropagation()}
                 />
                 <Flex

@@ -18,6 +18,7 @@ import { useFetchTasksOnLoad } from 'src/store/hooks/useFetchTasksOnLoad';
 import {
     fetchMyDay,
     fetchOverdueTasks,
+    fetchRecentlyCompletedTasks,
     fetchUpcomingTasks,
 } from 'src/store/Task/TaskSlice';
 
@@ -104,6 +105,7 @@ const AppContainer = memo(() => {
     useFetchTasksOnLoad(fetchMyDay);
     useFetchTasksOnLoad(fetchOverdueTasks);
     useFetchTasksOnLoad(fetchUpcomingTasks);
+    useFetchTasksOnLoad(fetchRecentlyCompletedTasks);
 
     const navigate = useNavigate();
 

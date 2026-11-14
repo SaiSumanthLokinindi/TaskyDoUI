@@ -2,7 +2,7 @@ import axios from 'src/axios-instance/axios-instance';
 import { TaskInfo } from 'src/store/Task/Task.types';
 
 export const TaskService = {
-    getTasks: (type: 'myday' | 'upcoming' | 'overdue'): Promise<TaskInfo[]> =>
+    getTasks: (type: 'myday' | 'upcoming' | 'overdue' | 'recentlyCompleted'): Promise<TaskInfo[]> =>
         axios.get<TaskInfo[]>(`task/${type}`).then((res) => res.data),
 
     updateTask: (

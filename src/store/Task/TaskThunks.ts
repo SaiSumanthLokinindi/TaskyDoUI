@@ -4,7 +4,7 @@ import { TaskService } from 'src/services/TaskService';
 
 export const fetchTasksThunk = (
     identifier: string,
-    taskType: 'myday' | 'upcoming' | 'overdue',
+    taskType: 'myday' | 'upcoming' | 'overdue' | 'recentlyCompleted',
 ) => {
     return createAsyncThunk(identifier, async (_, thunkApi) => {
         try {
