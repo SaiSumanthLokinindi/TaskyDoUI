@@ -11,7 +11,11 @@ const UpcomingTasks = memo(() => {
     return (
         <TaskList
             label="Upcoming Tasks"
-            tasks={upcomingTasks}
+            tasks={[...upcomingTasks].sort(
+                (a, b) =>
+                    new Date(a.scheduleDate as string).getTime() -
+                    new Date(b.scheduleDate as string).getTime(),
+            )}
             loading={upcomingTasksLoading}
         />
     );

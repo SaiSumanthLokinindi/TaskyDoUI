@@ -12,7 +12,11 @@ const OverdueTasks = memo(() => {
     return (
         <TaskList
             label="Overdue Tasks"
-            tasks={overdueTasks}
+            tasks={[...overdueTasks].sort(
+                (a, b) =>
+                    new Date(a.dueDate as string).getTime() -
+                    new Date(b.dueDate as string).getTime(),
+            )}
             loading={overdueTasksLoading}
         />
     );
