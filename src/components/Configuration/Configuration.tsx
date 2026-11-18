@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { createGlobalStyle, css, ThemeProvider } from 'styled-components';
-import darkTheme from '../../themes/dark.js';
+import darkTheme from '../../themes/dark';
 
 interface ConfigurationProps {
     children: ReactNode | string | null;
