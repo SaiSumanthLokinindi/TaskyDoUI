@@ -66,12 +66,14 @@ const StyledTaskCard = styled(Card)<{
             font-size: 1.125rem;
             padding: ${theme.spacing};
 
-            ${!$expanded &&
-            css`
-                &:hover {
-                    color: ${theme.baseColors.danger};
-                }
-            `}
+            ${
+                !$expanded &&
+                css`
+                    &:hover {
+                        color: ${theme.baseColors.danger};
+                    }
+                `
+            }
         }
 
         @media (max-width: calc(${theme.breakpoints.md} - 1px)) {
@@ -80,6 +82,8 @@ const StyledTaskCard = styled(Card)<{
                 width: 48px;
                 flex-shrink: 0;
             }
+
+            background: ${theme.palette.gray900};
         }
     `;
 });
@@ -96,11 +100,13 @@ const StyledTaskLabel = styled.span<{ $completed?: boolean }>(
             text-overflow: ellipsis;
             word-break: break-word;
 
-            ${$completed &&
-            css`
-                text-decoration: line-through;
-                color: rgba(255, 255, 255, 0.6);
-            `}
+            ${
+                $completed &&
+                css`
+                    text-decoration: line-through;
+                    color: rgba(255, 255, 255, 0.6);
+                `
+            }
         `;
     },
 );

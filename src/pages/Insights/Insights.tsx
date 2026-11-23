@@ -27,14 +27,17 @@ const Insights = memo(() => {
 
     const [myDayTasksCompletedCount, myDayTasksCompletionPercentage] =
         useMemo(() => {
+            if (!myDayTasks.length) return [0, 0];
             const completedCount = myDayTasks.reduce((acc, current) => {
                 if (current.status?.completed) {
                     return acc + 1;
                 }
                 return acc;
             }, 0);
+
             const completionPercentage =
                 (completedCount / myDayTasks.length) * 100;
+
             return [completedCount, Math.ceil(completionPercentage)];
         }, [myDayTasks]);
 

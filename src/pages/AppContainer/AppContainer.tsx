@@ -31,8 +31,8 @@ const StyledFlex = styled(Flex)(({ theme: { spacing, breakpoints } }) => {
         min-height: 0;
 
         @media (max-width: calc(${breakpoints.md} - 1px)) {
-            padding: calc(1.5 * ${spacing});
-            padding-block-start: calc(2 * ${spacing});
+            padding: calc(2.5 * ${spacing});
+            padding-block-start: calc(4 * ${spacing});
 
             ${StyledNavigation} {
                 position: fixed;
@@ -128,9 +128,14 @@ const AppContainer = memo(() => {
         }
     }, [isMediumScreenOrAbove, navigate]);
 
-    const { name, loading: userLoading } = useSelector((state: RootState) => ({
+    const {
+        name,
+        loading: userLoading,
+        email,
+    } = useSelector((state: RootState) => ({
         name: state.user.profile.name,
         loading: state.user.loading,
+        email: state.user.profile.email,
     }));
 
     const { openModal, closeModal } = useModal();
@@ -153,12 +158,6 @@ const AppContainer = memo(() => {
         <StyledFlex direction="column">
             <Flex alignItems="center" justifyContent="space-between">
                 <UserInfo
-                    visual={
-                        <Image
-                            src="https://i.pravatar.cc/300"
-                            alt="user image"
-                        />
-                    }
                     primary={name}
                     secondary={new Date()
                         .toLocaleDateString('en-US', {
@@ -168,6 +167,7 @@ const AppContainer = memo(() => {
                         })
                         .replace(',', '')
                         .replace(/^(\w+)\s(\d+)\s(\d+)$/, '$2 $1 $3')}
+                    email={email}
                     loading={userLoading}
                 />
                 <StyledNavigationWrapper columnGap="0.5rem" alignItems="center">

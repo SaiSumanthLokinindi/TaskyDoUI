@@ -36,7 +36,6 @@ const StyledTaskList = styled(Flex)(({ theme: { spacing, breakpoints } }) => {
         min-height: 0;
         overscroll-behavior: contain;
         margin-block-start: calc(1 * ${spacing});
-        padding-block-start: calc(2 * ${spacing});
 
         @media (max-width: calc(${breakpoints.md} - 1px)) {
             padding-block-end: var(--mobile-nav-clearance);

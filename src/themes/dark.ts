@@ -47,7 +47,7 @@ const dark = {
         },
     },
     text: {
-        primary: palette.white200,
+        primary: palette.gray300,
         heading: '#FFFFFF',
         secondary: '#8D8D8D',
         disabled: 'rgba(143, 143, 143, 0.2)',
@@ -94,6 +94,7 @@ const dark = {
         },
     },
     breakpoints,
+    palette
 };
 
 export default dark;

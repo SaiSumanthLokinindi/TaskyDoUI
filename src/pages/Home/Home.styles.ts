@@ -3,7 +3,7 @@ import Card from 'src/components/Card/card';
 
 export const StyledTaskList = styled(Card)<{gridArea: string}>(({ gridArea, theme:{spacing, breakpoints} }) => {
     return css`
-        padding: calc(1.5 * ${spacing});
+        padding: calc(2.5 * ${spacing});
         ${gridArea && css`
             grid-area: ${gridArea};
         `}

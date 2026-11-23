@@ -89,36 +89,49 @@ export const StyledText = styled.span<{
             color: ${theme.text.primary};
             line-height: ${$lineHeight};
 
-            ${$variant &&
-            variantSet.has($variant) &&
-            css`
-                color: ${theme.text.heading};
-            `}
+            ${
+                $variant &&
+                variantSet.has($variant) &&
+                css`
+                    color: ${theme.text.heading};
+                `
+            }
 
             ${$variant && variantStyles[$variant as keyof typeof variantStyles]}
 
-            ${$expandable &&
-            css`
-                display: -webkit-box;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
-                transition: max-height 330ms ease;
-                line-height: ${$lineHeight};
+            ${
+                textSize !== 'rg' &&
+                css`
+                    font-size: ${theme.components.text.size[textSize]};
+                `
+            }
 
-                ${$isExpanded
-                    ? css`
-                          -webkit-line-clamp: unset;
-                          max-height: calc(var(--text-height) + 10px);
-                      `
-                    : css`
-                          -webkit-line-clamp: ${$isTransitioning
-                              ? 'unset'
-                              : $linesToShow};
-                          max-height: calc(
-                              ${$linesToShow} * ${$lineHeight} * 1em
-                          );
-                      `}
-            `}
+            ${
+                $expandable &&
+                css`
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                    transition: max-height 330ms ease;
+                    line-height: ${$lineHeight};
+
+                    ${
+                        $isExpanded
+                            ? css`
+                                  -webkit-line-clamp: unset;
+                                  max-height: calc(var(--text-height) + 10px);
+                              `
+                            : css`
+                                  -webkit-line-clamp: ${
+                                      $isTransitioning ? 'unset' : $linesToShow
+                                  };
+                                  max-height: calc(
+                                      ${$linesToShow} * ${$lineHeight} * 1em
+                                  );
+                              `
+                    }
+                `
+            }
         `;
     },
 );

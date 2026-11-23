@@ -83,6 +83,7 @@ export const StyledModalMobile = styled(Card)<{$closing: boolean}>(({ theme: { s
         width: 100%;
         z-index: 1000;
         padding: calc(2 * ${spacing});
+        border-radius: unset;
         display: flex;
         flex-direction: column;
         row-gap: calc(2 * ${spacing});
